@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PeptideLab — Premium Research Peptides | Australia</title>
+  <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Express shipping Australia-wide. Free shipping over $200 AUD." />
+  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="icon" type="image/png" href="images/favicon.png?v=3" />
+  <link rel="apple-touch-icon" href="images/favicon.png?v=3" />
+</head>
+<body>
+
+<!-- CART OVERLAY + PANEL -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div class="cart-header__title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Your Cart
+    </div>
+    <div class="cart-close" onclick="closeCart()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+  <div class="free-ship-bar" id="freeShipBar">
+    <div class="free-ship-bar__label">
+      <span id="freeShipMsg">Add <span id="freeShipAmt">$200.00</span> more for free shipping</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    </div>
+    <div class="free-ship-track"><div class="free-ship-fill" id="freeShipFill" style="width:0%"></div></div>
+  </div>
+  <div class="cart-empty" id="cartEmpty">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    <div class="cart-empty__title">Your cart is empty</div>
+    <div class="cart-empty__sub">Add research compounds to get started</div>
+    <button class="btn btn--teal btn--sm" onclick="closeCart();showPage('shop')" style="margin-top:8px">Browse Catalog</button>
+  </div>
+  <div class="cart-items" id="cartItemsEl" style="display:none"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-totals">
+      <div class="cart-row"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div>
+      <div class="cart-row cart-row--discount" id="discountRow" style="display:none">
+        <span>Bundle discount <span class="multibuy-badge" id="discountBadge"></span></span>
+        <strong id="discountAmt">−$0.00</strong>
+      </div>
+      <div class="cart-row" id="shippingRow" style="align-items:flex-start">
+        <div>
+          <span>Shipping</span>
+          <div class="cart-ship-zone">
+            <button class="ship-zone-btn active" data-zone="au" onclick="setShipZone('au')">🇦🇺 Australia</button>
+            <button class="ship-zone-btn" data-zone="intl" onclick="setShipZone('intl')">🌍 International</button>
+          </div>
+        </div>
+        <span class="ship-cost" id="shippingCost">A$10.00</span>
+      </div>
+      <div class="cart-row cart-row--total"><span>Estimated Total</span><strong id="cartTotal">$0.00</strong></div>
+    </div>
+    <div class="cart-checkout">
+      <button class="btn btn--teal btn--full btn--lg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secure Checkout
+      </button>
+      <button class="btn btn--outline btn--full btn--sm" onclick="closeCart()">Continue Shopping</button>
+    </div>
+    <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- EMAIL GIVEAWAY POPUP -->
+<div class="popup-overlay" id="popupOverlay" onclick="if(event.target===this)closePopup()">
+  <div class="popup-modal" id="popupModal">
+    <button class="popup-close" onclick="closePopup()">×</button>
+    <div class="popup-prize-hero">
+      <div class="popup-prize-hero__amt">$250</div>
+      <div class="popup-prize-hero__text">
+        <strong>Monthly Store Credit</strong>
+        One winner drawn every month
+      </div>
+    </div>
+    <div class="popup-badge">🎁 Monthly Giveaway</div>
+    <h2 class="popup-title">Win $250 to spend on peptides</h2>
+    <p class="popup-sub">Enter your email to be automatically entered in every monthly draw. No purchase necessary.</p>
+    <div class="popup-form">
+      <input type="email" id="popupEmail" class="popup-input" placeholder="your@email.com" onkeydown="if(event.key==='Enter')submitPopup()" />
+      <button class="btn btn--teal btn--full" onclick="submitPopup()">Enter Monthly Giveaway →</button>
+    </div>
+    <div class="popup-legal">No purchase necessary. One entry per email. Winner notified on the last day of each month. By entering you agree to receive occasional marketing emails from PeptideLab. Unsubscribe anytime.</div>
+  </div>
+</div>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <strong>🇦🇺 Australian-based</strong><span>•</span>Free shipping over $200 AUD<span>•</span>Express shipping within Australia<span>•</span>Worldwide delivery
+</div>
+
+<!-- SHIPPING BANNER -->
+<div class="ship-banner">
+  <div class="ship-banner__item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    Free Shipping Over $200 AUD
+  </div>
+  <div class="ship-divider"></div>
+  <div class="ship-banner__item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    Express AU Delivery 1–2 Days
+  </div>
+  <div class="ship-divider"></div>
+  <div class="ship-banner__item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    Ships Worldwide
+  </div>
+  <div class="ship-divider"></div>
+  <div class="ship-banner__item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    Third-Party Batch Certified
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav__inner">
+      <div class="nav__logo" onclick="showPage('home')">
+        <span class="nav__logo-name">PeptideLab</span>
+      </div>
+      <div class="nav__links">
+        <span class="nav__link" onclick="showPage('home')">Home</span>
+        <span class="nav__link" onclick="showPage('shop')">Shop</span>
+        <span class="nav__link" onclick="showPage('quality')">Quality &amp; Testing</span>
+        <span class="nav__link" onclick="showPage('about')">About</span>
+        <span class="nav__link" onclick="showPage('faq')">FAQ</span>
+        <span class="nav__link" onclick="showPage('contact')">Contact</span>
+      </div>
+      <div class="nav__actions">
+        <span class="nav__badge">Research Use Only</span>
+        <select class="nav__currency" id="currencySelect" onchange="setCurrency(this.value)" title="Select currency">
+          <option value="AUD" selected>AUD</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="NZD">NZD</option>
+          <option value="CAD">CAD</option>
+        </select>
+        <div class="nav__cart-btn" onclick="openCart()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <div class="nav__cart-count" id="cartCount">0</div>
+        </div>
+        <button class="btn btn--teal btn--sm" onclick="showPage('shop')">Shop Peptides</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="nav__cart-btn" onclick="openCart()" style="display:none" id="mobileCartBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <div class="nav__cart-count" id="mobileCartCount">0</div>
+        </div>
+        <div class="nav__mobile-toggle" onclick="toggleMobileMenu()" id="mobileToggle">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav__mobile-menu" id="mobileMenu">
+    <span class="nav__mobile-link" onclick="showPage('home');toggleMobileMenu()">Home <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
+    <span class="nav__mobile-link" onclick="showPage('shop');toggleMobileMenu()">Shop Peptides <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
+    <span class="nav__mobile-link" onclick="showPage('quality');toggleMobileMenu()">Quality &amp; Testing <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
+    <span class="nav__mobile-link" onclick="showPage('about');toggleMobileMenu()">About Us <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
+    <span class="nav__mobile-link" onclick="showPage('faq');toggleMobileMenu()">FAQ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
+    <span class="nav__mobile-link" onclick="showPage('contact');toggleMobileMenu()">Contact <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
+    <div style="padding-top:16px;display:flex;gap:8px;">
+      <button class="btn btn--outline btn--sm" onclick="openCart();toggleMobileMenu()" style="flex:1">Cart (<span id="mobileMenuCartCount">0</span>)</button>
+      <button class="btn btn--teal btn--sm" onclick="showPage('shop');toggleMobileMenu()" style="flex:2">Shop Peptides</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!--  PAGE: HOME                                                   -->
+<!-- ============================================================ -->
+<div class="page active" id="page-home">
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <div class="hero__content">
+          <div class="hero__eyebrow"><span class="hero__eyebrow-dot"></span>Australian Research Peptides</div>
+          <h1 class="hero__title">The Standard for<br/><em>Research-Grade</em><br/>Peptide Supply</h1>
+          <p class="hero__sub">Third-party batch-certified research compounds, shipped from Australia. Express delivery nationwide. Worldwide shipping available.</p>
+          <div class="hero__actions">
+            <button class="btn btn--teal btn--lg" onclick="showPage('shop')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Shop Peptides
+            </button>
+            <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              View Certifications
+            </button>
+          </div>
+          <div class="hero__stats">
+            <div><div class="hero__stat-value">99<span>%+</span></div><div class="hero__stat-label">Min. Purity</div></div>
+            <div><div class="hero__stat-value">3rd</div><div class="hero__stat-label">Party Certified</div></div>
+            <div><div class="hero__stat-value">AU</div><div class="hero__stat-label">Express Delivery</div></div>
+            <div><div class="hero__stat-value">$200</div><div class="hero__stat-label">Free Shipping</div></div>
+          </div>
+        </div>
+        <div class="hero__visual">
+          <div class="hero__card-stack">
+            <div class="hero__floating-badge">✓ Batch Certified</div>
+            <div class="hero__main-card">
+              <div class="hero__vial-row">
+                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">Retarut.</div></div>
+                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">BPC-157</div></div>
+                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">TB-500</div></div>
+                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">Selank</div></div>
+                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">Semax</div></div>
+              </div>
+              <div class="hero__card-meta">
+                <div class="hero__meta-chip"><div class="hero__meta-chip-val">99.2%</div><div class="hero__meta-chip-key">Purity</div></div>
+                <div class="hero__meta-chip"><div class="hero__meta-chip-val">HPLC</div><div class="hero__meta-chip-key">Tested</div></div>
+                <div class="hero__meta-chip"><div class="hero__meta-chip-val">MS</div><div class="hero__meta-chip-key">Verified</div></div>
+              </div>
+            </div>
+            <div class="hero__coa-badge"><span class="coa-dot"></span>Certificates Available</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust-strip">
+    <div class="container">
+      <div class="trust-strip__inner">
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Third-Party Certified</div>
+        <div class="trust-divider"></div>
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Free Ship Over $200</div>
+        <div class="trust-divider"></div>
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AU Express 1–2 Days</div>
+        <div class="trust-divider"></div>
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure Checkout</div>
+        <div class="trust-divider"></div>
+        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Research Use Only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section" style="background:var(--body-bg)">
+    <div class="container">
+      <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+        <div>
+          <div class="section-label">Featured Products</div>
+          <h2 class="section-title" style="margin-bottom:8px">Research Compound Catalog</h2>
+          <p class="section-sub" style="max-width:520px">Third-party batch-certified compounds for laboratory research. All prices in AUD. Free shipping on orders over $200.</p>
+        </div>
+        <button class="btn btn--outline" onclick="showPage('shop')">View All →</button>
+      </div>
+      <div class="products-grid" id="featuredGrid"></div>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section class="section--sm" style="background:var(--body-bg)">
+    <div class="container--narrow">
+      <div class="disclaimer-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>
+          <div class="disclaimer-banner__title">Important Research Use Notice</div>
+          <div class="disclaimer-banner__text">All products sold by PeptideLab are intended strictly for <strong>laboratory research purposes only</strong>. They are <strong>not for human consumption</strong>, not intended for veterinary use, and are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Customers are responsible for compliance with all applicable laws in their jurisdiction.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section class="section" style="background:white">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <div class="section-label">Why PeptideLab</div>
+        <h2 class="section-title">Australia's Research Peptide Standard</h2>
+        <p class="section-sub">Australian-owned and operated. We supply the research community with compounds that meet professional standards, shipped fast from our local fulfilment centre.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="why-card__title">Third-Party Batch Certified</div><p class="why-card__text">Every batch independently tested. HPLC and MS results documented per batch. Certificates available in our directory — not hidden, not on request.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="why-card__title">Express AU Delivery</div><p class="why-card__text">All Australian orders shipped express, arriving in 1–2 business days. Free express shipping on orders over $200 AUD.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="why-card__title">Ships Worldwide</div><p class="why-card__text">International shipping to destinations where research compound import is permitted. Customers responsible for local compliance.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="why-card__title">Discreet Packaging</div><p class="why-card__text">All orders shipped in plain, unmarked outer packaging. Cold-chain protocols applied where required. Tracking provided for all orders.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div class="why-card__title">Transparent Documentation</div><p class="why-card__text">Our full batch certificate directory is publicly available. Every compound, every lot, every test date — no gatekeeping.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="why-card__title">Secure Checkout</div><p class="why-card__text">PCI-compliant payment processing. We do not store payment card data. Multiple payment options including crypto.</p></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FAQ PREVIEW -->
+  <section class="section" style="background:white">
+    <div class="container--narrow">
+      <div class="section-header section-header--center"><div class="section-label">FAQ</div><h2 class="section-title">Common Questions</h2><p class="section-sub">Quick answers for Australian and international research customers.</p></div>
+      <div class="faq-list">
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Are these products for human use?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">No. All products are for laboratory research purposes only. Not for human consumption, veterinary use, or any clinical application. By purchasing you confirm products will be used in a supervised laboratory research setting.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. All Australian orders ship express (1–2 business days) at a flat rate of $10 AUD, free on orders over $200 AUD. International shipping is a flat $20 AUD, also free over $200 AUD.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How are products shipped within Australia?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">All Australian orders are shipped express only. Dispatched within 1–2 business days, arriving in 1–2 business days to metro areas. Rural areas may vary slightly. All orders shipped in discreet, unmarked packaging with tracking provided by email.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Where can I view batch certificates?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Our full batch certification directory is available on the Quality &amp; Testing page. Every product batch is listed with its test date and a link to the independent laboratory certificate. We believe transparency is non-negotiable.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How should peptides be stored?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Store lyophilised peptides at -20°C or below in a dry, dark environment. Avoid repeated freeze-thaw cycles. Once reconstituted, store at 2–8°C and use within the timeframe required by your research protocol. See each product's specification sheet for compound-specific guidance.</div></div>
+      </div>
+      <div style="text-align:center;margin-top:32px;"><button class="btn btn--outline" onclick="showPage('faq')">View All FAQs →</button></div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <h2 class="final-cta__title">Explore Research Peptides</h2>
+      <p class="final-cta__sub">Browse our full catalog of batch-certified research compounds. Express delivery across Australia. Ships worldwide.</p>
+      <div class="final-cta__actions">
+        <button class="btn btn--teal btn--lg" onclick="showPage('shop')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop Research Peptides</button>
+        <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">View Batch Certificates</button>
+      </div>
+      <p class="final-cta__disclaimer">For laboratory research use only · Not for human consumption · Not intended to diagnose, treat, cure, or prevent any disease · All prices AUD</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: SHOP                                                   -->
+<!-- ============================================================ -->
+<div class="page" id="page-shop">
+  <div class="collection-hero">
+    <div class="container">
+      <div class="section-label" style="color:var(--teal-400)">Research Catalog</div>
+      <h1 class="collection-hero__title">Research Compound Catalog</h1>
+      <p class="collection-hero__sub">All compounds independently batch-certified. Prices in AUD. Free express shipping on orders over $200 AUD.</p>
+    </div>
+  </div>
+  <section class="section" style="background:var(--body-bg)">
+    <div class="container">
+      <div style="margin-bottom:24px;padding:14px 20px;background:white;border:1px solid var(--border);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div style="font-size:14px;color:var(--text-secondary);font-weight:500;">Showing <strong>14 products</strong> · All categories · Prices in AUD</div>
+        <div class="collection-filters">
+          <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
+          <button class="filter-btn" onclick="filterProducts('metabolic',this)">Metabolic</button>
+          <button class="filter-btn" onclick="filterProducts('recovery',this)">Recovery Research</button>
+          <button class="filter-btn" onclick="filterProducts('cognitive',this)">Cognitive Research</button>
+          <button class="filter-btn" onclick="filterProducts('gh',this)">GH Peptides</button>
+          <button class="filter-btn" onclick="filterProducts('cellular',this)">Cellular Health</button>
+          <button class="filter-btn" onclick="filterProducts('accessories',this)">Accessories</button>
+        </div>
+      </div>
+      <div class="products-grid" id="shopGrid"></div>
+      <div style="margin-top:32px;padding:14px 20px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md);font-size:12px;color:var(--warning-text);text-align:center;">
+        All products sold for <strong>laboratory research purposes only</strong> · Not for human consumption · Customers responsible for compliance with applicable laws in their jurisdiction
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: PRODUCT TEMPLATE                                       -->
+<!-- ============================================================ -->
+<div class="page" id="page-product">
+  <section class="section">
+    <div class="container">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:32px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span onclick="showPage('home')" style="cursor:pointer;color:var(--teal-600)">Home</span><span>›</span>
+        <span onclick="showPage('shop')" style="cursor:pointer;color:var(--teal-600)">Shop</span><span>›</span>
+        <span id="pdpBreadcrumb">Product</span>
+      </div>
+      <div class="product-page-grid">
+        <div class="product-page-img" id="pdpImg">
+          <div class="product-page-img__vials" id="pdpVials">
+            <div class="product-page-vial"><div class="vial-cap"></div><div class="vial-body" style="height:110px;width:44px;"></div></div>
+            <div class="product-page-vial"><div class="vial-cap"></div><div class="vial-body" style="height:80px;width:36px;"></div></div>
+          </div>
+          <div class="product-page-img__label" id="pdpImgLabel">Product · Research Grade</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 24px;">
+            <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:var(--teal-400);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">HPLC Tested</span>
+            <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:var(--teal-400);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">Batch Certified</span>
+          </div>
+        </div>
+        <div class="product-page-info">
+          <div class="product-page-eyebrow">PeptideLab · <span id="pdpSku">000</span></div>
+          <h1 class="product-page-name" id="pdpName">Product Name</h1>
+          <div class="product-page-id" id="pdpId">Research Compound · For Laboratory Use Only</div>
+          <div class="product-page-purity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="pdpPurity">≥99% Purity Verified · Third-Party Certified</span></div>
+          <div class="product-page-price" id="pdpPrice">$0.00</div>
+          <div class="product-page-price-note" id="pdpPriceNote">Per vial · AUD · Research use only</div>
+          <div class="pdp-purchase-type">
+            <div class="purchase-option selected" id="optOnce" onclick="setPurchaseType('once')">
+              <div class="purchase-option__left">
+                <div class="po-radio"></div>
+                <span class="po-label">One-time purchase</span>
+              </div>
+              <span class="po-price" id="pdpOncePrice">$0.00</span>
+            </div>
+            <div class="purchase-option" id="optSubscribe" onclick="setPurchaseType('subscribe')">
+              <div class="purchase-option__left">
+                <div class="po-radio"></div>
+                <div>
+                  <span class="po-label">Subscribe &amp; Save<span class="po-save">10% OFF</span></span>
+                  <div class="po-freq">Monthly · Cancel after 2nd month</div>
+                </div>
+              </div>
+              <span class="po-price" id="pdpSubPrice">$0.00</span>
+            </div>
+          </div>
+          <div class="product-page-variants" id="pdpVariants"></div>
+          <div class="product-page-actions">
+            <button class="btn btn--teal btn--lg" style="flex:1" id="pdpAddBtn" onclick="pdpAddToCart()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Add to Cart
+            </button>
+          </div>
+          <div class="product-cert-box">
+            <div><div class="product-cert-box__title">Batch Certification Available</div><div class="product-cert-box__sub">Independent laboratory tested · HPLC + MS verified · All batches documented</div></div>
+            <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--outline-teal btn--sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              View Certificates
+            </a>
+          </div>
+          <div class="product-page-info-tabs">
+            <div class="tab-buttons">
+              <div class="tab-btn active" onclick="switchTab(this,'desc')">Description</div>
+              <div class="tab-btn" onclick="switchTab(this,'specs')">Specifications</div>
+              <div class="tab-btn" onclick="switchTab(this,'storage')">Storage</div>
+              <div class="tab-btn" onclick="switchTab(this,'shipping-info')">Shipping</div>
+            </div>
+            <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Each batch is independently tested and documented.</p></div>
+            <div class="tab-content" id="tab-specs"><table class="spec-table" id="pdpSpecTable"></table></div>
+            <div class="tab-content" id="tab-storage"><p><strong>Lyophilised Storage</strong></p><p>Store at <strong>-20°C or below</strong> in a dry, dark environment. Avoid repeated freeze-thaw cycles. Properly stored lyophilised compound is stable for up to 24 months from manufacture date.</p><p><strong>After Reconstitution</strong></p><p>Store at <strong>2–8°C</strong> (refrigerated). Use within the timeframe required by your laboratory protocol. Do not freeze reconstituted solution unless required by research conditions.</p><p><strong>Handling</strong></p><p>Handle with appropriate laboratory PPE. Reconstitute in a sterile environment using appropriate laboratory-grade solvent per research protocol.</p></div>
+            <div class="tab-content" id="tab-shipping-info"><p>All Australian orders shipped <strong>express only</strong>. Processed within 1–2 business days, delivery 1–2 business days metro. <strong>Free express shipping on orders over $200 AUD.</strong></p><p>International shipping available to select destinations. Customers responsible for local import compliance. All orders shipped in discreet, unmarked packaging with email tracking confirmation.</p></div>
+          </div>
+          <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
+          <div style="margin-top:24px;" id="pdpFaq"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: QUALITY & TESTING                                      -->
+<!-- ============================================================ -->
+<div class="page" id="page-quality">
+  <div class="policy-hero">
+    <div class="container--narrow" style="text-align:center;">
+      <div class="section-label" style="color:var(--teal-400)">Quality &amp; Testing</div>
+      <h1 class="policy-hero__title">Batch Certification Directory</h1>
+      <p class="policy-hero__sub">Every compound, every batch, every test date. Independently certified by accredited third-party laboratories.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+
+      <!-- CERTIFICATIONS DIRECTORY -->
+      <div style="margin-top:72px;">
+        <div class="section-header">
+          <div class="section-label">Batch Certificate Directory</div>
+          <h2 class="section-title">All Tested Batches</h2>
+          <p class="section-sub">Full list of independently certified batches. Click any entry to view the original certificate from the accredited laboratory.</p>
+        </div>
+        <div class="cert-search-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="certSearch" placeholder="Search by compound name…" oninput="filterCerts(this.value)" />
+        </div>
+        <div class="cert-grid" id="certGrid"></div>
+        <div style="margin-top:32px;padding:20px 24px;background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--navy-800);margin-bottom:4px;">View Full Certificate Archive</div>
+            <div style="font-size:13px;color:var(--text-muted);">All certificates issued by independent accredited laboratories. Click below to access the full archive.</div>
+          </div>
+          <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--teal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open Certificate Archive
+          </a>
+        </div>
+      </div>
+
+      <div style="margin-top:48px;">
+        <div class="disclaimer-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <div class="disclaimer-banner__title">Research Use Only</div>
+            <div class="disclaimer-banner__text">Batch certification confirms purity and molecular identity for research purposes only. Testing does not constitute approval for human use, veterinary use, or therapeutic application.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: ABOUT                                                  -->
+<!-- ============================================================ -->
+<div class="page" id="page-about">
+  <div class="policy-hero"><div class="container--narrow" style="text-align:center;"><div class="section-label" style="color:var(--teal-400)">About PeptideLab</div><h1 class="policy-hero__title">Australian Research Supply</h1><p class="policy-hero__sub">Australian-owned and operated. Supplying the research community with professional-grade compounds since day one.</p></div></div>
+  <section class="section"><div class="container"><div class="about-grid">
+    <div>
+      <div class="section-label">Our Mission</div>
+      <h2 class="section-title">Precision Supply for the Research Community</h2>
+      <p style="font-size:16px;line-height:1.8;color:var(--text-secondary);margin-bottom:16px;">PeptideLab is an Australian-based supplier of research-grade peptides. We exist to supply researchers, laboratories, and institutions with independently tested compounds, backed by traceable batch documentation.</p>
+      <p style="font-size:15px;line-height:1.8;color:var(--text-muted);margin-bottom:16px;">We ship express across Australia and worldwide to destinations where research compound import is permitted. Free express shipping on Australian orders over $200 AUD.</p>
+      <p style="font-size:15px;line-height:1.8;color:var(--text-muted);margin-bottom:32px;">Our batch certificate directory is publicly accessible — no request required, no gatekeeping. Every compound, every lot, every test date is published for full transparency.</p>
+      <div class="values-grid">
+        <div class="value-card"><div class="value-card__title">Scientific Integrity</div><p class="value-card__text">We make no claims beyond what test data supports. Documentation is factual and verifiable.</p></div>
+        <div class="value-card"><div class="value-card__title">Compliance First</div><p class="value-card__text">Sold for research use only. We are transparent about what compounds are and are not for.</p></div>
+        <div class="value-card"><div class="value-card__title">Independent Verification</div><p class="value-card__text">Every batch certified by accredited third-party laboratories — not self-certified.</p></div>
+        <div class="value-card"><div class="value-card__title">Australian Operations</div><p class="value-card__text">Based in Australia. Express domestic delivery. Worldwide shipping available.</p></div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <div class="about-metric"><div class="about-metric-val">99<span>%+</span></div><div class="about-metric-label">Minimum batch purity standard</div></div>
+      <div class="about-metric"><div class="about-metric-val">100<span>%</span></div><div class="about-metric-label">Products independently third-party tested</div></div>
+      <div class="about-metric"><div class="about-metric-val">AU</div><div class="about-metric-label">Express delivery across Australia</div></div>
+      <div class="about-metric"><div class="about-metric-val">$200</div><div class="about-metric-label">Free shipping threshold (AUD)</div></div>
+      <div style="margin-top:24px;padding:16px;background:rgba(13,148,136,0.1);border:1px solid rgba(13,148,136,0.2);border-radius:8px;font-size:12px;color:var(--slate-400);line-height:1.7;">All products sold strictly for laboratory research purposes only. PeptideLab does not endorse or support the use of any compound for human consumption.</div>
+    </div>
+  </div></div></section>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: FAQ                                                    -->
+<!-- ============================================================ -->
+<div class="page" id="page-faq">
+  <div class="policy-hero"><div class="container--narrow" style="text-align:center;"><div class="section-label" style="color:var(--teal-400)">Support</div><h1 class="policy-hero__title">Frequently Asked Questions</h1><p class="policy-hero__sub">Answers to common questions about products, ordering, shipping, and policies.</p></div></div>
+  <section class="policy-body"><div class="container--narrow">
+    <div style="margin-bottom:40px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal-600);margin-bottom:16px;">Shipping &amp; Orders (Australia &amp; International)</div>
+      <div class="faq-list">
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Free shipping on all orders over $200 AUD. Australian express shipping is a flat $10 AUD. International shipping is a flat $20 AUD. All rates apply to orders under the $200 threshold.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How fast is Australian delivery?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">All Australian orders ship express only. Processed within 1–2 business days, delivery 1–2 business days to metro areas. Rural areas may vary slightly. All orders shipped with tracking confirmation by email.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you ship internationally?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. International shipping is a flat $20 AUD (free on orders over $200 AUD). We ship worldwide to destinations where research compound import is lawfully permitted. Typical delivery 7–14 business days. Buyers are solely responsible for compliance with local import laws.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Can I return opened products?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Opened products cannot be returned. Unopened sealed products may be eligible for return within 30 days. If you receive a damaged or incorrect product, contact us within 7 days of delivery with photos and your order number.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">All major credit/debit cards (Visa, Mastercard, Amex) and select cryptocurrency. Transactions processed through PCI-compliant secure gateways. We do not store card data.</div></div>
+      </div>
+    </div>
+    <div style="background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;">
+      <div style="font-size:16px;font-weight:700;color:var(--navy-800);margin-bottom:8px;">Still have a question?</div>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">Our team handles order, documentation, and account queries. Response within 1–2 business days.</p>
+      <button class="btn btn--teal" onclick="showPage('contact')">Contact Support →</button>
+    </div>
+  </div></section>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: CONTACT                                                -->
+<!-- ============================================================ -->
+<div class="page" id="page-contact">
+  <div class="policy-hero"><div class="container--narrow" style="text-align:center;"><div class="section-label" style="color:var(--teal-400)">Get in Touch</div><h1 class="policy-hero__title">Contact Us</h1><p class="policy-hero__sub">Our Australian-based team is available to assist with orders, documentation, and account questions.</p></div></div>
+  <section class="policy-body"><div class="container"><div class="contact-grid">
+    <div><div class="contact-form">
+      <div style="font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Send a Message</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:24px;">For order support and general enquiries. We respond within 1–2 business days (AEST).</p>
+      <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" type="text" placeholder="Dr. Jane Smith" /></div>
+      <div class="form-group"><label class="form-label">Email Address *</label><input class="form-input" type="email" placeholder="research@institution.edu.au" /></div>
+      <div class="form-group"><label class="form-label">Subject *</label><select class="form-select"><option value="">Select a topic...</option><option>Order Support</option><option>Shipping Enquiry</option><option>Batch Certificate Request</option><option>Bulk / Institutional Order</option><option>Product Information</option><option>Returns &amp; Refunds</option><option>Other</option></select></div>
+      <div class="form-group"><label class="form-label">Order Number (if applicable)</label><input class="form-input" type="text" placeholder="PL-2024-XXXXX" /></div>
+      <div class="form-group"><label class="form-label">Message *</label><textarea class="form-textarea" placeholder="Describe your question or request..."></textarea></div>
+      <div style="margin-bottom:20px;padding:12px 14px;background:var(--slate-50);border:1px solid var(--border);border-radius:var(--radius-md);font-size:12px;color:var(--text-muted);line-height:1.6;">By submitting you confirm all products are for laboratory research purposes only. We do not provide medical advice.</div>
+      <button class="btn btn--teal btn--full"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</button>
+    </div></div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="contact-card__title">Email Support</div><p class="contact-card__text">support@peptidelabsau.com<br/>General enquiries &amp; order support.<br/><strong style="color:var(--text-secondary);">Response: 1–2 business days (AEST)</strong></p></div></div>
+      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="contact-card__title">Australian Operations</div><p class="contact-card__text">Orders dispatched from Australia.<br/>Express AU delivery: 1–2 business days.<br/>Worldwide shipping available.</p></div></div>
+      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div><div class="contact-card__title">Institutional &amp; Bulk Orders</div><p class="contact-card__text">support@peptidelabsau.com<br/>For research institutions requiring volume pricing or custom documentation.</p></div></div>
+      <div style="background:var(--slate-50);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;"><div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:10px;">Business Hours (AEST)</div><div style="font-size:13px;color:var(--text-muted);line-height:2;">Monday – Friday: 9:00am – 5:00pm<br/>Saturday – Sunday: Closed<br/><span style="color:var(--teal-600);font-weight:600;">Orders processed on business days only</span></div></div>
+    </div>
+  </div></div></section>
+</div>
+
+<!-- ============================================================ -->
+<!--  POLICY PAGES                                                 -->
+<!-- ============================================================ -->
+<div class="page" id="page-shipping">
+  <div class="policy-hero"><h1 class="policy-hero__title">Shipping Policy</h1><p class="policy-hero__sub">Last updated: June 2024 · Australian &amp; International</p></div>
+  <div class="policy-body"><div class="container--narrow"><div class="policy-content">
+    <div class="warning-box"><p>All products are sold for laboratory research purposes only. Customers are responsible for compliance with import laws in their jurisdiction.</p></div>
+    <h2>Order Processing</h2><p>Orders are processed within <strong>1–2 business days</strong> (Mon–Fri, excluding Australian public holidays) following payment confirmation. You will receive a tracking number by email once dispatched.</p>
+    <h2>Australian Shipping</h2>
+    <ul><li><strong>Express Shipping (1–2 business days):</strong> Flat rate <strong>$10 AUD</strong>. Metro areas. Rural areas may vary.</li><li><strong>Free Express Shipping:</strong> All Australian orders over <strong>$200 AUD</strong> ship express at no charge.</li></ul>
+    <p><em>All Australian orders are shipped express only. Standard shipping is not available.</em></p>
+    <h2>International Shipping</h2><p>We ship worldwide to destinations where purchase and import of research compounds is lawfully permitted. International shipping is a flat rate of <strong>$20 AUD</strong> (free on orders over $200 AUD). Delivery typically <strong>7–14 business days</strong>. Buyers are solely responsible for compliance with local import laws. PeptideLab is not liable for customs delays or seizures. Import duties and taxes are the buyer's responsibility.</p>
+    <h2>Packaging</h2><p>All orders shipped in plain, unmarked outer packaging. No branding or contents descriptions on the exterior. Cold-chain compounds packaged with appropriate thermal insulation.</p>
+    <h2>Tracking</h2><p>Tracking number provided by email for all orders. May take up to 24 hours to update in the carrier's system after dispatch.</p>
+    <h2>Damaged or Missing Orders</h2><p>Contact support@peptidelabsau.com within <strong>7 days of delivery</strong> with your order number and photos if your order arrives damaged, incomplete, or incorrect.</p>
+  </div></div></div>
+</div>
+
+<div class="page" id="page-refund">
+  <div class="policy-hero"><h1 class="policy-hero__title">Refund Policy</h1><p class="policy-hero__sub">Last updated: June 2024</p></div>
+  <div class="policy-body"><div class="container--narrow"><div class="policy-content">
+    <div class="warning-box"><p>Due to the nature of research compounds, all sales are subject to the terms below.</p></div>
+    <h2>Unopened Products</h2><p>Eligible for return within <strong>30 days of delivery</strong> if sealed and in original condition. Submit a return request to support@peptidelabsau.com before shipping. Return postage is the customer's responsibility unless the return is due to our error. Refund issued within 5–7 business days of receipt and inspection.</p>
+    <h2>Opened Products</h2><p>We cannot accept returns on opened or partially used products. This is non-negotiable for quality assurance and regulatory reasons.</p>
+    <h2>Damaged or Incorrect Products</h2><p>If your order is damaged in transit, incorrect, or does not match its batch specification, contact us within <strong>7 days of delivery</strong> with photos and your order number. We will issue a replacement or full refund.</p>
+    <h2>Order Cancellations</h2><p>Orders may be cancelled for a full refund before dispatch. Contact us immediately with your order number. Once dispatched, orders cannot be cancelled.</p>
+    <h2>Contact</h2><p>For all returns and refund enquiries: <strong>support@peptidelabsau.com</strong></p>
+  </div></div></div>
+</div>
+
+<div class="page" id="page-terms">
+  <div class="policy-hero"><h1 class="policy-hero__title">Terms &amp; Conditions</h1><p class="policy-hero__sub">Last updated: June 2024</p></div>
+  <div class="policy-body"><div class="container--narrow"><div class="policy-content">
+    <div class="warning-box"><p><strong>Research Use Only.</strong> By purchasing, you confirm all products will be used strictly for laboratory research only — not for human consumption, veterinary use, or clinical application.</p></div>
+    <h2>1. Acceptance of Terms</h2><p>By accessing this website or placing an order, you agree to these Terms in full. If you do not agree, do not use this website.</p>
+    <h2>2. Eligibility</h2><p>You must be 18+ and a qualified researcher, laboratory professional, or authorised buyer. You must comply with all laws in your jurisdiction governing purchase and use of research compounds.</p>
+    <h2>3. Research Use Only</h2><p>All products are supplied strictly for laboratory and in-vitro research only. Not for: human consumption, veterinary or agricultural use, diagnostic, therapeutic, or medical use, cosmetic application, or any use other than legitimate laboratory research.</p>
+    <h2>4. No Medical Advice</h2><p>This website does not constitute medical advice. Nothing here should be construed as a recommendation for use in or on the human body.</p>
+    <h2>5. Limitation of Liability</h2><p>PeptideLab is not liable for direct, indirect, or consequential damages from purchase or use of any product. The buyer assumes full liability for any use outside the stated research-only purpose.</p>
+    <h2>6. Governing Law</h2><p>These terms are governed by the laws of Australia. Disputes resolved in Australian courts.</p>
+    <h2>7. Contact</h2><p>support@peptidelabsau.com</p>
+  </div></div></div>
+</div>
+
+<div class="page" id="page-privacy">
+  <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: June 2024 · We respect your privacy.</p></div>
+  <div class="policy-body"><div class="container--narrow"><div class="policy-content">
+    <h2>Information We Collect</h2><p>Order data (name, email, shipping address), payment data (processed by PCI-compliant third parties — we do not store card details), communication data from enquiries, and anonymised usage analytics.</p>
+    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p>
+    <h2>Data Security</h2><p>SSL/TLS encrypted transmission. Appropriate technical and organisational security measures. Order data retained for 7 years for Australian legal/accounting compliance.</p>
+    <h2>Your Rights</h2><p>Subject to applicable Australian law, you may request access, correction, deletion, or portability of your data. Contact: <strong>support@peptidelabsau.com</strong></p>
+  </div></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!--  FOOTER                                                       -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <div class="footer__logo" onclick="showPage('home')">
+          <div class="footer__logo-mark"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg></div>
+          <span class="footer__logo-name">Peptide<span>Lab</span></span>
+        </div>
+        <p class="footer__tagline">Australian-based research peptide supplier. Third-party batch-certified compounds. Express delivery nationwide. Ships worldwide.</p>
+        <div class="footer__compliance"><strong style="color:var(--slate-400);display:block;margin-bottom:4px;">Compliance Statement</strong>All products sold for laboratory research purposes only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. This website does not provide medical advice. Customers responsible for compliance with all applicable laws. All prices AUD.</div>
+      </div>
+      <div>
+        <div class="footer__col-title">Products</div>
+        <div class="footer__links">
+          <span class="footer__link" onclick="showPage('shop')">Research Catalog</span>
+          <span class="footer__link" onclick="showPage('shop')">Metabolic</span>
+          <span class="footer__link" onclick="showPage('shop')">Recovery Peptides</span>
+          <span class="footer__link" onclick="showPage('shop')">Cognitive Research</span>
+          <span class="footer__link" onclick="showPage('shop')">GH Peptides</span>
+          <span class="footer__link" onclick="showPage('shop')">Cellular Health</span>
+          <span class="footer__link" onclick="showPage('quality')">Batch Certificates</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer__col-title">Information</div>
+        <div class="footer__links">
+          <span class="footer__link" onclick="showPage('about')">About Us</span>
+          <span class="footer__link" onclick="showPage('quality')">Quality &amp; Testing</span>
+          <span class="footer__link" onclick="showPage('faq')">FAQ</span>
+          <span class="footer__link" onclick="showPage('contact')">Contact</span>
+          <span class="footer__link" onclick="showPage('shipping')">Shipping Info</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer__col-title">Policies</div>
+        <div class="footer__links">
+          <span class="footer__link" onclick="showPage('shipping')">Shipping Policy</span>
+          <span class="footer__link" onclick="showPage('refund')">Refund Policy</span>
+          <span class="footer__link" onclick="showPage('terms')">Terms &amp; Conditions</span>
+          <span class="footer__link" onclick="showPage('privacy')">Privacy Policy</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="footer__copy">© 2024 PeptideLab Australia. All rights reserved. ABN: XX XXX XXX XXX</div>
+      <div class="footer__bottom-links">
+        <span class="footer__bottom-link" onclick="showPage('terms')">Terms</span>
+        <span class="footer__bottom-link" onclick="showPage('privacy')">Privacy</span>
+        <span class="footer__bottom-link" onclick="showPage('shipping')">Shipping</span>
+        <span class="footer__bottom-link" onclick="showPage('refund')">Refunds</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · All prices AUD · Australian Operations</div></div>
+</footer>
+
+<!-- MOBILE STICKY CTA -->
+<div class="mobile-cta" id="mobileCta">
+  <button class="btn btn--outline-white btn--sm" style="flex:1;font-size:12px" onclick="openCart()">Cart (<span id="mobileCTACount">0</span>)</button>
+  <button class="btn btn--teal btn--sm" style="flex:2" onclick="showPage('shop')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    Shop Peptides
+  </button>
+</div>
+
+<script>
+// ============================================================
+// PRODUCT DATA
+// ============================================================
+const PRODUCTS = [
+  { id:'PL-001', name:'Retatrutide', size:'10mg', price:139, category:'metabolic', img:'images/retatrutide.jpg', purity:'≥99% Purity', badge:'Best Seller', badgeHot:true, desc:'Retatrutide is a tri-agonist research compound supplied for laboratory study. Each batch independently tested for purity and molecular identity.', tags:['≥99% Purity','HPLC Tested','MS Verified'], specs:[['CAS Number','2382367-33-9'],['Molecular Weight','~4814 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-002', name:'BPC-157', size:'10mg', price:85, category:'recovery', img:'images/bpc-157.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'BPC-157 (Body Protection Compound 157) is a synthetic pentadecapeptide supplied for laboratory research. Independently tested per batch.', tags:['≥99% Purity','HPLC Tested','COA Available'], specs:[['CAS Number','137525-51-0'],['Molecular Formula','C₆₂H₉₈N₁₆O₂₂'],['Molecular Weight','1419.55 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-003', name:'TB-500', size:'5mg', price:90, category:'recovery', img:'images/tb-500.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'TB-500 (Thymosin β4) is an analytical reference compound for laboratory research. Supplied with full batch documentation.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','77591-33-4'],['Molecular Weight','~4964 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-004', name:'Tesamorelin', size:'5mg', price:105, category:'gh', img:'images/tesamorelin.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Tesamorelin is a synthetic GHRH analogue research compound. Independently batch-certified and supplied for laboratory use.', tags:['≥99% Purity','MS Verified','Batch Certified'], specs:[['CAS Number','218949-48-5'],['Molecular Weight','~5135 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-005', name:'Semax', size:'10mg', price:75, category:'cognitive', img:'images/semax.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Semax is a synthetic heptapeptide research compound for laboratory analysis. Each batch independently verified for purity and identity.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','80714-61-0'],['Molecular Formula','C₃₇H₅₁N₉O₁₀S'],['Molecular Weight','813.93 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-006', name:'Selank', size:'10mg', price:75, category:'cognitive', img:'images/selank.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Selank is a synthetic heptapeptide research compound. Analytical-grade, independently certified per batch for laboratory research.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','129954-34-3'],['Molecular Formula','C₃₃H₅₇N₁₁O₉'],['Molecular Weight','751.88 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-007', name:'Deep Sleep Inducing Peptide', size:'5mg', price:55, category:'cognitive', img:'images/dsip.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'DSIP (Delta Sleep-Inducing Peptide) is a nonapeptide research compound supplied for laboratory study. Batch tested and certified.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['Common Name','DSIP'],['CAS Number','62568-57-4'],['Molecular Formula','C₃₅H₄₈N₁₀O₁₅'],['Molecular Weight','848.82 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥98%'],['Quantity','5mg per vial'],['Third-Party Certified','Yes']] },
+  { id:'PL-008', name:'Melanotan-2', size:'10mg', price:75, category:'cognitive', img:'images/melanotan-2.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-2 (MT-2) is a synthetic melanocortin analogue research compound. Each batch independently tested per laboratory standards.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','121062-08-6'],['Molecular Formula','C₅₀H₆₉N₁₅O₉'],['Molecular Weight','1024.19 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-009', name:'Melanotan-1', size:'10mg', price:75, category:'cognitive', img:'images/melanotan-1.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-1 (MT-1 / Afamelanotide) is a synthetic melanocortin research compound supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','75921-69-6'],['Molecular Weight','~1646 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-010', name:'Human Growth Hormone', size:'10iu', price:75, category:'gh', img:'images/hgh.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'Recombinant Human Growth Hormone (rHGH) supplied as a research compound for laboratory study. Independently batch-certified.', tags:['≥98% Purity','Batch Certified','Research Grade'], specs:[['Common Name','rHGH / Somatropin'],['Sequence Length','191 amino acids'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥98%'],['Quantity','10 IU per vial'],['Testing','HPLC / MS'],['Third-Party Certified','Yes']] },
+  { id:'PL-011', name:'NAD+', size:'500mg', price:85, category:'cellular', img:'images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','100mg per vial'],['Third-Party Certified','Yes']] },
+  { id:'PL-012', name:'GHK-Cu', size:'50mg', price:65, category:'cellular', img:'images/ghk-cu.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'GHK-Cu (Copper Peptide) is a naturally occurring tripeptide research compound. Batch-certified and supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','49557-75-7'],['Molecular Formula','C₁₄H₂₃CuN₆O₄'],['Molecular Weight','403.91 g/mol'],['Appearance','Blue-green powder'],['Purity (HPLC)','≥99%'],['Quantity','50mg per vial'],['Third-Party Certified','Yes']] },
+  { id:'PL-013', name:'Glutathione', size:'1500mg', price:95, category:'cellular', img:'images/glutathione.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'Glutathione (GSH) is a tripeptide antioxidant research compound for laboratory cellular biology study. Independently batch-tested.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','70-18-8'],['Molecular Formula','C₁₀H₁₇N₃O₆S'],['Molecular Weight','307.32 g/mol'],['Appearance','White powder'],['Purity (HPLC)','≥98%'],['Quantity','1500mg per vial'],['Third-Party Certified','Yes']] },
+  { id:'PL-014', name:'BAC Water', size:'10ml', price:19, category:'accessories', img:'images/bac-water.jpg', purity:'Pharmaceutical Grade', badge:'Accessory', badgeHot:false, desc:'Bacteriostatic Water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research compounds.', tags:['0.9% Benzyl Alcohol','10ml vial','Lab Grade'], specs:[['Type','Bacteriostatic Water'],['Benzyl Alcohol','0.9%'],['Volume','10ml'],['Container','Multi-dose vial'],['Use','Laboratory reconstitution only']] }
+];
+
+// ============================================================
+// VIAL SVG RENDERER
+// ============================================================
+const VIAL_ABBREVS = {
+  'Deep Sleep Inducing Peptide': { short:'DSIP', sub:'Delta Sleep Peptide' },
+  'Human Growth Hormone':        { short:'HGH',  sub:'Somatropin 191aa' },
+};
+function _nameFZ(n) {
+  if (n<=4) return 15; if (n<=6) return 13; if (n<=9) return 10;
+  if (n<=11) return 7; return 6;
+}
+let _vid = 0;
+function makeVialSVG(p) {
+  const ab  = VIAL_ABBREVS[p.name];
+  const n1  = ab ? ab.short : p.name;
+  const n2  = ab ? ab.sub   : null;
+  const fz  = ab ? 16 : _nameFZ(n1.length);
+  const nY  = fz > 10 ? 57 : 55;
+  const pu  = (p.purity||'≥99%').replace(' Purity','').replace('Pharmaceutical Grade','Pharma Grade');
+  const sz  = p.size.replace(/mg$/i,'MG').replace(/iu$/i,'IU').replace(/ml$/i,'ML');
+  const id  = 'v'+(++_vid);
+  const off = n2 ? 9 : 0;
+  const sbY = 64 + off;
+  const lyY = 79 + off;
+  const puY = 88 + off;
+  const ruY = 97 + off;
+  const diY = 105+ off;
+  const lbH = diY + 5 - 33;
+  return `<svg viewBox="0 0 70 140" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%"   stop-color="#90A4AE" stop-opacity=".5"/>
+    <stop offset="16%"  stop-color="#ECEFF1" stop-opacity=".95"/>
+    <stop offset="84%"  stop-color="#E0E7EE" stop-opacity=".9"/>
+    <stop offset="100%" stop-color="#607D8B" stop-opacity=".4"/>
+  </linearGradient>
+  <linearGradient id="${id}c" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%"   stop-color="#1A202C"/>
+    <stop offset="45%"  stop-color="#4A5568"/>
+    <stop offset="100%" stop-color="#1A202C"/>
+  </linearGradient>
+  <clipPath id="${id}cl"><rect x="10" y="24" width="50" height="116" rx="6"/></clipPath>
+</defs>
+<rect x="19" y="5"  width="32" height="9"  rx="3" fill="url(#${id}c)"/>
+<rect x="21" y="10" width="28" height="4"  rx="0" fill="#2D3748" opacity=".55"/>
+<rect x="16" y="13" width="38" height="15" rx="4" fill="url(#${id}c)"/>
+<rect x="16" y="13" width="38" height="7"  rx="4" fill="#4A5568" opacity=".5"/>
+<rect x="10" y="24" width="50" height="116" rx="6" fill="url(#${id}g)"/>
+<rect x="11" y="116" width="48" height="25" fill="white" opacity=".82" clip-path="url(#${id}cl)"/>
+<rect x="11" y="113" width="48" height="5"  fill="white" opacity=".3"  clip-path="url(#${id}cl)"/>
+<rect x="12" y="33" width="46" height="${lbH}" rx="2" fill="white" stroke="#CCCCCC" stroke-width=".7"/>
+<rect x="12" y="33" width="46" height="10" rx="2" fill="#000000"/>
+<rect x="12" y="39" width="46" height="4"       fill="#000000"/>
+<text x="35" y="40.5" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="4.6" fill="#FFFFFF" text-anchor="middle" font-weight="800" letter-spacing=".8">PeptideLab</text>
+<text x="35" y="${nY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="${fz}" fill="#111111" text-anchor="middle" font-weight="800" letter-spacing="-.2">${n1}</text>
+${n2?`<text x="35" y="${nY+9}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="4.5" fill="#555555" text-anchor="middle">${n2}</text>`:''}
+<rect x="23" y="${sbY}" width="24" height="8" rx="1.5" fill="none" stroke="#222222" stroke-width="1.1"/>
+<text x="35" y="${sbY+6}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="5.8" fill="#111111" text-anchor="middle" font-weight="800" letter-spacing=".8">${sz}</text>
+<text x="35" y="${lyY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="3.1" fill="#777777" text-anchor="middle" font-style="italic">Lyophilised Powder</text>
+<rect x="12" y="${puY-5}" width="14" height="6" rx=".5" fill="#111111"/>
+<text x="19" y="${puY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="2.9" fill="white" text-anchor="middle" font-weight="800">PURITY</text>
+<text x="43" y="${puY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="3.5" fill="#333333" text-anchor="middle" font-weight="700">${pu} HPLC</text>
+<rect x="12" y="${ruY-5}" width="9" height="6" rx=".5" fill="#000000"/>
+<text x="16.5" y="${ruY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="2.9" fill="white" text-anchor="middle" font-weight="800">RUO</text>
+<text x="42" y="${ruY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="3.2" fill="#555555" text-anchor="middle">Research use only</text>
+<text x="35" y="${diY}" font-family="'Plus Jakarta Sans',Arial,sans-serif" font-size="2.6" fill="#AAAAAA" text-anchor="middle">Not for human or veterinary use.</text>
+<rect x="11" y="24" width="5" height="116" rx="3" fill="white" opacity=".28"/>
+<rect x="54" y="24" width="4" height="116" rx="2" fill="white" opacity=".1"/>
+</svg>`;
+}
+
+const FREE_SHIP_THRESHOLD = 200;
+let cart = [];
+
+// ============================================================
+// CURRENCY
+// ============================================================
+const RATES  = { AUD:1, USD:0.65, EUR:0.60, GBP:0.51, NZD:1.09, CAD:0.89 };
+const SYMS   = { AUD:'A$', USD:'$', EUR:'€', GBP:'£', NZD:'NZ$', CAD:'C$' };
+let currentCurrency = 'AUD';
+function fmtPrice(aud) {
+  return SYMS[currentCurrency] + (aud * RATES[currentCurrency]).toFixed(2);
+}
+function setCurrency(val) {
+  currentCurrency = val;
+  const note = document.getElementById('cartCurrencyNote');
+  if (note) note.textContent = val;
+  renderFeatured(); renderShop();
+  updatePdpPrices();
+  renderCart();
+}
+
+// ============================================================
+// SUBSCRIPTION TOGGLE
+// ============================================================
+let pdpIsSubscription = false;
+function setPurchaseType(type) {
+  pdpIsSubscription = (type === 'subscribe');
+  document.getElementById('optOnce').classList.toggle('selected', !pdpIsSubscription);
+  document.getElementById('optSubscribe').classList.toggle('selected', pdpIsSubscription);
+  updatePdpPrices();
+}
+function updatePdpPrices() {
+  if (!currentProduct) return;
+  const p = currentProduct;
+  const activePrice = pdpIsSubscription ? p.price * 0.9 : p.price;
+  document.getElementById('pdpPrice').textContent = fmtPrice(activePrice);
+  document.getElementById('pdpPriceNote').textContent = pdpIsSubscription
+    ? 'Subscribe · 10% off · Cancel after 2nd month · ' + currentCurrency + ' · Research use only'
+    : 'Per vial · ' + currentCurrency + ' · Research use only';
+  const onceEl = document.getElementById('pdpOncePrice');
+  const subEl  = document.getElementById('pdpSubPrice');
+  if (onceEl) onceEl.textContent = fmtPrice(p.price);
+  if (subEl)  subEl.textContent  = fmtPrice(p.price * 0.9);
+}
+
+// ============================================================
+// EMAIL POPUP
+// ============================================================
+function initPopup() {
+  if (localStorage.getItem('plPopup')) return;
+  setTimeout(() => {
+    const el = document.getElementById('popupOverlay');
+    if (el) el.classList.add('open');
+  }, 4500);
+}
+function closePopup() {
+  document.getElementById('popupOverlay').classList.remove('open');
+  localStorage.setItem('plPopup', '1');
+}
+function submitPopup() {
+  const input = document.getElementById('popupEmail');
+  const email = input ? input.value.trim() : '';
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (input) { input.classList.add('error'); input.focus(); }
+    return;
+  }
+  input.classList.remove('error');
+  document.getElementById('popupModal').innerHTML = `
+    <div class="popup-success">
+      <div style="font-size:52px;margin-bottom:16px">🎉</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--navy-900);margin-bottom:8px">You're in the draw!</div>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:24px">We'll notify <strong>${email}</strong> if you win the $250 store credit. Good luck!</p>
+      <button class="btn btn--teal" onclick="closePopup()">Continue Shopping</button>
+    </div>`;
+  localStorage.setItem('plPopup', '1');
+}
+
+// ============================================================
+// MULTI-BUY DISCOUNT
+// ============================================================
+function getMultibuyDiscount() {
+  const qty = getCartCount();
+  if (qty >= 5) return 0.10;
+  if (qty >= 3) return 0.05;
+  if (qty >= 2) return 0.03;
+  return 0;
+}
+function getMultibuyLabel(qty) {
+  if (qty >= 5) return '10% — 5+ items';
+  if (qty >= 3) return '5% — 3+ items';
+  if (qty >= 2) return '3% — bundle';
+  return '';
+}
+
+// ============================================================
+// SHIPPING ZONE
+// ============================================================
+let shipZone = 'au';
+function setShipZone(z) {
+  shipZone = z;
+  document.querySelectorAll('.ship-zone-btn').forEach(b => b.classList.toggle('active', b.dataset.zone === z));
+  renderCart();
+}
+
+// ============================================================
+// CART LOGIC
+// ============================================================
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function addToCart(productId, isSubscription) {
+  const p = PRODUCTS.find(x => x.id === productId);
+  if (!p) return;
+  const sub = !!isSubscription;
+  const price = sub ? Math.round(p.price * 0.9 * 100) / 100 : p.price;
+  const existing = cart.find(x => x.id === productId && x.subscription === sub);
+  if (existing) { existing.qty++; }
+  else { cart.push({ id: p.id, name: p.name, size: p.size, price, qty: 1, subscription: sub }); }
+  renderCart();
+  updateCountBadges();
+  showToast(p.name + (sub ? ' (Subscribe & Save)' : '') + ' added to cart');
+  openCart();
+}
+function removeFromCart(idx) {
+  cart.splice(idx, 1);
+  renderCart();
+  updateCountBadges();
+}
+function changeQty(idx, delta) {
+  cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+  renderCart();
+  updateCountBadges();
+}
+function getCartTotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
+function getCartCount() { return cart.reduce((s, i) => s + i.qty, 0); }
+
+function renderCart() {
+  const el     = document.getElementById('cartItemsEl');
+  const footer = document.getElementById('cartFooter');
+  const empty  = document.getElementById('cartEmpty');
+  const subtotal     = getCartTotal();
+  const qty          = getCartCount();
+  const discountRate = getMultibuyDiscount();
+  const discountAmt  = subtotal * discountRate;
+  const afterDiscount = subtotal - discountAmt;
+  const shippingAUD  = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (shipZone === 'intl' ? 20 : 10);
+  const totalAUD     = afterDiscount + shippingAUD;
+  const remaining    = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
+  const pct          = Math.min(100, (subtotal / FREE_SHIP_THRESHOLD) * 100);
+
+  const bar = document.getElementById('freeShipBar');
+  document.getElementById('freeShipFill').style.width = pct + '%';
+  if (remaining > 0) {
+    document.getElementById('freeShipMsg').innerHTML = 'Add <strong>' + fmtPrice(remaining) + '</strong> more for free AU shipping';
+    bar.classList.remove('unlocked');
+  } else {
+    document.getElementById('freeShipMsg').innerHTML = '🎉 <strong>Free shipping unlocked!</strong>';
+    bar.classList.add('unlocked');
+  }
+
+  if (cart.length === 0) {
+    empty.style.display = 'flex'; el.style.display = 'none'; footer.style.display = 'none';
+    el.innerHTML = ''; return;
+  }
+  empty.style.display = 'none'; el.style.display = 'block'; footer.style.display = 'block';
+
+  let html = '';
+  cart.forEach((item, i) => {
+    html += `<div class="cart-item">
+      <div class="cart-item__img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:22px;height:22px"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg></div>
+      <div class="cart-item__info">
+        <div class="cart-item__name">${item.name}${item.subscription ? '<span class="cart-sub-badge">Sub</span>' : ''}</div>
+        <div class="cart-item__size">${item.size} · Research Use Only</div>
+        <div class="cart-item__controls">
+          <div class="cart-qty-btn" onclick="changeQty(${i},-1)">−</div>
+          <div class="cart-qty-num">${item.qty}</div>
+          <div class="cart-qty-btn" onclick="changeQty(${i},1)">+</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;padding-right:20px;">
+        <div class="cart-item__price">${fmtPrice(item.price * item.qty)}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${fmtPrice(item.price)} each</div>
+      </div>
+      <div class="cart-item__remove" onclick="removeFromCart(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>`;
+  });
+  el.innerHTML = html;
+
+  document.getElementById('cartSubtotal').textContent = fmtPrice(subtotal);
+
+  // Multibuy discount row
+  const discountRow = document.getElementById('discountRow');
+  if (discountRate > 0) {
+    discountRow.style.display = 'flex';
+    document.getElementById('discountBadge').textContent = getMultibuyLabel(qty);
+    document.getElementById('discountAmt').textContent = '−' + fmtPrice(discountAmt);
+  } else {
+    discountRow.style.display = 'none';
+  }
+
+  // Shipping cost
+  const shipCostEl = document.getElementById('shippingCost');
+  if (shippingAUD === 0) {
+    shipCostEl.innerHTML = '<span style="color:var(--success);font-weight:700">FREE ✓</span>';
+  } else {
+    shipCostEl.textContent = fmtPrice(shippingAUD);
+  }
+
+  document.getElementById('cartTotal').textContent = fmtPrice(totalAUD);
+}
+
+function updateCountBadges() {
+  const n = getCartCount();
+  const countEl = document.getElementById('cartCount');
+  countEl.textContent = n;
+  if (n > 0) { countEl.classList.add('visible'); countEl.classList.add('bump'); setTimeout(()=>countEl.classList.remove('bump'),400); }
+  else { countEl.classList.remove('visible'); }
+  ['mobileCartCount','mobileMenuCartCount','mobileCTACount'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.textContent = n;
+  });
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${msg}`;
+  c.appendChild(t);
+  setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 3200);
+}
+
+// ============================================================
+// PRODUCT CARDS RENDERING
+// ============================================================
+function makeCard(p, mini) {
+  const badgeClass = p.badgeHot ? 'product-card__badge product-card__badge--hot'
+    : p.badge === 'In Stock' ? 'product-card__badge product-card__badge--instock'
+    : 'product-card__badge';
+  const badge = badgeClass;
+  return `<div class="product-card" onclick="viewProduct('${p.id}')">
+    <div class="product-card__img">
+      <span class="${badge}">${p.badge}</span>
+      ${p.img
+        ? `<img class="product-card__photo" src="${p.img}" alt="${p.name}" loading="lazy">`
+        : `<div class="product-vial-svg">${makeVialSVG(p)}</div>`}
+    </div>
+    <div class="product-card__body">
+      <div class="product-card__name">${p.name} <span class="product-card__size">${p.size}</span></div>
+      <div class="product-card__sub">${p.desc.split('.')[0]}.</div>
+      <div class="product-card__meta"><span class="product-card__tag">${p.tags[0]}</span></div>
+      <div class="product-card__price">${fmtPrice(p.price)}</div>
+      <button class="product-card__add-full" onclick="event.stopPropagation();addToCart('${p.id}')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Add — ${fmtPrice(p.price)}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderFeatured() {
+  const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0,8);
+  document.getElementById('featuredGrid').innerHTML = featured.map(p=>makeCard(p,false)).join('');
+}
+function renderShop(filter) {
+  const list = filter && filter !== 'all' ? PRODUCTS.filter(p=>p.category===filter) : PRODUCTS;
+  document.getElementById('shopGrid').innerHTML = list.map(p=>makeCard(p,false)).join('');
+}
+function filterProducts(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShop(cat);
+}
+
+// ============================================================
+// PRODUCT PAGE
+// ============================================================
+let currentProduct = null;
+function viewProduct(id) {
+  const p = PRODUCTS.find(x=>x.id===id);
+  if (!p) return;
+  currentProduct = p;
+  pdpIsSubscription = false;
+  document.getElementById('pdpBreadcrumb').textContent = p.name;
+  document.getElementById('pdpSku').textContent = p.id.replace('PL-','');
+  document.getElementById('pdpName').textContent = p.name;
+  document.getElementById('pdpId').textContent = p.size + ' · Research Compound · For Laboratory Use Only';
+  document.getElementById('pdpPurity').textContent = p.purity + ' · Third-Party Certified';
+  document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
+  document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currentCurrency + ' · Research use only';
+  document.getElementById('pdpImgLabel').textContent = p.name + ' · ' + p.size + ' · Research Grade';
+  document.getElementById('pdpDesc').textContent = p.desc;
+  document.getElementById('pdpSpecTable').innerHTML = p.specs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  document.getElementById('pdpAddBtn').onclick = () => pdpAddToCart();
+  // Render label vials on product page
+  const pdpVials = document.getElementById('pdpVials');
+  if (pdpVials) {
+    pdpVials.innerHTML = p.img
+      ? `<img class="pdp-product-photo" src="${p.img}" alt="${p.name}">`
+      : `<div class="pdp-vials-wrap">
+          <div style="width:105px">${makeVialSVG(p)}</div>
+          <div style="width:78px;opacity:.72;transform:translateY(10px)">${makeVialSVG(p)}</div>
+        </div>`;
+  }
+  // Reset subscription toggle
+  document.getElementById('optOnce').classList.add('selected');
+  document.getElementById('optSubscribe').classList.remove('selected');
+  document.getElementById('pdpOncePrice').textContent = fmtPrice(p.price);
+  document.getElementById('pdpSubPrice').textContent  = fmtPrice(p.price * 0.9);
+  showPage('product');
+}
+function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id, pdpIsSubscription); }
+
+// ============================================================
+// CERTIFICATIONS DATA
+// ============================================================
+const CERTS = [
+  { name:'Retatrutide 10mg', batches:[['Reta 10mg','6-May-25'],['Reta 10mg','10-Jun-25'],['Reta 10mg','18-Jul-25'],['Reta 10mg','31-Jul-25'],['Reta 10mg','20-Aug-25'],['Reta 10mg','21-Aug-25'],['Reta 10mg','29-Aug-25'],['Reta 10mg','2-Sep-25'],['Reta 10mg','3-Oct-25']] },
+  { name:'BPC-157 10mg', batches:[['BPC 10mg','21-May-25'],['BPC 10mg','16-Jul-25'],['BPC 10mg','25-Jul-25'],['BPC 10mg','11-Aug-25'],['BPC 10mg','21-Aug-25'],['BPC 10mg','2-Sep-25'],['BPC 10mg','2-Oct-25']] },
+  { name:'TB-500', batches:[['TB-500 5mg','21-May-25'],['TB-500 10mg','23-Jul-25'],['TB-500 10mg','2-Sep-25'],['TB-500 10mg','24-Sep-25'],['TB-500 10mg','3-Oct-25']] },
+  { name:'Tesamorelin', batches:[['Tesamorelin 10mg','16-May-25'],['Tesamorelin 10mg','11-Aug-25'],['Tesamorelin 10mg','25-Aug-25'],['Tesamorelin 10mg','24-Sep-25']] },
+  { name:'Semax 10mg', batches:[['Semax 10mg','29-Apr-25'],['Semax 10mg','22-Jul-25'],['Semax 10mg','14-Aug-25'],['Semax 10mg','2-Sep-25'],['Semax 10mg','3-Oct-25']] },
+  { name:'Selank 10mg', batches:[['Selank 10mg','29-Apr-25'],['Selank 10mg','14-Aug-25'],['Selank 10mg','2-Sep-25'],['Selank 10mg','3-Oct-25']] },
+  { name:'Deep Sleep Inducing Peptide (DSIP)', batches:[['DSIP 5mg','29-May-25'],['DSIP 5mg','18-Jul-25'],['DSIP 5mg','30-Jul-25'],['DSIP 5mg','16-Sep-25']] },
+  { name:'Melanotan-2', batches:[['MT2 10mg','16-May-25'],['MT2 10mg','30-May-25'],['MT2 10mg','24-Sep-25']] },
+  { name:'Melanotan-1', batches:[['Melanotan 1 10mg','30-May-25'],['Melanotan 1 10mg','12-Jul-25'],['Melanotan 1 10mg','21-Aug-25']] },
+  { name:'Human Growth Hormone 10IU', batches:[['HGH 10IU','3-Sep-25']] },
+  { name:'NAD+ 500mg', batches:[['NAD+ 500mg','17-May-25'],['NAD+ 500mg','16-Jul-25'],['NAD+ 500mg','14-Aug-25'],['NAD+ 500mg','29-Aug-25'],['NAD+ 500mg','5-Sep-25'],['NAD+ 500mg','23-Sep-25']] },
+  { name:'GHK-Cu 50mg', batches:[['GHK-CU 50mg','21-Aug-25'],['GHK-CU 50mg','25-Sep-25'],['GHK-CU 100mg','25-Jul-25'],['GHK-CU 100mg','25-Aug-25']] },
+];
+
+function renderCerts(query) {
+  const list = query ? CERTS.filter(c=>c.name.toLowerCase().includes(query.toLowerCase())) : CERTS;
+  document.getElementById('certGrid').innerHTML = list.map(c=>`
+    <div class="cert-compound">
+      <div class="cert-compound__header">
+        <div class="cert-compound__name">${c.name}</div>
+        <div class="cert-compound__count">${c.batches.length} batch${c.batches.length!==1?'es':''}</div>
+      </div>
+      <div class="cert-batches">
+        ${c.batches.map(b=>`
+          <a class="cert-batch" href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener">
+            <div class="cert-batch__id">${b[0]}</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="cert-batch__date">${b[1]}</div>
+              <div class="cert-batch__view">View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+            </div>
+          </a>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function filterCerts(q) { renderCerts(q); }
+
+// ============================================================
+// PAGE ROUTER
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const page = document.getElementById('page-'+id);
+  if (page) { page.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  document.querySelectorAll('.nav__link').forEach(l=>l.classList.remove('active'));
+  const map = {home:0,shop:1,quality:2,about:3,faq:4,contact:5};
+  const links = document.querySelectorAll('.nav__link');
+  if (map[id]!==undefined) links[map[id]]?.classList.add('active');
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  item.closest('.faq-list')?.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+function switchTab(btn, tabId) {
+  btn.closest('.product-page-info-tabs').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.closest('.product-page-info-tabs').querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+tabId)?.classList.add('active');
+}
+document.addEventListener('click', e=>{
+  if (e.target.classList.contains('variant-btn')) {
+    e.target.closest('.variant-options')?.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
+    e.target.classList.add('selected');
+  }
+});
+
+// Mobile cart button visibility
+function updateMobileCartBtn() {
+  const btn = document.getElementById('mobileCartBtn');
+  if (btn) btn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+}
+window.addEventListener('resize', updateMobileCartBtn);
+
+// ============================================================
+// INIT
+// ============================================================
+showPage('home');
+renderFeatured();
+renderShop();
+renderCerts();
+renderCart();
+updateMobileCartBtn();
+initPopup();
+</script>
+
+</body>
+</html>
