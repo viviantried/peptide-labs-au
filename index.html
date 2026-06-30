@@ -57,7 +57,7 @@
       <div class="cart-row cart-row--total"><span>Estimated Total</span><strong id="cartTotal">$0.00</strong></div>
     </div>
     <div class="cart-checkout">
-      <button class="btn btn--teal btn--full btn--lg">
+      <button class="btn btn--teal btn--full btn--lg" onclick="checkoutToShopify()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         Secure Checkout
       </button>
@@ -780,6 +780,29 @@ ${n2?`<text x="35" y="${nY+9}" font-family="'Plus Jakarta Sans',Arial,sans-serif
 
 const FREE_SHIP_THRESHOLD = 200;
 let cart = [];
+
+const SHOPIFY_VARIANTS = {
+  'PL-001': '50411488051423',
+  'PL-002': '50411582554335',
+  'PL-003': '50411626823903',
+  'PL-004': '50411649892575',
+  'PL-005': '50411663098079',
+  'PL-006': '50411663130847',
+  'PL-007': '50411666407647',
+  'PL-008': '50411669684447',
+  'PL-009': '50411669717215',
+  'PL-011': '50411672994015',
+  'PL-012': '50411676270815',
+  'PL-013': '50411679547615',
+  'PL-014': '50411692622047',
+};
+
+function checkoutToShopify() {
+  const items = cart.filter(i => SHOPIFY_VARIANTS[i.id]);
+  if (!items.length) return;
+  const cartStr = items.map(i => `${SHOPIFY_VARIANTS[i.id]}:${i.qty}`).join(',');
+  window.location.href = `https://v7hk9e-pi.myshopify.com/cart/${cartStr}`;
+}
 
 // ============================================================
 // CURRENCY
