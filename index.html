@@ -801,7 +801,7 @@ function checkoutToShopify() {
   const items = cart.filter(i => SHOPIFY_VARIANTS[i.id]);
   if (!items.length) return;
   const cartStr = items.map(i => `${SHOPIFY_VARIANTS[i.id]}:${i.qty}`).join(',');
-  window.location.href = `https://v7hk9e-pi.myshopify.com/cart/${cartStr}`;
+  window.location.href = `https://aupeptidelab.myshopify.com/cart/${cartStr}`;
 }
 
 // ============================================================
