@@ -205,12 +205,83 @@
         </div>
       </div>
 
+      <!-- Shipping method -->
+      <div class="co-section" id="coShipSection">
+        <div class="co-section-title">Shipping method</div>
+        <div class="co-ship-group" id="coShipGroup">
+          <!-- populated by coRenderShippingOptions() on checkout open / country change -->
+        </div>
+      </div>
+
       <!-- Payment -->
       <div class="co-section">
         <div class="co-section-title">Payment</div>
-        <p style="font-size:12px;color:#555;margin:0 0 12px">All transactions are secure and encrypted.</p>
+        <p style="font-size:12px;color:#555;margin:0 0 12px">All transactions are secure and encrypted. Bank transfer only.</p>
         <div class="co-pay-group" id="coPayGroup">
-          <div style="padding:16px;color:#555;font-size:13px">Loading payment options…</div>
+
+          <!-- AUS / NZ -->
+          <div class="co-pay-opt co-pay-opt--on" id="popt-aud" onclick="selectPayMethod('aud')">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot on"></div>
+              <span>Bank Transfer (AUS / NZ)</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-aud">
+              <div class="co-bsb-row"><span>Account Name</span><span>Australian Peptide Labs Store</span></div>
+              <div class="co-bsb-row"><span>BSB</span><span id="pay-aud-bsb">See confirmation email</span></div>
+              <div class="co-bsb-row"><span>Account No.</span><span id="pay-aud-acct">See confirmation email</span></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+              <div class="co-bsb-row"><span>Reference</span><span style="color:#888;font-size:12px">Shown after order placed</span></div>
+            </div>
+          </div>
+
+          <!-- EUR -->
+          <div class="co-pay-opt" id="popt-eur" onclick="selectPayMethod('eur')">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot"></div>
+              <span>Bank Transfer (EUR)</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-eur" style="display:none">
+              <div id="pfields-eur"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive EUR transfer details.</div></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+            </div>
+          </div>
+
+          <!-- USD -->
+          <div class="co-pay-opt" id="popt-usd" onclick="selectPayMethod('usd')">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot"></div>
+              <span>Bank Transfer (USD)</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-usd" style="display:none">
+              <div id="pfields-usd"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive USD transfer details.</div></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+            </div>
+          </div>
+
+          <!-- CAD -->
+          <div class="co-pay-opt" id="popt-cad" onclick="selectPayMethod('cad')">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot"></div>
+              <span>Bank Transfer (CAD)</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-cad" style="display:none">
+              <div id="pfields-cad"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive CAD transfer details.</div></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+            </div>
+          </div>
+
+          <!-- GBP -->
+          <div class="co-pay-opt" id="popt-gbp" onclick="selectPayMethod('gbp')">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot"></div>
+              <span>Bank Transfer (UK / GBP)</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-gbp" style="display:none">
+              <div id="pfields-gbp"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive GBP transfer details.</div></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+            </div>
+          </div>
+
         </div>
         <div class="co-bsb-note" style="margin-top:10px;border-radius:8px;background:#0D1F0D;border:1px solid #1a3a1a">Transfer the exact amount and use your order reference. Orders dispatched once payment confirmed — usually same business day.</div>
       </div>
@@ -1094,8 +1165,32 @@ const PROMO_CODES = {
   'VIVIAN': { type: 'percent', value: 10, label: '10% off' },
 };
 let appliedPromo   = null;
-let coPayMethods   = [];
-let coSelectedPay  = null;
+let coSelectedPayId = 'aud';
+let coPayApiData    = {};
+
+const PAY_METHOD_LABELS = {
+  aud: 'Bank Transfer (AUS / NZ)',
+  eur: 'Bank Transfer (EUR)',
+  usd: 'Bank Transfer (USD)',
+  cad: 'Bank Transfer (CAD)',
+  gbp: 'Bank Transfer (UK / GBP)',
+};
+
+const SHIP_ZONES = {
+  AU: [
+    { id: 'au-std', label: 'Standard', carrier: 'Australia Post', eta: '3–7 business days', price: 10, freeOk: true },
+    { id: 'au-exp', label: 'Express',  carrier: 'Australia Post Express', eta: '1–2 business days', price: 15, freeOk: false },
+  ],
+  NZ: [
+    { id: 'nz-std', label: 'Standard', carrier: 'Aust. Post International', eta: '6–12 business days', price: 15, freeOk: true },
+    { id: 'nz-exp', label: 'Express',  carrier: 'DHL Express', eta: '3–5 business days', price: 28, freeOk: false },
+  ],
+  INTL: [
+    { id: 'int-std', label: 'Standard', carrier: 'Aust. Post International', eta: '7–21 business days', price: 20, freeOk: true },
+    { id: 'int-exp', label: 'Express',  carrier: 'DHL Express', eta: '5–10 business days', price: 40, freeOk: false },
+  ],
+};
+let selectedShipping = null;
 
 function openCheckout() {
   if (!cart.length) return;
@@ -1105,6 +1200,7 @@ function openCheckout() {
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
   document.body.style.overflow = 'hidden';
+  coRenderShippingOptions();
   coRenderSummary();
   coLoadPayMethods();
 }
@@ -1122,42 +1218,40 @@ async function coLoadPayMethods() {
   try {
     const res  = await fetch('/api/bank-details');
     const data = await res.json();
-    coPayMethods = data.methods || [];
-  } catch {
-    coPayMethods = [];
-  }
-  coRenderPayMethods();
-}
-
-function coRenderPayMethods() {
-  const group = document.getElementById('coPayGroup');
-  if (!coPayMethods.length) {
-    group.innerHTML = '<div style="padding:16px;color:#555;font-size:13px">Payment details loading — please check your email after placing order.</div>';
-    return;
-  }
-  coSelectedPay = coPayMethods[0];
-  group.innerHTML = coPayMethods.map((m, i) => `
-    <div class="co-pay-opt ${i === 0 ? 'co-pay-opt--on' : ''}" id="popt-${m.id}" onclick="selectPayMethod('${m.id}')">
-      <div class="co-pay-opt__hdr">
-        <div class="co-radio-dot ${i === 0 ? 'on' : ''}"></div>
-        <span>${m.label}</span>
-      </div>
-      <div class="co-pay-opt__details" id="pdet-${m.id}" style="${i === 0 ? '' : 'display:none'}">
-        ${m.fields.map(f => `<div class="co-bsb-row"><span>${f.label}</span><span>${f.value}</span></div>`).join('')}
-        <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
-        <div class="co-bsb-row"><span>Reference</span><span style="color:#555">Shown after placing order</span></div>
-      </div>
-    </div>`).join('');
+    coPayApiData = {};
+    (data.methods || []).forEach(m => { coPayApiData[m.id] = m.fields; });
+    // Update AUD field display values
+    const audFields = coPayApiData['aud'] || [];
+    audFields.forEach(f => {
+      if (f.label === 'BSB') {
+        const el = document.getElementById('pay-aud-bsb');
+        if (el) el.textContent = f.value;
+      } else if (f.label === 'Account No.') {
+        const el = document.getElementById('pay-aud-acct');
+        if (el) el.textContent = f.value;
+      }
+    });
+    // Update international fields if configured
+    ['eur', 'usd', 'cad', 'gbp'].forEach(id => {
+      const fields = coPayApiData[id];
+      if (!fields || !fields.length) return;
+      const container = document.getElementById(`pfields-${id}`);
+      if (!container) return;
+      container.innerHTML = fields.map(f =>
+        `<div class="co-bsb-row"><span>${f.label}</span><span>${f.value}</span></div>`
+      ).join('');
+    });
+  } catch {}
   coRenderSummary();
 }
 
 function selectPayMethod(id) {
-  coSelectedPay = coPayMethods.find(m => m.id === id);
-  coPayMethods.forEach(m => {
-    const opt = document.getElementById(`popt-${m.id}`);
-    const det = document.getElementById(`pdet-${m.id}`);
+  coSelectedPayId = id;
+  ['aud', 'eur', 'usd', 'cad', 'gbp'].forEach(mid => {
+    const opt = document.getElementById(`popt-${mid}`);
+    const det = document.getElementById(`pdet-${mid}`);
     const dot = opt?.querySelector('.co-radio-dot');
-    if (m.id === id) {
+    if (mid === id) {
       opt?.classList.add('co-pay-opt--on');
       dot?.classList.add('on');
       if (det) det.style.display = '';
@@ -1169,10 +1263,66 @@ function selectPayMethod(id) {
   });
 }
 
+function coGetShipMethods() {
+  const country = document.getElementById('co-country')?.value || 'AU';
+  if (country === 'AU')  return SHIP_ZONES.AU;
+  if (country === 'NZ')  return SHIP_ZONES.NZ;
+  return SHIP_ZONES.INTL;
+}
+
+function coRenderShippingOptions() {
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const methods  = coGetShipMethods();
+  const match    = methods.find(m => m.id === selectedShipping?.id);
+  selectedShipping = match || methods[0];
+
+  const group = document.getElementById('coShipGroup');
+  if (!group) return;
+
+  group.innerHTML = methods.map(m => {
+    const isFree   = m.freeOk && subtotal >= FREE_SHIP_THRESHOLD;
+    const priceStr = isFree ? 'FREE' : `A$${m.price.toFixed(2)}`;
+    const isOn     = m.id === selectedShipping.id;
+    return `
+      <div class="co-ship-opt${isOn ? ' co-ship-opt--on' : ''}" id="sopt-${m.id}" onclick="selectShipping('${m.id}')">
+        <div class="co-ship-opt__hdr">
+          <div class="co-radio-dot${isOn ? ' on' : ''}"></div>
+          <div class="co-ship-opt__info">
+            <span class="co-ship-opt__carrier">${m.carrier}</span>
+            <span class="co-ship-opt__eta">${m.eta}</span>
+          </div>
+          <span class="co-ship-opt__price">${priceStr}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectShipping(id) {
+  const methods  = coGetShipMethods();
+  selectedShipping = methods.find(m => m.id === id) || methods[0];
+  methods.forEach(m => {
+    const opt = document.getElementById(`sopt-${m.id}`);
+    const dot = opt?.querySelector('.co-radio-dot');
+    if (m.id === id) {
+      opt?.classList.add('co-ship-opt--on');
+      dot?.classList.add('on');
+    } else {
+      opt?.classList.remove('co-ship-opt--on');
+      dot?.classList.remove('on');
+    }
+  });
+  coRenderSummary();
+}
+
 function coRenderSummary() {
-  const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const country    = document.getElementById('co-country')?.value || 'AU';
-  const ship       = getShippingCost(subtotal, country);
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  let ship = 0;
+  if (selectedShipping) {
+    ship = (selectedShipping.freeOk && subtotal >= FREE_SHIP_THRESHOLD) ? 0 : selectedShipping.price;
+  } else {
+    const country = document.getElementById('co-country')?.value || 'AU';
+    ship = getShippingCost(subtotal, country);
+  }
   let   discount   = 0;
   if (appliedPromo) {
     if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
@@ -1229,6 +1379,7 @@ function coCountryChange() {
   const isAU = country === 'AU';
   document.getElementById('co-state-select').style.display = isAU ? '' : 'none';
   document.getElementById('co-state-text').style.display   = isAU ? 'none' : '';
+  coRenderShippingOptions();
   coRenderSummary();
 }
 
@@ -1258,7 +1409,9 @@ async function placeOrder() {
     : coVal('co-state-text');
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const ship     = getShippingCost(subtotal, country);
+  const ship     = selectedShipping
+    ? ((selectedShipping.freeOk && subtotal >= FREE_SHIP_THRESHOLD) ? 0 : selectedShipping.price)
+    : getShippingCost(subtotal, country);
   let   discount = 0;
   if (appliedPromo) {
     if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
@@ -1273,9 +1426,10 @@ async function placeOrder() {
     phone: coVal('co-phone'),
     items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty })),
     subtotal, shipping: ship, discount, total,
-    promoCode: appliedPromo ? appliedPromo.code : null,
-    paymentMethod: coSelectedPay?.id || 'aud',
-    paymentLabel:  coSelectedPay?.label || 'Bank Transfer (AUS, NZ)',
+    promoCode:      appliedPromo ? appliedPromo.code : null,
+    paymentMethod:  coSelectedPayId,
+    paymentLabel:   PAY_METHOD_LABELS[coSelectedPayId],
+    shippingMethod: selectedShipping ? `${selectedShipping.label} — ${selectedShipping.carrier}` : 'Standard',
   };
 
   const btn = document.getElementById('coPlaceBtn');
@@ -1290,8 +1444,14 @@ async function placeOrder() {
     document.getElementById('coBody').style.display = 'none';
     document.getElementById('coSuccessAmt').textContent = `A$${total.toFixed(2)}`;
     document.getElementById('coSuccessRef').textContent = data.orderName;
-    // Render selected bank fields
-    const fields = coSelectedPay?.fields || data.fields || [];
+    // Render selected bank fields — prefer API data, fall back to order response BSB
+    const apiFields = coPayApiData[coSelectedPayId] || [];
+    const fields = apiFields.length ? apiFields
+      : (coSelectedPayId === 'aud' && data.bsb
+          ? [{ label: 'Account Name', value: 'Australian Peptide Labs Store' },
+             { label: 'BSB',          value: data.bsb },
+             { label: 'Account No.',  value: data.acct }]
+          : []);
     document.getElementById('coSuccessFields').innerHTML = fields.map(f =>
       `<div class="co-success__bank-row"><span>${f.label}</span><span>${f.value}</span></div>`
     ).join('');
