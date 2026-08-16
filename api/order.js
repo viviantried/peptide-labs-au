@@ -100,7 +100,10 @@ module.exports = async function handler(req, res) {
       <div style="margin-top:14px;padding:10px 12px;background:#dcfce7;border-radius:6px;font-size:13px;color:#166534">Always use <strong>${orderName}</strong> as your payment reference.</div>
     </div>
 
-    <p style="color:#666;font-size:13px;margin:0 0 6px">Once your payment clears, your order will be dispatched within 1-2 business days.</p>
+    <p style="color:#666;font-size:13px;margin:0 0 8px">Once your payment clears, your order will be dispatched within 1-2 business days. A <strong>dispatch confirmation email</strong> with your tracking number will be sent when your order ships.</p>
+    <div style="margin:0 0 16px;padding:12px 16px;background:#f0f4ff;border:1px solid #c7d2fe;border-radius:8px;font-size:13px;color:#3730a3">
+      📦 <strong>To track your order:</strong> Visit <a href="https://www.aupeptidelab.com" style="color:#3730a3">aupeptidelab.com</a> → Track Order, and enter your tracking number from the dispatch email.
+    </div>
     <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
   </div>
   <div style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;text-align:center">
