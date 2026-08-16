@@ -214,21 +214,11 @@
       <!-- Payment -->
       <div class="co-section">
         <div class="co-section-title">Payment</div>
-        <div class="co-bank-box">
-          <div class="co-bank-header">
-            <input type="radio" checked readonly />
-            <span>Bank Transfer (AUD)</span>
-            <span class="tag">Secure</span>
-          </div>
-          <div class="co-bsb-details">
-            <div class="co-bsb-row"><span>Account Name</span><span>Australian Peptide Labs Store</span></div>
-            <div class="co-bsb-row"><span>BSB</span><span id="coBsb">—</span></div>
-            <div class="co-bsb-row"><span>Account Number</span><span id="coAcct">—</span></div>
-            <div class="co-bsb-row"><span>Amount</span><span id="coPayAmt">A$0.00</span></div>
-            <div class="co-bsb-row"><span>Reference</span><span style="color:#888">Shown after placing order</span></div>
-          </div>
-          <div class="co-bsb-note">Transfer the exact amount using your order reference. Orders are dispatched once payment is confirmed — usually same business day.</div>
+        <p style="font-size:12px;color:#555;margin:0 0 12px">All transactions are secure and encrypted.</p>
+        <div class="co-pay-group" id="coPayGroup">
+          <div style="padding:16px;color:#555;font-size:13px">Loading payment options…</div>
         </div>
+        <div class="co-bsb-note" style="margin-top:10px;border-radius:8px;background:#0D1F0D;border:1px solid #1a3a1a">Transfer the exact amount and use your order reference. Orders dispatched once payment confirmed — usually same business day.</div>
       </div>
 
       <!-- Submit -->
@@ -244,7 +234,15 @@
     <div class="co-summary-col">
       <div class="co-sum-items" id="coSumItems"></div>
       <hr class="co-sum-divider" />
+      <!-- Promo code -->
+      <div class="co-promo-row">
+        <input class="co-input co-promo-input" type="text" id="coPromoInput" placeholder="Discount code" style="text-transform:uppercase" />
+        <button class="co-promo-apply" onclick="applyPromo()">Apply</button>
+      </div>
+      <div class="co-promo-msg" id="coPromoMsg" style="display:none"></div>
+      <hr class="co-sum-divider" style="margin-top:14px" />
       <div class="co-sum-row"><span>Subtotal</span><span id="coSumSubtotal">A$0.00</span></div>
+      <div class="co-sum-row" id="coDiscountRow" style="display:none"><span id="coDiscountLabel">Discount</span><span id="coSumDiscount" style="color:#4ade80">−A$0.00</span></div>
       <div class="co-sum-row"><span>Shipping</span><span id="coSumShipping">—</span></div>
       <div class="co-sum-row co-sum-row--total"><span>Total</span><span id="coSumTotal">A$0.00</span></div>
     </div>
@@ -252,27 +250,51 @@
 
   <!-- SUCCESS SCREEN -->
   <div class="co-success" id="coSuccess">
-    <div class="co-success__check">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <div class="co-success-inner">
+      <div class="co-success__confirmed">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Order Confirmed
+      </div>
+      <h1 class="co-success__title">Your order is confirmed</h1>
+      <p class="co-success__intro">Please complete the transfer at your earliest convenience using the details provided at checkout and/or below.</p>
+
+      <div class="co-success__block">
+        <div class="co-success__block-title">How to Finalise Your Payment</div>
+
+        <div class="co-success__step-label">Step 1: Complete a Bank Transfer</div>
+        <p class="co-success__step-body">Please send the full order amount to the details listed below:</p>
+        <div class="co-success__bank-fields" id="coSuccessFields"></div>
+        <div class="co-success__amount-row">
+          <span>Amount</span>
+          <span id="coSuccessAmt" style="color:#4ade80;font-weight:800;font-size:20px"></span>
+        </div>
+
+        <div class="co-success__step-label" style="margin-top:22px">Step 2: Include the Correct Payment Reference: Your Order number</div>
+        <p class="co-success__step-body"><em>(This step is essential)</em></p>
+        <p class="co-success__step-body">To ensure your order is matched correctly, enter the following in the transfer reference:</p>
+        <div class="co-success__ref-box">
+          Your order reference: <strong id="coSuccessRef" style="color:#fff;font-size:17px"></strong>
+        </div>
+      </div>
+
+      <div class="co-success__notice co-success__notice--green">
+        ✅ Once payment is received, your order will be processed and dispatched.
+      </div>
+
+      <div class="co-success__notice co-success__notice--yellow">
+        <div style="font-weight:700;margin-bottom:4px">⚠ Important</div>
+        Orders not paid within 24 hours will be automatically cancelled.
+      </div>
+
+      <div class="co-success__notice co-success__notice--blue">
+        <div style="font-weight:700;margin-bottom:4px">ℹ Additional Information</div>
+        If the account name displayed differs, this is normal. As long as the BSB and account number are correct, the payment will be successful.
+      </div>
+
+      <p style="font-size:13px;color:#555;margin:0 0 24px">A confirmation email with all details has been sent to you.</p>
+
+      <button class="co-success__done" onclick="closeCheckout();showPage('shop')">Back to Shop</button>
     </div>
-    <h1>Order Placed!</h1>
-    <p class="co-success__num">Reference: <strong id="coSuccessNum"></strong></p>
-    <div class="co-success__card">
-      <h2>Complete Your Bank Transfer</h2>
-      <div class="co-success__card-row"><span>Account Name</span><span>Australian Peptide Labs Store</span></div>
-      <div class="co-success__card-row"><span>BSB</span><span id="coSuccessBsb"></span></div>
-      <div class="co-success__card-row"><span>Account Number</span><span id="coSuccessAcct"></span></div>
-      <div class="co-success__card-row highlight"><span>Amount</span><span id="coSuccessAmt"></span></div>
-      <div class="co-success__card-row ref"><span>Reference</span><span id="coSuccessRef"></span></div>
-    </div>
-    <div class="co-success__deadline">
-      ⏰ Your order will be automatically cancelled if payment is not received within <strong>24 hours</strong>. Use your order reference so we can match your transfer.
-    </div>
-    <p class="co-success__email">A confirmation email with these details has been sent to you.</p>
-    <button class="co-success__done" onclick="closeCheckout();showPage('shop')">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to Shop
-    </button>
   </div>
 
 </div>
@@ -992,21 +1014,23 @@ let cart = [];
 // ============================================================
 // CHECKOUT
 // ============================================================
-// BSB details fetched from API env — displayed after overlay opens
-const CO_BSB  = '';  // set by env on server; shown in success screen via API response
-const CO_ACCT = '';
+const PROMO_CODES = {
+  'VIVIAN': { type: 'percent', value: 10, label: '10% off' },
+};
+let appliedPromo   = null;
+let coPayMethods   = [];
+let coSelectedPay  = null;
 
 function openCheckout() {
   if (!cart.length) return;
   const overlay = document.getElementById('coOverlay');
-  const success  = document.getElementById('coSuccess');
-  const body     = document.getElementById('coBody');
-  success.classList.remove('visible');
-  body.style.display = 'grid';
+  document.getElementById('coSuccess').classList.remove('visible');
+  document.getElementById('coBody').style.display = 'grid';
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
   document.body.style.overflow = 'hidden';
   coRenderSummary();
+  coLoadPayMethods();
 }
 
 function closeCheckout() {
@@ -1018,135 +1042,194 @@ function closeCheckout() {
   }, 250);
 }
 
+async function coLoadPayMethods() {
+  try {
+    const res  = await fetch('/api/bank-details');
+    const data = await res.json();
+    coPayMethods = data.methods || [];
+  } catch {
+    coPayMethods = [];
+  }
+  coRenderPayMethods();
+}
+
+function coRenderPayMethods() {
+  const group = document.getElementById('coPayGroup');
+  if (!coPayMethods.length) {
+    group.innerHTML = '<div style="padding:16px;color:#555;font-size:13px">Payment details loading — please check your email after placing order.</div>';
+    return;
+  }
+  coSelectedPay = coPayMethods[0];
+  group.innerHTML = coPayMethods.map((m, i) => `
+    <div class="co-pay-opt ${i === 0 ? 'co-pay-opt--on' : ''}" id="popt-${m.id}" onclick="selectPayMethod('${m.id}')">
+      <div class="co-pay-opt__hdr">
+        <div class="co-radio-dot ${i === 0 ? 'on' : ''}"></div>
+        <span>${m.label}</span>
+      </div>
+      <div class="co-pay-opt__details" id="pdet-${m.id}" style="${i === 0 ? '' : 'display:none'}">
+        ${m.fields.map(f => `<div class="co-bsb-row"><span>${f.label}</span><span>${f.value}</span></div>`).join('')}
+        <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+        <div class="co-bsb-row"><span>Reference</span><span style="color:#555">Shown after placing order</span></div>
+      </div>
+    </div>`).join('');
+  coRenderSummary();
+}
+
+function selectPayMethod(id) {
+  coSelectedPay = coPayMethods.find(m => m.id === id);
+  coPayMethods.forEach(m => {
+    const opt = document.getElementById(`popt-${m.id}`);
+    const det = document.getElementById(`pdet-${m.id}`);
+    const dot = opt?.querySelector('.co-radio-dot');
+    if (m.id === id) {
+      opt?.classList.add('co-pay-opt--on');
+      dot?.classList.add('on');
+      if (det) det.style.display = '';
+    } else {
+      opt?.classList.remove('co-pay-opt--on');
+      dot?.classList.remove('on');
+      if (det) det.style.display = 'none';
+    }
+  });
+}
+
 function coRenderSummary() {
-  const itemsEl  = document.getElementById('coSumItems');
-  const subEl    = document.getElementById('coSumSubtotal');
-  const shipEl   = document.getElementById('coSumShipping');
-  const totalEl  = document.getElementById('coSumTotal');
-  const payAmtEl = document.getElementById('coPayAmt');
+  const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const zone       = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
+  const ship       = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
+  let   discount   = 0;
+  if (appliedPromo) {
+    if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
+    else discount = Math.min(appliedPromo.value, subtotal);
+  }
+  const total = Math.max(0, subtotal - discount) + ship;
 
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const zone     = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
-  const ship     = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
-  const total    = subtotal + ship;
-
-  itemsEl.innerHTML = cart.map(i => {
-    const img = i.img
-      ? `<img src="${i.img}" alt="${i.name}" />`
-      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:20px">⬜</div>`;
+  document.getElementById('coSumItems').innerHTML = cart.map(i => {
+    const img = i.img ? `<img src="${i.img}" alt="${i.name}" />` : '';
     return `<div class="co-sum-item">
       <div class="co-sum-item__img">${img}<div class="co-sum-item__badge">${i.qty}</div></div>
-      <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px;font-weight:500">${i.size}</span>` : ''}</div>
+      <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px">${i.size}</span>` : ''}</div>
       <div class="co-sum-item__price">A$${(i.price * i.qty).toFixed(2)}</div>
     </div>`;
   }).join('');
 
-  subEl.textContent   = `A$${subtotal.toFixed(2)}`;
-  shipEl.textContent  = ship === 0 ? 'FREE' : `A$${ship.toFixed(2)}`;
-  totalEl.textContent = `A$${total.toFixed(2)}`;
-  payAmtEl.textContent = `A$${total.toFixed(2)}`;
+  document.getElementById('coSumSubtotal').textContent = `A$${subtotal.toFixed(2)}`;
+  document.getElementById('coSumShipping').textContent = ship === 0 ? 'FREE' : `A$${ship.toFixed(2)}`;
+  document.getElementById('coSumTotal').textContent    = `A$${total.toFixed(2)}`;
+
+  const discRow = document.getElementById('coDiscountRow');
+  if (appliedPromo) {
+    document.getElementById('coDiscountLabel').textContent = `${appliedPromo.label}`;
+    document.getElementById('coSumDiscount').textContent   = `−A$${discount.toFixed(2)}`;
+    discRow.style.display = '';
+  } else {
+    discRow.style.display = 'none';
+  }
+
+  // Update inline amount in payment options
+  document.querySelectorAll('.co-pay-amt-inline').forEach(el => el.textContent = `A$${total.toFixed(2)}`);
+}
+
+function applyPromo() {
+  const code = document.getElementById('coPromoInput').value.trim().toUpperCase();
+  const msgEl = document.getElementById('coPromoMsg');
+  const promo = PROMO_CODES[code];
+  if (!code) return;
+  if (promo) {
+    appliedPromo = { ...promo, code };
+    msgEl.textContent = `✓ "${code}" applied — ${promo.label}`;
+    msgEl.style.display = '';
+    msgEl.style.color = '#4ade80';
+    coRenderSummary();
+  } else {
+    msgEl.textContent = 'Invalid discount code.';
+    msgEl.style.display = '';
+    msgEl.style.color = '#f87171';
+  }
 }
 
 function coCountryChange() {
-  const country   = document.getElementById('co-country').value;
-  const stateWrap = document.getElementById('co-state-wrap');
-  const stateSelect = document.getElementById('co-state-select');
-  const stateText   = document.getElementById('co-state-text');
-  if (country === 'AU') {
-    stateSelect.style.display = '';
-    stateText.style.display   = 'none';
-  } else {
-    stateSelect.style.display = 'none';
-    stateText.style.display   = '';
-  }
+  const country = document.getElementById('co-country').value;
+  const isAU = country === 'AU';
+  document.getElementById('co-state-select').style.display = isAU ? '' : 'none';
+  document.getElementById('co-state-text').style.display   = isAU ? 'none' : '';
   coRenderSummary();
 }
 
 function coVal(id) { return document.getElementById(id)?.value.trim() || ''; }
 
 async function placeOrder() {
-  // Basic validation
   const required = { 'co-email': 'Email', 'co-first': 'First name', 'co-last': 'Last name', 'co-address1': 'Address', 'co-suburb': 'Suburb / City', 'co-postcode': 'Postcode' };
   let firstErr = null;
   for (const [id, label] of Object.entries(required)) {
     const el = document.getElementById(id);
-    if (!el.value.trim()) {
-      el.classList.add('error');
-      if (!firstErr) firstErr = label;
-    } else {
-      el.classList.remove('error');
-    }
+    if (!el.value.trim()) { el.classList.add('error'); if (!firstErr) firstErr = label; }
+    else el.classList.remove('error');
   }
   const emailEl = document.getElementById('co-email');
   if (emailEl.value && !/\S+@\S+\.\S+/.test(emailEl.value)) {
-    emailEl.classList.add('error');
-    firstErr = firstErr || 'a valid email address';
+    emailEl.classList.add('error'); firstErr = firstErr || 'a valid email address';
   }
   if (firstErr) {
-    const errEl = document.getElementById('coError');
-    errEl.textContent = `Please enter ${firstErr}.`;
-    errEl.style.display = 'block';
-    return;
+    const e = document.getElementById('coError');
+    e.textContent = `Please enter ${firstErr}.`; e.style.display = 'block'; return;
   }
   document.getElementById('coError').style.display = 'none';
 
   const country = coVal('co-country');
-  const isAU    = country === 'AU';
-  const state   = isAU
+  const state   = country === 'AU'
     ? document.getElementById('co-state-select').value
     : coVal('co-state-text');
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const zone     = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
   const ship     = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
+  let   discount = 0;
+  if (appliedPromo) {
+    if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
+    else discount = Math.min(appliedPromo.value, subtotal);
+  }
+  const total = Math.max(0, subtotal - discount) + ship;
 
   const payload = {
-    email:     coVal('co-email'),
-    firstName: coVal('co-first'),
-    lastName:  coVal('co-last'),
-    address1:  coVal('co-address1'),
-    address2:  coVal('co-address2'),
-    suburb:    coVal('co-suburb'),
-    state,
-    postcode:  coVal('co-postcode'),
-    country,
-    phone:     coVal('co-phone'),
+    email: coVal('co-email'), firstName: coVal('co-first'), lastName: coVal('co-last'),
+    address1: coVal('co-address1'), address2: coVal('co-address2'),
+    suburb: coVal('co-suburb'), state, postcode: coVal('co-postcode'), country,
+    phone: coVal('co-phone'),
     items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty })),
-    subtotal,
-    shipping: ship,
-    total: subtotal + ship,
+    subtotal, shipping: ship, discount, total,
+    promoCode: appliedPromo ? appliedPromo.code : null,
+    paymentMethod: coSelectedPay?.id || 'aud',
+    paymentLabel:  coSelectedPay?.label || 'Bank Transfer (AUS, NZ)',
   };
 
   const btn = document.getElementById('coPlaceBtn');
-  btn.classList.add('loading');
-  btn.disabled = true;
+  btn.classList.add('loading'); btn.disabled = true;
 
   try {
     const res  = await fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Order failed');
 
-    const orderName = data.orderName;
-
-    // Show success screen
+    // Populate success screen
     document.getElementById('coBody').style.display = 'none';
-    const success = document.getElementById('coSuccess');
-    document.getElementById('coSuccessNum').textContent = orderName;
-    document.getElementById('coSuccessBsb').textContent  = data.bsb  || '(see email)';
-    document.getElementById('coSuccessAcct').textContent = data.acct || '(see email)';
-    document.getElementById('coSuccessAmt').textContent  = `A$${payload.total.toFixed(2)}`;
-    document.getElementById('coSuccessRef').textContent  = orderName;
-    success.classList.add('visible');
+    document.getElementById('coSuccessAmt').textContent = `A$${total.toFixed(2)}`;
+    document.getElementById('coSuccessRef').textContent = data.orderName;
+    // Render selected bank fields
+    const fields = coSelectedPay?.fields || data.fields || [];
+    document.getElementById('coSuccessFields').innerHTML = fields.map(f =>
+      `<div class="co-success__bank-row"><span>${f.label}</span><span>${f.value}</span></div>`
+    ).join('');
+    document.getElementById('coSuccess').classList.add('visible');
     document.getElementById('coOverlay').scrollTop = 0;
 
     cart = [];
     renderCart();
   } catch (err) {
-    const errEl = document.getElementById('coError');
-    errEl.textContent = 'Something went wrong. Please try again or contact support@aupeptidelab.com';
-    errEl.style.display = 'block';
-    btn.classList.remove('loading');
-    btn.disabled = false;
+    const e = document.getElementById('coError');
+    e.textContent = 'Something went wrong. Please try again or email support@aupeptidelab.com';
+    e.style.display = 'block';
+    btn.classList.remove('loading'); btn.disabled = false;
   }
 }
 

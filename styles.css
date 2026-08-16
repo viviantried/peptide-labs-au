@@ -1204,3 +1204,108 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .co-row--3 { grid-template-columns: 1fr 1fr; }
   .co-row--3 .co-field:last-child { grid-column: span 2; }
 }
+
+/* ═══ MULTI-CURRENCY PAYMENT OPTIONS ═══ */
+.co-pay-group {
+  border: 1px solid #2E2E2E; border-radius: 10px; overflow: hidden;
+}
+.co-pay-opt {
+  border-bottom: 1px solid #1E1E1E; cursor: pointer;
+  transition: background .15s;
+}
+.co-pay-opt:last-child { border-bottom: none; }
+.co-pay-opt--on { border: 2px solid #555; border-radius: 9px; margin: -1px; }
+.co-pay-opt__hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; font-size: 14px; font-weight: 600; color: #fff;
+}
+.co-radio-dot {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border-radius: 50%; border: 2px solid #444;
+  position: relative; transition: border-color .15s;
+}
+.co-radio-dot.on { border-color: #fff; }
+.co-radio-dot.on::after {
+  content: ''; position: absolute;
+  inset: 3px; border-radius: 50%; background: #fff;
+}
+.co-pay-opt__details {
+  padding: 0 16px 16px; display: grid; gap: 6px;
+  border-top: 1px solid #1E1E1E;
+}
+
+/* ═══ PROMO CODE ═══ */
+.co-promo-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.co-promo-input { flex: 1; font-size: 13px; letter-spacing: 1px; }
+.co-promo-apply {
+  padding: 10px 16px; background: #1E1E1E; color: #fff;
+  border: 1px solid #333; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: background .15s;
+}
+.co-promo-apply:hover { background: #2E2E2E; }
+.co-promo-msg { font-size: 12px; padding: 2px 0; }
+
+/* ═══ SUCCESS SCREEN (redesigned) ═══ */
+.co-success-inner {
+  max-width: 600px; margin: 0 auto; padding: 48px 24px 80px;
+}
+.co-success__confirmed {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #052e16; color: #4ade80; border: 1px solid #166534;
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  margin-bottom: 20px;
+}
+.co-success__title {
+  font-size: 28px; font-weight: 800; color: #fff; margin: 0 0 12px;
+  letter-spacing: -0.5px;
+}
+.co-success__intro { color: #888; font-size: 15px; margin: 0 0 28px; line-height: 1.6; }
+
+.co-success__block {
+  background: #0A0A0A; border: 1px solid #2E2E2E;
+  border-radius: 12px; padding: 24px; margin-bottom: 20px;
+}
+.co-success__block-title {
+  font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 20px;
+}
+.co-success__step-label {
+  font-size: 14px; font-weight: 700; color: #ddd; margin-bottom: 8px;
+}
+.co-success__step-body { font-size: 14px; color: #777; margin: 0 0 8px; line-height: 1.6; }
+.co-success__bank-fields { margin: 12px 0; }
+.co-success__bank-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid #1A1A1A;
+  font-size: 14px;
+}
+.co-success__bank-row:last-child { border-bottom: none; }
+.co-success__bank-row span:first-child { color: #666; }
+.co-success__bank-row span:last-child { font-weight: 700; color: #fff; }
+.co-success__amount-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; margin-top: 4px;
+  border-top: 1px solid #2E2E2E;
+  font-size: 14px; color: #666;
+}
+.co-success__ref-box {
+  background: #111; border: 1px solid #2E2E2E; border-radius: 8px;
+  padding: 14px 16px; font-size: 14px; color: #888; margin-top: 8px;
+}
+
+.co-success__notice {
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;
+  font-size: 14px; line-height: 1.6;
+}
+.co-success__notice--green { background: #052e16; border: 1px solid #166534; color: #86efac; }
+.co-success__notice--yellow { background: #1c0a00; border: 1px solid #7c2d12; color: #FED7AA; }
+.co-success__notice--blue { background: #0a1929; border: 1px solid #1e3a5f; color: #93c5fd; }
+
+.co-success__done {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px; background: #fff; color: #000;
+  border: none; border-radius: 10px; font-size: 15px;
+  font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: opacity .2s;
+}
+.co-success__done:hover { opacity: 0.9; }
