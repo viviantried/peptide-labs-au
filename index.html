@@ -1405,7 +1405,7 @@ function getMultibuyLabel(qty) {
 function getShippingCost(subtotalAUD, countryCode) {
   if (subtotalAUD >= FREE_SHIP_THRESHOLD) return 0;
   // AU and NZ get standard AU rate; everyone else pays international
-  return (countryCode === 'AU' || countryCode === 'NZ') ? 10 : 30;
+  return (countryCode === 'AU' || countryCode === 'NZ') ? 10 : 20;
 }
 
 // ============================================================
