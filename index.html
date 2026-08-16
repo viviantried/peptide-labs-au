@@ -44,17 +44,11 @@
         <span>Bundle discount <span class="multibuy-badge" id="discountBadge"></span></span>
         <strong id="discountAmt">−$0.00</strong>
       </div>
-      <div class="cart-row" id="shippingRow" style="align-items:flex-start">
-        <div>
-          <span>Shipping</span>
-          <div class="cart-ship-zone">
-            <button class="ship-zone-btn active" data-zone="au" onclick="setShipZone('au')">🇦🇺 Australia</button>
-            <button class="ship-zone-btn" data-zone="intl" onclick="setShipZone('intl')">🌍 International</button>
-          </div>
-        </div>
-        <span class="ship-cost" id="shippingCost">A$10.00</span>
+      <div class="cart-row" id="shippingRow">
+        <span>Shipping</span>
+        <span style="font-size:12px;color:var(--text-muted);font-style:italic">Calculated at checkout</span>
       </div>
-      <div class="cart-row cart-row--total"><span>Estimated Total</span><strong id="cartTotal">$0.00</strong></div>
+      <div class="cart-row cart-row--total"><span>Subtotal</span><strong id="cartTotal">$0.00</strong></div>
     </div>
     <div class="cart-checkout">
       <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">
@@ -1177,8 +1171,8 @@ function selectPayMethod(id) {
 
 function coRenderSummary() {
   const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const zone       = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
-  const ship       = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
+  const country    = document.getElementById('co-country')?.value || 'AU';
+  const ship       = getShippingCost(subtotal, country);
   let   discount   = 0;
   if (appliedPromo) {
     if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
@@ -1264,8 +1258,7 @@ async function placeOrder() {
     : coVal('co-state-text');
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const zone     = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
-  const ship     = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
+  const ship     = getShippingCost(subtotal, country);
   let   discount = 0;
   if (appliedPromo) {
     if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
@@ -1409,11 +1402,10 @@ function getMultibuyLabel(qty) {
 // ============================================================
 // SHIPPING ZONE
 // ============================================================
-let shipZone = 'au';
-function setShipZone(z) {
-  shipZone = z;
-  document.querySelectorAll('.ship-zone-btn').forEach(b => b.classList.toggle('active', b.dataset.zone === z));
-  renderCart();
+function getShippingCost(subtotalAUD, countryCode) {
+  if (subtotalAUD >= FREE_SHIP_THRESHOLD) return 0;
+  // AU and NZ get standard AU rate; everyone else pays international
+  return (countryCode === 'AU' || countryCode === 'NZ') ? 10 : 30;
 }
 
 // ============================================================
@@ -1464,15 +1456,14 @@ function renderCart() {
   const discountRate = getMultibuyDiscount();
   const discountAmt  = subtotal * discountRate;
   const afterDiscount = subtotal - discountAmt;
-  const shippingAUD  = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (shipZone === 'intl' ? 20 : 10);
-  const totalAUD     = afterDiscount + shippingAUD;
+  const totalAUD     = afterDiscount;
   const remaining    = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
   const pct          = Math.min(100, (subtotal / FREE_SHIP_THRESHOLD) * 100);
 
   const bar = document.getElementById('freeShipBar');
   document.getElementById('freeShipFill').style.width = pct + '%';
   if (remaining > 0) {
-    document.getElementById('freeShipMsg').innerHTML = 'Add <strong>' + fmtPrice(remaining) + '</strong> more for free AU shipping';
+    document.getElementById('freeShipMsg').innerHTML = 'Add <strong>' + fmtPrice(remaining) + '</strong> more for free shipping';
     bar.classList.remove('unlocked');
   } else {
     document.getElementById('freeShipMsg').innerHTML = '🎉 <strong>Free shipping unlocked!</strong>';
@@ -1517,14 +1508,6 @@ function renderCart() {
     document.getElementById('discountAmt').textContent = '−' + fmtPrice(discountAmt);
   } else {
     discountRow.style.display = 'none';
-  }
-
-  // Shipping cost
-  const shipCostEl = document.getElementById('shippingCost');
-  if (shippingAUD === 0) {
-    shipCostEl.innerHTML = '<span style="color:var(--success);font-weight:700">FREE ✓</span>';
-  } else {
-    shipCostEl.textContent = fmtPrice(shippingAUD);
   }
 
   document.getElementById('cartTotal').textContent = fmtPrice(totalAUD);
