@@ -914,6 +914,67 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .po-freq{font-size:11px;color:var(--text-muted);margin-top:2px}
 .cart-sub-badge{font-size:10px;font-weight:700;background:var(--teal-600);color:#fff;padding:1px 6px;border-radius:8px;margin-left:5px;vertical-align:middle}
 
+/* ═══ BUNDLE & SAVE (product page) ═══ */
+.pdp-bundle-box {
+  margin: 14px 0;
+  border: 1.5px solid var(--teal-200, #99f6e4);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--teal-50, #f0fdfa);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pdp-bundle-box {
+    border-color: rgba(13,148,136,.35);
+    background: rgba(13,148,136,.07);
+  }
+}
+:root[data-theme="dark"] .pdp-bundle-box {
+  border-color: rgba(13,148,136,.35);
+  background: rgba(13,148,136,.07);
+}
+.pdp-bundle-box__title {
+  display: flex; align-items: center; gap: 7px;
+  padding: 10px 14px;
+  font-size: 12px; font-weight: 700; color: var(--teal-700, #0f766e);
+  border-bottom: 1px solid var(--teal-100, #ccfbf1);
+  background: var(--teal-100, #ccfbf1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pdp-bundle-box__title {
+    background: rgba(13,148,136,.15); border-color: rgba(13,148,136,.2); color: var(--teal-400);
+  }
+}
+:root[data-theme="dark"] .pdp-bundle-box__title {
+  background: rgba(13,148,136,.15); border-color: rgba(13,148,136,.2); color: var(--teal-400);
+}
+.pdp-bundle-box__tiers {
+  display: flex; justify-content: space-around; padding: 10px 12px; gap: 6px;
+}
+.pdp-bundle-box__tier {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  flex: 1; padding: 8px 4px; border-radius: 8px;
+  border: 1px solid var(--teal-100, #ccfbf1);
+  background: white;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pdp-bundle-box__tier {
+    background: rgba(255,255,255,.04); border-color: rgba(13,148,136,.2);
+  }
+}
+:root[data-theme="dark"] .pdp-bundle-box__tier {
+  background: rgba(255,255,255,.04); border-color: rgba(13,148,136,.2);
+}
+.pdp-bundle-box__tier--best {
+  border-color: var(--teal-500, #14b8a6);
+  background: var(--teal-50, #f0fdfa);
+}
+:root[data-theme="dark"] .pdp-bundle-box__tier--best,
+:root:not([data-theme="light"]) .pdp-bundle-box__tier--best {
+  border-color: var(--teal-500, #14b8a6); background: rgba(13,148,136,.15);
+}
+.pbt-qty { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.pbt-save { font-size: 11px; font-weight: 800; color: var(--teal-600, #0d9488); }
+
 /* ═══════════════════════════════════════════════════════════════
    CURRENCY SELECTOR (Nav)
 ═══════════════════════════════════════════════════════════════ */

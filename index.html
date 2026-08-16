@@ -307,6 +307,7 @@
       <div class="co-promo-msg" id="coPromoMsg" style="display:none"></div>
       <hr class="co-sum-divider" style="margin-top:14px" />
       <div class="co-sum-row"><span>Subtotal</span><span id="coSumSubtotal">A$0.00</span></div>
+      <div class="co-sum-row" id="coMultibuyRow" style="display:none"><span id="coMultibuyLabel">Bundle discount</span><span id="coSumMultibuy" style="color:#4ade80">−A$0.00</span></div>
       <div class="co-sum-row" id="coDiscountRow" style="display:none"><span id="coDiscountLabel">Discount</span><span id="coSumDiscount" style="color:#4ade80">−A$0.00</span></div>
       <div class="co-sum-row"><span>Shipping</span><span id="coSumShipping">—</span></div>
       <div class="co-sum-row co-sum-row--total"><span>Total</span><span id="coSumTotal">A$0.00</span></div>
@@ -705,6 +706,20 @@
               <span class="po-price" id="pdpSubPrice">$0.00</span>
             </div>
           </div>
+
+          <!-- Bundle & Save -->
+          <div class="pdp-bundle-box">
+            <div class="pdp-bundle-box__title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Bundle &amp; Save — mix &amp; match any products
+            </div>
+            <div class="pdp-bundle-box__tiers">
+              <div class="pdp-bundle-box__tier"><span class="pbt-qty">2 items</span><span class="pbt-save">3% off</span></div>
+              <div class="pdp-bundle-box__tier"><span class="pbt-qty">3+ items</span><span class="pbt-save">5% off</span></div>
+              <div class="pdp-bundle-box__tier pdp-bundle-box__tier--best"><span class="pbt-qty">5+ items</span><span class="pbt-save">10% off</span></div>
+            </div>
+          </div>
+
           <div class="product-page-variants" id="pdpVariants"></div>
           <div class="product-page-actions">
             <button class="btn btn--teal btn--lg" style="flex:1" id="pdpAddBtn" onclick="pdpAddToCart()">
@@ -1326,16 +1341,30 @@ function selectShipping(id) {
 }
 
 function coRenderSummary() {
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  let ship = selectedShipping
-    ? coShipPrice(selectedShipping, subtotal)
-    : getShippingCost(subtotal, document.getElementById('co-country')?.value || 'AU');
+  const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const mbRate     = getMultibuyDiscount();
+  const mbDiscount = subtotal * mbRate;
+  const afterMb    = subtotal - mbDiscount;
   let   discount   = 0;
   if (appliedPromo) {
-    if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
-    else discount = Math.min(appliedPromo.value, subtotal);
+    if (appliedPromo.type === 'percent') discount = afterMb * appliedPromo.value / 100;
+    else discount = Math.min(appliedPromo.value, afterMb);
   }
-  const total = Math.max(0, subtotal - discount) + ship;
+  const effectiveSubtotal = afterMb - discount;
+  const ship = selectedShipping
+    ? coShipPrice(selectedShipping, subtotal)
+    : getShippingCost(subtotal, document.getElementById('co-country')?.value || 'AU');
+  const total = Math.max(0, effectiveSubtotal) + ship;
+
+  // Multi-buy row
+  const mbRow = document.getElementById('coMultibuyRow');
+  if (mbRate > 0) {
+    document.getElementById('coMultibuyLabel').textContent = `Bundle discount (${getMultibuyLabel(getCartCount())})`;
+    document.getElementById('coSumMultibuy').textContent   = `−A$${mbDiscount.toFixed(2)}`;
+    mbRow.style.display = '';
+  } else {
+    mbRow.style.display = 'none';
+  }
 
   document.getElementById('coSumItems').innerHTML = cart.map(i => {
     const img = i.img ? `<img src="${i.img}" alt="${i.name}" />` : '';
@@ -1415,15 +1444,19 @@ async function placeOrder() {
     ? document.getElementById('co-state-select').value
     : coVal('co-state-text');
 
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const mbRate     = getMultibuyDiscount();
+  const mbDiscount = subtotal * mbRate;
+  const afterMb    = subtotal - mbDiscount;
+  let   promoDiscount = 0;
+  if (appliedPromo) {
+    if (appliedPromo.type === 'percent') promoDiscount = afterMb * appliedPromo.value / 100;
+    else promoDiscount = Math.min(appliedPromo.value, afterMb);
+  }
+  const discount = mbDiscount + promoDiscount;
   const ship     = selectedShipping
     ? coShipPrice(selectedShipping, subtotal)
     : getShippingCost(subtotal, country);
-  let   discount = 0;
-  if (appliedPromo) {
-    if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
-    else discount = Math.min(appliedPromo.value, subtotal);
-  }
   const total = Math.max(0, subtotal - discount) + ship;
 
   const payload = {
