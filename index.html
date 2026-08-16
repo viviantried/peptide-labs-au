@@ -1178,19 +1178,31 @@ const PAY_METHOD_LABELS = {
 
 const SHIP_ZONES = {
   AU: [
-    { id: 'au-std', label: 'Standard', carrier: 'Australia Post', eta: '3–7 business days', price: 10, freeOk: true },
-    { id: 'au-exp', label: 'Express',  carrier: 'Australia Post Express', eta: '1–2 business days', price: 15, freeOk: false },
+    { id: 'au-std', label: 'Standard', carrier: 'Australia Post',         eta: '3–7 business days',  price: 10, freeOk: true,  isExpress: false },
+    { id: 'au-exp', label: 'Express',  carrier: 'Australia Post Express', eta: '1–2 business days',  price: 15, freeOk: false, isExpress: true  },
   ],
   NZ: [
-    { id: 'nz-std', label: 'Standard', carrier: 'Aust. Post International', eta: '6–12 business days', price: 15, freeOk: true },
-    { id: 'nz-exp', label: 'Express',  carrier: 'DHL Express', eta: '3–5 business days', price: 28, freeOk: false },
+    { id: 'nz-std', label: 'Standard', carrier: 'Aust. Post International', eta: '6–12 business days', price: 15, freeOk: true,  isExpress: false },
+    { id: 'nz-exp', label: 'Express',  carrier: 'DHL Express',              eta: '3–5 business days',  price: 28, freeOk: false, isExpress: true  },
   ],
   INTL: [
-    { id: 'int-std', label: 'Standard', carrier: 'Aust. Post International', eta: '7–21 business days', price: 20, freeOk: true },
-    { id: 'int-exp', label: 'Express',  carrier: 'DHL Express', eta: '5–10 business days', price: 40, freeOk: false },
+    { id: 'int-std', label: 'Standard', carrier: 'Aust. Post International', eta: '7–21 business days', price: 20, freeOk: true,  isExpress: false },
+    { id: 'int-exp', label: 'Express',  carrier: 'DHL Express',              eta: '5–10 business days', price: 40, freeOk: false, isExpress: true  },
   ],
 };
 let selectedShipping = null;
+
+function coShipPrice(method, subtotal) {
+  // Express upgrade when standard shipping is free
+  if (method.isExpress && subtotal >= FREE_SHIP_THRESHOLD) return 5;
+  if (method.freeOk   && subtotal >= FREE_SHIP_THRESHOLD) return 0;
+  return method.price;
+}
+function coShipLabel(method, subtotal) {
+  if (method.isExpress && subtotal >= FREE_SHIP_THRESHOLD) return '+A$5.00';
+  if (method.freeOk   && subtotal >= FREE_SHIP_THRESHOLD) return 'FREE';
+  return `A$${method.price.toFixed(2)}`;
+}
 
 function openCheckout() {
   if (!cart.length) return;
@@ -1280,8 +1292,7 @@ function coRenderShippingOptions() {
   if (!group) return;
 
   group.innerHTML = methods.map(m => {
-    const isFree   = m.freeOk && subtotal >= FREE_SHIP_THRESHOLD;
-    const priceStr = isFree ? 'FREE' : `A$${m.price.toFixed(2)}`;
+    const priceStr = coShipLabel(m, subtotal);
     const isOn     = m.id === selectedShipping.id;
     return `
       <div class="co-ship-opt${isOn ? ' co-ship-opt--on' : ''}" id="sopt-${m.id}" onclick="selectShipping('${m.id}')">
@@ -1316,13 +1327,9 @@ function selectShipping(id) {
 
 function coRenderSummary() {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  let ship = 0;
-  if (selectedShipping) {
-    ship = (selectedShipping.freeOk && subtotal >= FREE_SHIP_THRESHOLD) ? 0 : selectedShipping.price;
-  } else {
-    const country = document.getElementById('co-country')?.value || 'AU';
-    ship = getShippingCost(subtotal, country);
-  }
+  let ship = selectedShipping
+    ? coShipPrice(selectedShipping, subtotal)
+    : getShippingCost(subtotal, document.getElementById('co-country')?.value || 'AU');
   let   discount   = 0;
   if (appliedPromo) {
     if (appliedPromo.type === 'percent') discount = subtotal * appliedPromo.value / 100;
@@ -1410,7 +1417,7 @@ async function placeOrder() {
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const ship     = selectedShipping
-    ? ((selectedShipping.freeOk && subtotal >= FREE_SHIP_THRESHOLD) ? 0 : selectedShipping.price)
+    ? coShipPrice(selectedShipping, subtotal)
     : getShippingCost(subtotal, country);
   let   discount = 0;
   if (appliedPromo) {
