@@ -1,9 +1,9 @@
 // Vercel serverless function — POST /api/order
 // CommonJS — no vercel.json or package.json required
 
-const BSB          = process.env.BSB_NUMBER;
-const ACCOUNT      = process.env.ACCOUNT_NUMBER;
-const RESEND_KEY   = process.env.RESEND_API_KEY;
+const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
+const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
+const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
 const ACCOUNT_NAME = 'Australian Peptide Labs Store';
 const OWNER_EMAIL  = 'support@aupeptidelab.com';
 const FROM_EMAIL   = 'orders@aupeptidelab.com';
