@@ -57,7 +57,7 @@
       <div class="cart-row cart-row--total"><span>Estimated Total</span><strong id="cartTotal">$0.00</strong></div>
     </div>
     <div class="cart-checkout">
-      <button class="btn btn--teal btn--full btn--lg" onclick="checkoutToShopify()">
+      <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         Secure Checkout
       </button>
@@ -69,6 +69,214 @@
 
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════ CHECKOUT OVERLAY ═══════════════════ -->
+<div class="co-overlay" id="coOverlay">
+
+  <!-- HEADER -->
+  <div class="co-header">
+    <button class="co-back" onclick="closeCheckout()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to cart
+    </button>
+    <div class="co-brand">PeptideLab</div>
+    <div class="co-secure">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secure &amp; Encrypted
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="co-body" id="coBody">
+
+    <!-- LEFT: FORM -->
+    <div class="co-form-col">
+
+      <!-- Contact -->
+      <div class="co-section">
+        <div class="co-section-title">Contact</div>
+        <div class="co-field">
+          <label for="co-email">Email</label>
+          <input class="co-input" type="email" id="co-email" placeholder="your@email.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <!-- Delivery -->
+      <div class="co-section">
+        <div class="co-section-title">Delivery</div>
+        <div class="co-field">
+          <label for="co-country">Country / Region</label>
+          <select class="co-select" id="co-country" onchange="coCountryChange()" autocomplete="country">
+            <option value="AU">Australia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="JP">Japan</option>
+            <option value="SG">Singapore</option>
+            <option value="HK">Hong Kong</option>
+            <option value="IE">Ireland</option>
+            <option value="IT">Italy</option>
+            <option value="ES">Spain</option>
+            <option value="NL">Netherlands</option>
+            <option value="SE">Sweden</option>
+            <option value="NO">Norway</option>
+            <option value="DK">Denmark</option>
+            <option value="FI">Finland</option>
+            <option value="CH">Switzerland</option>
+            <option value="AT">Austria</option>
+            <option value="BE">Belgium</option>
+            <option value="PT">Portugal</option>
+            <option value="PL">Poland</option>
+            <option value="GR">Greece</option>
+            <option value="CZ">Czech Republic</option>
+            <option value="RO">Romania</option>
+            <option value="HU">Hungary</option>
+            <option value="SK">Slovakia</option>
+            <option value="HR">Croatia</option>
+            <option value="BG">Bulgaria</option>
+            <option value="LT">Lithuania</option>
+            <option value="LV">Latvia</option>
+            <option value="EE">Estonia</option>
+            <option value="MT">Malta</option>
+            <option value="CY">Cyprus</option>
+            <option value="LU">Luxembourg</option>
+            <option value="SI">Slovenia</option>
+            <option value="KR">South Korea</option>
+            <option value="TW">Taiwan</option>
+            <option value="MY">Malaysia</option>
+            <option value="TH">Thailand</option>
+            <option value="PH">Philippines</option>
+            <option value="ID">Indonesia</option>
+            <option value="VN">Vietnam</option>
+            <option value="IN">India</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="IL">Israel</option>
+            <option value="ZA">South Africa</option>
+            <option value="MX">Mexico</option>
+            <option value="BR">Brazil</option>
+            <option value="AR">Argentina</option>
+            <option value="CL">Chile</option>
+            <option value="CO">Colombia</option>
+          </select>
+        </div>
+        <div class="co-row">
+          <div class="co-field">
+            <label for="co-first">First name</label>
+            <input class="co-input" type="text" id="co-first" autocomplete="given-name" />
+          </div>
+          <div class="co-field">
+            <label for="co-last">Last name</label>
+            <input class="co-input" type="text" id="co-last" autocomplete="family-name" />
+          </div>
+        </div>
+        <div class="co-field">
+          <label for="co-address1">Address</label>
+          <input class="co-input" type="text" id="co-address1" autocomplete="address-line1" />
+        </div>
+        <div class="co-field">
+          <label for="co-address2">Apartment, suite, etc. (optional)</label>
+          <input class="co-input" type="text" id="co-address2" autocomplete="address-line2" />
+        </div>
+        <div class="co-row co-row--3">
+          <div class="co-field">
+            <label for="co-suburb">Suburb / City</label>
+            <input class="co-input" type="text" id="co-suburb" autocomplete="address-level2" />
+          </div>
+          <div class="co-field" id="co-state-wrap">
+            <label for="co-state">State</label>
+            <select class="co-select" id="co-state-select" autocomplete="address-level1">
+              <option value="ACT">ACT</option>
+              <option value="NSW">NSW</option>
+              <option value="NT">NT</option>
+              <option value="QLD">QLD</option>
+              <option value="SA">SA</option>
+              <option value="TAS">TAS</option>
+              <option value="VIC" selected>VIC</option>
+              <option value="WA">WA</option>
+            </select>
+            <input class="co-input" type="text" id="co-state-text" placeholder="State / Province" autocomplete="address-level1" style="display:none" />
+          </div>
+          <div class="co-field">
+            <label for="co-postcode">Postcode</label>
+            <input class="co-input" type="text" id="co-postcode" autocomplete="postal-code" />
+          </div>
+        </div>
+        <div class="co-field">
+          <label for="co-phone">Phone (optional)</label>
+          <input class="co-input" type="tel" id="co-phone" autocomplete="tel" />
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="co-section">
+        <div class="co-section-title">Payment</div>
+        <div class="co-bank-box">
+          <div class="co-bank-header">
+            <input type="radio" checked readonly />
+            <span>Bank Transfer (AUD)</span>
+            <span class="tag">Secure</span>
+          </div>
+          <div class="co-bsb-details">
+            <div class="co-bsb-row"><span>Account Name</span><span>Australian Peptide Labs Store</span></div>
+            <div class="co-bsb-row"><span>BSB</span><span id="coBsb">—</span></div>
+            <div class="co-bsb-row"><span>Account Number</span><span id="coAcct">—</span></div>
+            <div class="co-bsb-row"><span>Amount</span><span id="coPayAmt">A$0.00</span></div>
+            <div class="co-bsb-row"><span>Reference</span><span style="color:#888">Shown after placing order</span></div>
+          </div>
+          <div class="co-bsb-note">Transfer the exact amount using your order reference. Orders are dispatched once payment is confirmed — usually same business day.</div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="co-place-order" id="coPlaceBtn" onclick="placeOrder()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        <span class="co-btn-text">Place Order</span>
+      </button>
+      <div class="co-error-msg" id="coError"></div>
+      <div class="co-legal">By placing your order you agree to our <a href="#" onclick="closeCheckout();showPage('terms')">Terms of Service</a> and <a href="#" onclick="closeCheckout();showPage('privacy')">Privacy Policy</a>. All products are for research use only.</div>
+    </div>
+
+    <!-- RIGHT: SUMMARY -->
+    <div class="co-summary-col">
+      <div class="co-sum-items" id="coSumItems"></div>
+      <hr class="co-sum-divider" />
+      <div class="co-sum-row"><span>Subtotal</span><span id="coSumSubtotal">A$0.00</span></div>
+      <div class="co-sum-row"><span>Shipping</span><span id="coSumShipping">—</span></div>
+      <div class="co-sum-row co-sum-row--total"><span>Total</span><span id="coSumTotal">A$0.00</span></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="co-success" id="coSuccess">
+    <div class="co-success__check">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1>Order Placed!</h1>
+    <p class="co-success__num">Reference: <strong id="coSuccessNum"></strong></p>
+    <div class="co-success__card">
+      <h2>Complete Your Bank Transfer</h2>
+      <div class="co-success__card-row"><span>Account Name</span><span>Australian Peptide Labs Store</span></div>
+      <div class="co-success__card-row"><span>BSB</span><span id="coSuccessBsb"></span></div>
+      <div class="co-success__card-row"><span>Account Number</span><span id="coSuccessAcct"></span></div>
+      <div class="co-success__card-row highlight"><span>Amount</span><span id="coSuccessAmt"></span></div>
+      <div class="co-success__card-row ref"><span>Reference</span><span id="coSuccessRef"></span></div>
+    </div>
+    <div class="co-success__deadline">
+      ⏰ Your order will be automatically cancelled if payment is not received within <strong>24 hours</strong>. Use your order reference so we can match your transfer.
+    </div>
+    <p class="co-success__email">A confirmation email with these details has been sent to you.</p>
+    <button class="co-success__done" onclick="closeCheckout();showPage('shop')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Shop
+    </button>
+  </div>
+
+</div>
+<!-- ═══════════════════ /CHECKOUT OVERLAY ═══════════════════ -->
 
 <!-- EMAIL GIVEAWAY POPUP -->
 <div class="popup-overlay" id="popupOverlay" onclick="if(event.target===this)closePopup()">
@@ -693,6 +901,7 @@
 // PRODUCT DATA
 // ============================================================
 const PRODUCTS = [
+  { id:'PL-012', name:'GHK-Cu', size:'50mg', price:55, category:'cellular', img:'images/ghk-cu.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'GHK-Cu (Copper Peptide) is a naturally occurring tripeptide research compound. Batch-certified and supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','49557-75-7'],['Molecular Formula','C₁₄H₂₃CuN₆O₄'],['Molecular Weight','403.91 g/mol'],['Appearance','Blue-green powder'],['Purity (HPLC)','≥99%'],['Quantity','50mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-001', name:'Retatrutide', size:'10mg', price:139, category:'metabolic', img:'images/retatrutide.jpg', purity:'≥99% Purity', badge:'Best Seller', badgeHot:true, desc:'Retatrutide is a tri-agonist research compound supplied for laboratory study. Each batch independently tested for purity and molecular identity.', tags:['≥99% Purity','HPLC Tested','MS Verified'], specs:[['CAS Number','2382367-33-9'],['Molecular Weight','~4814 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-002', name:'BPC-157', size:'10mg', price:85, category:'recovery', img:'images/bpc-157.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'BPC-157 (Body Protection Compound 157) is a synthetic pentadecapeptide supplied for laboratory research. Independently tested per batch.', tags:['≥99% Purity','HPLC Tested','COA Available'], specs:[['CAS Number','137525-51-0'],['Molecular Formula','C₆₂H₉₈N₁₆O₂₂'],['Molecular Weight','1419.55 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-003', name:'TB-500', size:'5mg', price:90, category:'recovery', img:'images/tb-500.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'TB-500 (Thymosin β4) is an analytical reference compound for laboratory research. Supplied with full batch documentation.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','77591-33-4'],['Molecular Weight','~4964 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
@@ -703,7 +912,6 @@ const PRODUCTS = [
   { id:'PL-008', name:'Melanotan-2', size:'10mg', price:75, category:'cognitive', img:'images/melanotan-2.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-2 (MT-2) is a synthetic melanocortin analogue research compound. Each batch independently tested per laboratory standards.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','121062-08-6'],['Molecular Formula','C₅₀H₆₉N₁₅O₉'],['Molecular Weight','1024.19 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-009', name:'Melanotan-1', size:'10mg', price:75, category:'cognitive', img:'images/melanotan-1.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-1 (MT-1 / Afamelanotide) is a synthetic melanocortin research compound supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','75921-69-6'],['Molecular Weight','~1646 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-011', name:'NAD+', size:'500mg', price:85, category:'cellular', img:'images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','100mg per vial'],['Third-Party Certified','Yes']] },
-  { id:'PL-012', name:'GHK-Cu', size:'50mg', price:65, category:'cellular', img:'images/ghk-cu.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'GHK-Cu (Copper Peptide) is a naturally occurring tripeptide research compound. Batch-certified and supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','49557-75-7'],['Molecular Formula','C₁₄H₂₃CuN₆O₄'],['Molecular Weight','403.91 g/mol'],['Appearance','Blue-green powder'],['Purity (HPLC)','≥99%'],['Quantity','50mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-013', name:'Glutathione', size:'1500mg', price:95, category:'cellular', img:'images/glutathione.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'Glutathione (GSH) is a tripeptide antioxidant research compound for laboratory cellular biology study. Independently batch-tested.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','70-18-8'],['Molecular Formula','C₁₀H₁₇N₃O₆S'],['Molecular Weight','307.32 g/mol'],['Appearance','White powder'],['Purity (HPLC)','≥98%'],['Quantity','1500mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-014', name:'BAC Water', size:'10ml', price:19, category:'accessories', img:'images/bac-water.jpg', purity:'Pharmaceutical Grade', badge:'Accessory', badgeHot:false, desc:'Bacteriostatic Water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research compounds.', tags:['0.9% Benzyl Alcohol','10ml vial','Lab Grade'], specs:[['Type','Bacteriostatic Water'],['Benzyl Alcohol','0.9%'],['Volume','10ml'],['Container','Multi-dose vial'],['Use','Laboratory reconstitution only']] }
 ];
@@ -781,27 +989,165 @@ ${n2?`<text x="35" y="${nY+9}" font-family="'Plus Jakarta Sans',Arial,sans-serif
 const FREE_SHIP_THRESHOLD = 200;
 let cart = [];
 
-const SHOPIFY_VARIANTS = {
-  'PL-001': '50411488051423',
-  'PL-002': '50411582554335',
-  'PL-003': '50411626823903',
-  'PL-004': '50411649892575',
-  'PL-005': '50411663098079',
-  'PL-006': '50411663130847',
-  'PL-007': '50411666407647',
-  'PL-008': '50411669684447',
-  'PL-009': '50411669717215',
-  'PL-011': '50411672994015',
-  'PL-012': '50411676270815',
-  'PL-013': '50411679547615',
-  'PL-014': '50411692622047',
-};
+// ============================================================
+// CHECKOUT
+// ============================================================
+// BSB details fetched from API env — displayed after overlay opens
+const CO_BSB  = '';  // set by env on server; shown in success screen via API response
+const CO_ACCT = '';
 
-function checkoutToShopify() {
-  const items = cart.filter(i => SHOPIFY_VARIANTS[i.id]);
-  if (!items.length) return;
-  const cartStr = items.map(i => `${SHOPIFY_VARIANTS[i.id]}:${i.qty}`).join(',');
-  window.location.href = `https://aupeptidelab.com/cart/${cartStr}`;
+function openCheckout() {
+  if (!cart.length) return;
+  const overlay = document.getElementById('coOverlay');
+  const success  = document.getElementById('coSuccess');
+  const body     = document.getElementById('coBody');
+  success.classList.remove('visible');
+  body.style.display = 'grid';
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  document.body.style.overflow = 'hidden';
+  coRenderSummary();
+}
+
+function closeCheckout() {
+  const overlay = document.getElementById('coOverlay');
+  overlay.classList.remove('visible');
+  setTimeout(() => {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }, 250);
+}
+
+function coRenderSummary() {
+  const itemsEl  = document.getElementById('coSumItems');
+  const subEl    = document.getElementById('coSumSubtotal');
+  const shipEl   = document.getElementById('coSumShipping');
+  const totalEl  = document.getElementById('coSumTotal');
+  const payAmtEl = document.getElementById('coPayAmt');
+
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const zone     = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
+  const ship     = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
+  const total    = subtotal + ship;
+
+  itemsEl.innerHTML = cart.map(i => {
+    const img = i.img
+      ? `<img src="${i.img}" alt="${i.name}" />`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:20px">⬜</div>`;
+    return `<div class="co-sum-item">
+      <div class="co-sum-item__img">${img}<div class="co-sum-item__badge">${i.qty}</div></div>
+      <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px;font-weight:500">${i.size}</span>` : ''}</div>
+      <div class="co-sum-item__price">A$${(i.price * i.qty).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+
+  subEl.textContent   = `A$${subtotal.toFixed(2)}`;
+  shipEl.textContent  = ship === 0 ? 'FREE' : `A$${ship.toFixed(2)}`;
+  totalEl.textContent = `A$${total.toFixed(2)}`;
+  payAmtEl.textContent = `A$${total.toFixed(2)}`;
+}
+
+function coCountryChange() {
+  const country   = document.getElementById('co-country').value;
+  const stateWrap = document.getElementById('co-state-wrap');
+  const stateSelect = document.getElementById('co-state-select');
+  const stateText   = document.getElementById('co-state-text');
+  if (country === 'AU') {
+    stateSelect.style.display = '';
+    stateText.style.display   = 'none';
+  } else {
+    stateSelect.style.display = 'none';
+    stateText.style.display   = '';
+  }
+  coRenderSummary();
+}
+
+function coVal(id) { return document.getElementById(id)?.value.trim() || ''; }
+
+async function placeOrder() {
+  // Basic validation
+  const required = { 'co-email': 'Email', 'co-first': 'First name', 'co-last': 'Last name', 'co-address1': 'Address', 'co-suburb': 'Suburb / City', 'co-postcode': 'Postcode' };
+  let firstErr = null;
+  for (const [id, label] of Object.entries(required)) {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      if (!firstErr) firstErr = label;
+    } else {
+      el.classList.remove('error');
+    }
+  }
+  const emailEl = document.getElementById('co-email');
+  if (emailEl.value && !/\S+@\S+\.\S+/.test(emailEl.value)) {
+    emailEl.classList.add('error');
+    firstErr = firstErr || 'a valid email address';
+  }
+  if (firstErr) {
+    const errEl = document.getElementById('coError');
+    errEl.textContent = `Please enter ${firstErr}.`;
+    errEl.style.display = 'block';
+    return;
+  }
+  document.getElementById('coError').style.display = 'none';
+
+  const country = coVal('co-country');
+  const isAU    = country === 'AU';
+  const state   = isAU
+    ? document.getElementById('co-state-select').value
+    : coVal('co-state-text');
+
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const zone     = document.querySelector('.ship-zone-btn.active')?.dataset.zone || 'au';
+  const ship     = subtotal >= FREE_SHIP_THRESHOLD ? 0 : (zone === 'au' ? 10 : 30);
+
+  const payload = {
+    email:     coVal('co-email'),
+    firstName: coVal('co-first'),
+    lastName:  coVal('co-last'),
+    address1:  coVal('co-address1'),
+    address2:  coVal('co-address2'),
+    suburb:    coVal('co-suburb'),
+    state,
+    postcode:  coVal('co-postcode'),
+    country,
+    phone:     coVal('co-phone'),
+    items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty })),
+    subtotal,
+    shipping: ship,
+    total: subtotal + ship,
+  };
+
+  const btn = document.getElementById('coPlaceBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Order failed');
+
+    const orderName = data.orderName;
+
+    // Show success screen
+    document.getElementById('coBody').style.display = 'none';
+    const success = document.getElementById('coSuccess');
+    document.getElementById('coSuccessNum').textContent = orderName;
+    document.getElementById('coSuccessBsb').textContent  = data.bsb  || '(see email)';
+    document.getElementById('coSuccessAcct').textContent = data.acct || '(see email)';
+    document.getElementById('coSuccessAmt').textContent  = `A$${payload.total.toFixed(2)}`;
+    document.getElementById('coSuccessRef').textContent  = orderName;
+    success.classList.add('visible');
+    document.getElementById('coOverlay').scrollTop = 0;
+
+    cart = [];
+    renderCart();
+  } catch (err) {
+    const errEl = document.getElementById('coError');
+    errEl.textContent = 'Something went wrong. Please try again or contact support@aupeptidelab.com';
+    errEl.style.display = 'block';
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
 }
 
 // ============================================================
