@@ -14,7 +14,7 @@ function generateOrderId() {
 }
 
 async function sendEmail(to, subject, html) {
-  const res = await fetch('https://api.resend.com/emails', {
+  const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${RESEND_KEY}`,
@@ -22,7 +22,11 @@ async function sendEmail(to, subject, html) {
     },
     body: JSON.stringify({ from: `PeptideLab <${FROM_EMAIL}>`, to, subject, html }),
   });
-  if (!res.ok) console.error('Resend error:', await res.text());
+  if (!r.ok) {
+    const body = await r.text();
+    console.error('Resend error:', r.status, body);
+    throw new Error(`Resend ${r.status}: ${body}`);
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -143,6 +147,7 @@ module.exports = async function handler(req, res) {
 </div>
 </body></html>`;
 
+  let emailError = null;
   try {
     await Promise.all([
       sendEmail(email, `Order ${orderName} — Complete Your Bank Transfer`, customerHtml),
@@ -150,7 +155,8 @@ module.exports = async function handler(req, res) {
     ]);
   } catch (err) {
     console.error('Email error:', err);
+    emailError = err.message;
   }
 
-  return res.status(200).json({ orderName, bsb: BSB, acct: ACCOUNT });
+  return res.status(200).json({ orderName, bsb: BSB, acct: ACCOUNT, emailError });
 };
