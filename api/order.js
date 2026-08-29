@@ -1,12 +1,22 @@
 // Vercel serverless function — POST /api/order
 // CommonJS — no vercel.json or package.json required
 
+const crypto       = require('crypto');
 const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
+const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret || 'pl-confirm-2024';
 const ACCOUNT_NAME = 'Australian Peptide Labs Store';
 const OWNER_EMAIL  = 'support@aupeptidelab.com';
 const FROM_EMAIL   = 'orders@aupeptidelab.com';
+const SITE_URL     = 'https://aupeptidelab.com';
+
+function makeConfirmToken(order, email, amt) {
+  return crypto.createHmac('sha256', CONFIRM_SECRET)
+    .update(`${order}:${email}:${amt}`)
+    .digest('hex')
+    .slice(0, 20);
+}
 
 function generateOrderId() {
   const n = Math.floor((Date.now() / 1000) % 100000).toString().padStart(5, '0');
@@ -139,9 +149,17 @@ module.exports = async function handler(req, res) {
       <tr><td style="padding:12px 0;font-weight:800;font-size:16px;border-top:2px solid #111">TOTAL</td><td style="border-top:2px solid #111"></td><td style="padding:12px 0;text-align:right;font-weight:800;font-size:18px;border-top:2px solid #111">A$${Number(total).toFixed(2)}</td></tr>
     </table>
 
-    <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:14px 16px">
+    <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin-bottom:20px">
       <div style="font-size:13px;font-weight:700;color:#92400e">Expires: ${deadlineStr} AEST</div>
-      <div style="font-size:13px;color:#78350f;margin-top:4px">Watch for a transfer with reference <strong>${orderName}</strong>. Once confirmed, dispatch the order.</div>
+      <div style="font-size:13px;color:#78350f;margin-top:4px">Watch for a transfer with reference <strong>${orderName}</strong>. Once payment clears, click below to notify the customer.</div>
+    </div>
+
+    <div style="text-align:center">
+      <a href="${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}"
+        style="display:inline-block;background:#16a34a;color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;text-decoration:none">
+        ✓ Confirm Payment Received
+      </a>
+      <div style="font-size:12px;color:#999;margin-top:8px">Clicking this sends a dispatch confirmation email to the customer.</div>
     </div>
   </div>
 </div>
