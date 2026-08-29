@@ -20,7 +20,7 @@ async function sendEmail(to, subject, html) {
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: `PeptideLab <${FROM_EMAIL}>`, to, subject, html }),
+    body: JSON.stringify({ from: `PeptideLab <${FROM_EMAIL}>`, reply_to: 'support@aupeptidelab.com', to, subject, html }),
   });
   if (!r.ok) throw new Error(await r.text());
 }

@@ -30,7 +30,7 @@ async function sendEmail(to, subject, html) {
       'Authorization': `Bearer ${RESEND_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ from: `PeptideLab <${FROM_EMAIL}>`, to, subject, html }),
+    body: JSON.stringify({ from: `PeptideLab <${FROM_EMAIL}>`, reply_to: OWNER_EMAIL, to, subject, html }),
   });
   if (!r.ok) {
     const body = await r.text();
