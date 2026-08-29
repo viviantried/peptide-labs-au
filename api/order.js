@@ -6,10 +6,25 @@ const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
 const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret || 'pl-confirm-2024';
-const ACCOUNT_NAME = 'Australian Peptide Labs Store';
-const OWNER_EMAIL  = 'support@aupeptidelab.com';
-const FROM_EMAIL   = 'orders@aupeptidelab.com';
-const SITE_URL     = 'https://www.aupeptidelab.com';
+const ACCOUNT_NAME   = 'Australian Peptide Labs Store';
+const OWNER_EMAIL    = 'support@aupeptidelab.com';
+const FROM_EMAIL     = 'orders@aupeptidelab.com';
+const SITE_URL       = 'https://www.aupeptidelab.com';
+const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN || process.env.airtable_token;
+const AIRTABLE_BASE  = 'appwbIeYvWxx7R9Y8';
+
+async function logToAirtable(order) {
+  if (!AIRTABLE_TOKEN) return;
+  try {
+    await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/Orders`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ records: [{ fields: order }] }),
+    });
+  } catch (err) {
+    console.error('Airtable log error:', err.message);
+  }
+}
 
 function makeConfirmToken(order, email, amt) {
   return crypto.createHmac('sha256', CONFIRM_SECRET)
@@ -182,6 +197,22 @@ module.exports = async function handler(req, res) {
     console.error('Email error:', err);
     emailError = err.message;
   }
+
+  logToAirtable({
+    'Name':           orderName,
+    'Customer':       `${firstName} ${lastName}`,
+    'Email':          email,
+    'Phone':          phone || '',
+    'Address':        `${address1}${address2 ? ', ' + address2 : ''}, ${suburb} ${state || ''} ${postcode}, ${country}`,
+    'Items':          items.map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty} — A$${(i.price * i.qty).toFixed(2)}`).join('\n'),
+    'Subtotal':       Number(subtotal),
+    'Discount':       Number(discount) || 0,
+    'Shipping':       Number(shipping),
+    'Total':          Number(total),
+    'Payment Method': paymentLabel || paymentMethod,
+    'Status':         'Pending Payment',
+    'Date':           new Date().toISOString(),
+  });
 
   return res.status(200).json({ orderName, bsb: BSB, acct: ACCOUNT, emailError });
 };
