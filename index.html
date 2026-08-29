@@ -232,6 +232,18 @@
             </div>
           </div>
 
+          <!-- INTL SWIFT -->
+          <div class="co-pay-opt" id="popt-intl" onclick="selectPayMethod('intl')">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot"></div>
+              <span>International Wire Transfer (SWIFT)</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-intl" style="display:none">
+              <div id="pfields-intl"><div class="co-pay-intl-note">SWIFT transfer details will be shown on the order confirmation page after placing your order.</div></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+            </div>
+          </div>
+
           <!-- EUR -->
           <div class="co-pay-opt" id="popt-eur" onclick="selectPayMethod('eur')">
             <div class="co-pay-opt__hdr">
@@ -1185,11 +1197,12 @@ let coSelectedPayId = 'aud';
 let coPayApiData    = {};
 
 const PAY_METHOD_LABELS = {
-  aud: 'Bank Transfer (AUS / NZ)',
-  eur: 'Bank Transfer (EUR)',
-  usd: 'Bank Transfer (USD)',
-  cad: 'Bank Transfer (CAD)',
-  gbp: 'Bank Transfer (UK / GBP)',
+  aud:  'Bank Transfer (AUS / NZ)',
+  intl: 'International Wire Transfer (SWIFT)',
+  eur:  'Bank Transfer (EUR)',
+  usd:  'Bank Transfer (USD)',
+  cad:  'Bank Transfer (CAD)',
+  gbp:  'Bank Transfer (UK / GBP)',
 };
 
 const SHIP_ZONES = {
@@ -1249,7 +1262,7 @@ async function coLoadPayMethods() {
     coPayApiData = {};
     (data.methods || []).forEach(m => { coPayApiData[m.id] = m.fields; });
     // Update international fields if configured
-    ['eur', 'usd', 'cad', 'gbp'].forEach(id => {
+    ['intl', 'eur', 'usd', 'cad', 'gbp'].forEach(id => {
       const fields = coPayApiData[id];
       if (!fields || !fields.length) return;
       const container = document.getElementById(`pfields-${id}`);
@@ -1264,7 +1277,7 @@ async function coLoadPayMethods() {
 
 function selectPayMethod(id) {
   coSelectedPayId = id;
-  ['aud', 'eur', 'usd', 'cad', 'gbp'].forEach(mid => {
+  ['aud', 'intl', 'eur', 'usd', 'cad', 'gbp'].forEach(mid => {
     const opt = document.getElementById(`popt-${mid}`);
     const det = document.getElementById(`pdet-${mid}`);
     const dot = opt?.querySelector('.co-radio-dot');

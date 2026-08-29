@@ -103,11 +103,18 @@ module.exports = async function handler(req, res) {
     </table>
 
     <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:22px;margin:0 0 24px">
-      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">Bank Transfer Details</h2>
+      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">${paymentMethod === 'intl' ? 'International Wire Transfer (SWIFT)' : 'Bank Transfer Details'}</h2>
       <table style="width:100%;border-collapse:collapse">
         <tr><td style="padding:6px 0;color:#555;font-size:14px;width:44%">Account Name</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT_NAME}</td></tr>
+        ${paymentMethod === 'intl' ? `
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">Bank</td><td style="padding:6px 0;font-weight:700;font-size:14px">Commonwealth Bank of Australia</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">SWIFT / BIC</td><td style="padding:6px 0;font-weight:700;font-size:14px">CTBAAU2S</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">Account No.</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT}</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">Currency</td><td style="padding:6px 0;font-weight:700;font-size:14px">AUD</td></tr>
+        ` : `
         <tr><td style="padding:6px 0;color:#555;font-size:14px">BSB</td><td style="padding:6px 0;font-weight:700;font-size:14px">${BSB}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Account Number</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT}</td></tr>
+        `}
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Amount</td><td style="padding:6px 0;font-weight:800;font-size:18px;color:#16a34a">A$${Number(total).toFixed(2)}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>

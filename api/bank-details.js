@@ -21,6 +21,19 @@ module.exports = function handler(req, res) {
         { label: 'Account No.',  value: ACCOUNT },
       ],
     });
+
+    methods.push({
+      id: 'intl',
+      label: 'International Wire Transfer (SWIFT)',
+      currency: 'AUD',
+      fields: [
+        { label: 'Account Name', value: 'Australian Peptide Labs Store' },
+        { label: 'Bank',         value: 'Commonwealth Bank of Australia' },
+        { label: 'SWIFT / BIC',  value: 'CTBAAU2S' },
+        { label: 'Account No.',  value: ACCOUNT },
+        { label: 'Currency',     value: 'AUD' },
+      ],
+    });
   }
 
   const EUR_IBAN    = process.env.EUR_IBAN        || process.env.eur_iban;
