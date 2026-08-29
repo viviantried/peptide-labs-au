@@ -80,11 +80,8 @@ module.exports = async function handler(req, res) {
 
   try {
     await sendEmail(email, `Payment Confirmed — Order ${order} is Being Dispatched`, confirmHtml);
-    return res.status(200).send(page(`
-      <h2 style="color:#16a34a;margin:0 0 8px">✓ Payment confirmed</h2>
-      <p style="color:#555;margin:0 0 4px">Confirmation email sent to <strong>${email}</strong></p>
-      <p style="color:#555;margin:0">Order <strong>${order}</strong> — ${amtDisplay}</p>
-    `, 'success'));
+    const trackToken = makeToken(order, email, 'track');
+    return res.status(200).send(successPage({ order, email, amt: amtDisplay, name: firstName, trackToken }));
   } catch (err) {
     return res.status(500).send(page('Failed to send email: ' + err.message, 'error'));
   }
@@ -97,6 +94,51 @@ function page(body, type) {
 <body style="margin:0;padding:60px 20px;background:#f5f5f5;font-family:Arial,sans-serif;text-align:center">
   <div style="max-width:420px;margin:0 auto;background:${color};border:2px solid ${border};border-radius:12px;padding:36px">
     ${body}
+  </div>
+</body></html>`;
+}
+
+function successPage({ order, email, amt, name, trackToken }) {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>PeptideLab</title></head>
+<body style="margin:0;padding:40px 20px;background:#f5f5f5;font-family:Arial,sans-serif;text-align:center">
+  <div style="max-width:460px;margin:0 auto">
+
+    <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:32px;margin-bottom:24px">
+      <h2 style="color:#16a34a;margin:0 0 8px;font-size:20px">✓ Payment confirmed</h2>
+      <p style="color:#555;margin:0 0 4px">Dispatch email sent to <strong>${email}</strong></p>
+      <p style="color:#555;margin:0">Order <strong>${order}</strong> — ${amt}</p>
+    </div>
+
+    <div style="background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:32px;text-align:left">
+      <h3 style="margin:0 0 6px;font-size:16px;color:#111">📦 Send Tracking Number</h3>
+      <p style="margin:0 0 20px;font-size:13px;color:#666">Once you've shipped the order, fill this in to notify ${name}.</p>
+      <form method="POST" action="/api/send-tracking">
+        <input type="hidden" name="order" value="${order}">
+        <input type="hidden" name="email" value="${email}">
+        <input type="hidden" name="token" value="${trackToken}">
+        <div style="margin-bottom:14px">
+          <label style="display:block;font-size:13px;font-weight:700;color:#333;margin-bottom:6px">Tracking Number</label>
+          <input type="text" name="tracking" required placeholder="e.g. EY123456789AU"
+            style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;outline:none">
+        </div>
+        <div style="margin-bottom:20px">
+          <label style="display:block;font-size:13px;font-weight:700;color:#333;margin-bottom:6px">Carrier</label>
+          <select name="carrier" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;background:#fff;outline:none">
+            <option value="Australia Post">Australia Post</option>
+            <option value="DHL Express">DHL Express</option>
+            <option value="FedEx">FedEx</option>
+            <option value="StarTrack">StarTrack</option>
+            <option value="Aramex">Aramex</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <button type="submit"
+          style="width:100%;background:#111;color:#fff;font-size:14px;font-weight:700;padding:12px;border:none;border-radius:8px;cursor:pointer">
+          Send Tracking Email to Customer
+        </button>
+      </form>
+    </div>
+
   </div>
 </body></html>`;
 }
