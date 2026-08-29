@@ -9,7 +9,7 @@ const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret 
 const ACCOUNT_NAME = 'Australian Peptide Labs Store';
 const OWNER_EMAIL  = 'support@aupeptidelab.com';
 const FROM_EMAIL   = 'orders@aupeptidelab.com';
-const SITE_URL     = 'https://aupeptidelab.com';
+const SITE_URL     = 'https://www.aupeptidelab.com';
 
 function makeConfirmToken(order, email, amt) {
   return crypto.createHmac('sha256', CONFIRM_SECRET)

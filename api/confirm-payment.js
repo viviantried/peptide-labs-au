@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
 const SECRET       = process.env.CONFIRM_SECRET  || process.env.confirm_secret || 'pl-confirm-2024';
 const FROM_EMAIL   = 'orders@aupeptidelab.com';
-const SITE_URL     = 'https://aupeptidelab.com';
+const SITE_URL     = 'https://www.aupeptidelab.com';
 
 function makeToken(order, email, amt) {
   return crypto.createHmac('sha256', SECRET)
