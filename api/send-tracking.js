@@ -88,25 +88,35 @@ module.exports = async function handler(req, res) {
     <div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px">PeptideLab</div>
     <div style="color:#888;font-size:12px;margin-top:2px">aupeptidelab.com</div>
   </div>
-  <div style="padding:32px;text-align:center">
-    <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">How was your order?</h1>
-    <p style="color:#666;margin:0 0 28px;font-size:15px">We hope your order arrived safely! We'd love to hear what you think.</p>
+  <div style="padding:36px;text-align:center">
 
-    <p style="color:#555;font-size:14px;margin:0 0 16px;font-weight:600">Tap a star to rate your experience:</p>
-    <div style="margin-bottom:28px">
-      <a href="${feedbackBase}&rating=5" style="display:inline-block;font-size:36px;color:#d1d5db;text-decoration:none;padding:4px" title="5 stars">★</a>
-      <a href="${feedbackBase}&rating=4" style="display:inline-block;font-size:36px;color:#d1d5db;text-decoration:none;padding:4px" title="4 stars">★</a>
-      <a href="${feedbackBase}&rating=3" style="display:inline-block;font-size:36px;color:#d1d5db;text-decoration:none;padding:4px" title="3 stars">★</a>
-      <a href="${feedbackBase}&rating=2" style="display:inline-block;font-size:36px;color:#d1d5db;text-decoration:none;padding:4px" title="2 stars">★</a>
-      <a href="${feedbackBase}&rating=1" style="display:inline-block;font-size:36px;color:#d1d5db;text-decoration:none;padding:4px" title="1 star">★</a>
+    <div style="font-size:40px;margin-bottom:16px">🧪</div>
+    <h1 style="font-size:22px;font-weight:800;color:#111;margin:0 0 12px;line-height:1.3">Thank you for being a part of the PeptideLab community.</h1>
+    <p style="color:#555;margin:0 0 8px;font-size:15px;line-height:1.6">Knowing that our peptides are supporting real research is genuinely why we do this.</p>
+    <p style="color:#777;margin:0 0 28px;font-size:14px;line-height:1.6">Your order <strong style="color:#111">${order}</strong> has had a week to arrive — we'd love to know how everything went.</p>
+
+    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin:0 0 24px;text-align:left">
+      <div style="font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">A few things we care about</div>
+      <div style="font-size:14px;color:#555;line-height:2">
+        ✓ &nbsp;Product quality &amp; purity on arrival<br>
+        ✓ &nbsp;Packaging — sealed, labelled, and intact<br>
+        ✓ &nbsp;Delivery speed and communication<br>
+        ✓ &nbsp;Overall experience ordering from us
+      </div>
     </div>
 
-    <a href="${feedbackBase}" style="display:inline-block;background:#111;color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:8px;text-decoration:none;margin-bottom:28px">Leave Feedback →</a>
-
-    <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:left">
-      <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Order Reference</div>
-      <div style="font-size:18px;font-weight:800;color:#111">${order}</div>
+    <p style="color:#555;font-size:14px;margin:0 0 14px;font-weight:600">How would you rate your experience?</p>
+    <div style="margin-bottom:28px;font-size:0">
+      <a href="${feedbackBase}&rating=5" style="display:inline-block;font-size:38px;color:#d1d5db;text-decoration:none;padding:2px 5px" title="5 — Excellent">★</a>
+      <a href="${feedbackBase}&rating=4" style="display:inline-block;font-size:38px;color:#d1d5db;text-decoration:none;padding:2px 5px" title="4 — Great">★</a>
+      <a href="${feedbackBase}&rating=3" style="display:inline-block;font-size:38px;color:#d1d5db;text-decoration:none;padding:2px 5px" title="3 — Good">★</a>
+      <a href="${feedbackBase}&rating=2" style="display:inline-block;font-size:38px;color:#d1d5db;text-decoration:none;padding:2px 5px" title="2 — Fair">★</a>
+      <a href="${feedbackBase}&rating=1" style="display:inline-block;font-size:38px;color:#d1d5db;text-decoration:none;padding:2px 5px" title="1 — Poor">★</a>
     </div>
+
+    <a href="${feedbackBase}" style="display:inline-block;background:#111;color:#fff;font-size:14px;font-weight:700;padding:13px 32px;border-radius:8px;text-decoration:none">Share Your Feedback →</a>
+
+    <p style="color:#bbb;font-size:12px;margin:20px 0 0">Takes less than a minute — and it genuinely helps us improve.</p>
   </div>
   <div style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;text-align:center">
     <p style="margin:0;font-size:12px;color:#aaa">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#888">support@aupeptidelab.com</a></p>

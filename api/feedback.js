@@ -77,8 +77,9 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).send(page(`
       <div style="font-size:40px;margin-bottom:12px">${'★'.repeat(r)}${'☆'.repeat(5-r)}</div>
-      <h2 style="color:#111;margin:0 0 8px">Thank you for your feedback!</h2>
-      <p style="color:#555;margin:0">Your review helps us improve. We appreciate your support.</p>
+      <h2 style="color:#111;margin:0 0 8px">Thank you so much — it means a lot.</h2>
+      <p style="color:#555;margin:0 0 10px">Your feedback helps us serve the research community better. We read every single one.</p>
+      <p style="color:#aaa;font-size:13px;margin:0">— The PeptideLab team 🧪</p>
     `, 'success'));
   }
 
@@ -97,11 +98,13 @@ function feedbackForm({ order, email, token, rating }) {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>PeptideLab Feedback</title></head>
 <body style="margin:0;padding:40px 20px;background:#f5f5f5;font-family:Arial,sans-serif;text-align:center">
 <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:40px;box-shadow:0 2px 16px rgba(0,0,0,.08)">
+  <div style="font-size:32px;margin-bottom:10px">🧪</div>
   <div style="font-size:20px;font-weight:800;color:#111;margin-bottom:4px">PeptideLab</div>
-  <div style="font-size:13px;color:#999;margin-bottom:28px">Order ${order}</div>
+  <div style="font-size:13px;color:#999;margin-bottom:20px">Order ${order}</div>
 
-  <h2 style="font-size:20px;font-weight:700;color:#111;margin:0 0 6px">How was your experience?</h2>
-  <p style="color:#666;font-size:14px;margin:0 0 20px">Tap a star to rate your order</p>
+  <h2 style="font-size:20px;font-weight:700;color:#111;margin:0 0 8px">How was your experience?</h2>
+  <p style="color:#666;font-size:14px;margin:0 0 6px;line-height:1.5">We'd love to know how the quality, packaging, and delivery went.</p>
+  <p style="color:#aaa;font-size:13px;margin:0 0 20px">Tap a star to get started</p>
 
   <div style="margin-bottom:${rating ? '24px' : '0'}">${starBtns}</div>
 
@@ -112,9 +115,9 @@ function feedbackForm({ order, email, token, rating }) {
     <input type="hidden" name="token" value="${token}">
     <input type="hidden" name="rating" value="${rating}">
     <label style="display:block;font-size:13px;font-weight:700;color:#333;margin-bottom:8px">
-      ${'★'.repeat(rating)}${'☆'.repeat(5-rating)} — Add a comment <span style="color:#999;font-weight:400">(optional)</span>
+      ${'★'.repeat(rating)}${'☆'.repeat(5-rating)} — Tell us more <span style="color:#999;font-weight:400">(optional)</span>
     </label>
-    <textarea name="comment" rows="4" placeholder="What did you think of the product quality, delivery speed, or anything else?"
+    <textarea name="comment" rows="4" placeholder="e.g. How did the product arrive? Was purity what you expected? Anything we could improve for your next order?"
       style="width:100%;box-sizing:border-box;padding:12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;font-family:Arial,sans-serif;resize:vertical;outline:none"></textarea>
     <button type="submit"
       style="width:100%;margin-top:14px;background:#111;color:#fff;font-size:14px;font-weight:700;padding:13px;border:none;border-radius:8px;cursor:pointer">
