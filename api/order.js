@@ -79,6 +79,7 @@ module.exports = async function handler(req, res) {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
     items, subtotal, shipping, discount, total,
+    mbDiscount, promoDiscount,
     promoCode, paymentMethod, paymentLabel, shippingMethod, marketingConsent,
   } = req.body;
 
@@ -95,9 +96,42 @@ module.exports = async function handler(req, res) {
     hour: '2-digit', minute: '2-digit',
   });
 
+  const totalQty = items.reduce((s, i) => s + i.qty, 0);
+  const bundleTier = totalQty >= 5 ? '5+ item bundle — 10% off'
+    : totalQty >= 3 ? '3+ item bundle — 5% off'
+    : totalQty >= 2 ? '2 item bundle — 3% off'
+    : null;
+  const mbD    = Number(mbDiscount)    || 0;
+  const promoD = Number(promoDiscount) || 0;
+  const gotFreeShipping = Number(shipping) === 0 && Number(subtotal) >= 200;
+  const subItems = (items || []).filter(i => i.subscription);
+
+  const intelRows = [
+    bundleTier && mbD > 0
+      ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Bundle</span><span style="font-weight:700;color:#7c3aed">${bundleTier} · −A$${mbD.toFixed(2)}</span></div>`
+      : null,
+    gotFreeShipping
+      ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Free Shipping</span><span style="font-weight:700;color:#16a34a">Yes — order over $200</span></div>`
+      : `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Free Shipping</span><span style="color:#aaa">No (A$${Number(subtotal).toFixed(2)} order)</span></div>`,
+    promoCode && promoD > 0
+      ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Promo Code</span><span style="font-weight:700;color:#dc2626">${promoCode} · −A$${promoD.toFixed(2)}</span></div>`
+      : promoCode
+        ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Promo Code</span><span style="font-weight:700;color:#dc2626">${promoCode}</span></div>`
+        : null,
+    subItems.length > 0
+      ? `<div style="padding:6px 0;font-size:13px"><span style="color:#555">Monthly Subscriptions</span><div style="margin-top:4px">${subItems.map(i => `<div style="font-weight:700;color:#6366f1;margin-left:8px">· ${i.name}${i.size ? ` (${i.size})` : ''} × ${i.qty}</div>`).join('')}</div></div>`
+      : `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px"><span style="color:#555">Subscription</span><span style="color:#aaa">None — one-time purchase</span></div>`,
+  ].filter(Boolean).join('');
+
+  const intelBox = `
+    <div style="background:#f8f4ff;border:1px solid #ddd6fe;border-radius:8px;padding:14px 16px;margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Order Details</div>
+      ${intelRows}
+    </div>`;
+
   const itemsHtml = items.map(i => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px">${i.name}${i.size ? ` — ${i.size}` : ''}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px">${i.name}${i.size ? ` — ${i.size}` : ''}${i.subscription ? ' <span style="display:inline-block;background:#6366f1;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">MONTHLY</span>' : ''}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:center;color:#666;font-size:14px">x${i.qty}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px">A$${(i.price * i.qty).toFixed(2)}</td>
     </tr>`).join('');
@@ -180,10 +214,14 @@ module.exports = async function handler(req, res) {
     <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Items</div>
     <table style="width:100%;border-collapse:collapse;margin:0 0 20px">${itemsHtml}
       <tr><td style="padding:8px 0;color:#666;font-size:14px">Subtotal</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">A$${Number(subtotal).toFixed(2)}</td></tr>
-      ${Number(discount) > 0 ? `<tr><td style="padding:8px 0;color:#16a34a;font-size:14px">Discount${promoCode ? ` (${promoCode})` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#16a34a">−A$${Number(discount).toFixed(2)}</td></tr>` : ''}
+      ${mbD > 0 ? `<tr><td style="padding:8px 0;color:#7c3aed;font-size:14px">Bundle discount</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#7c3aed">−A$${mbD.toFixed(2)}</td></tr>` : ''}
+      ${promoD > 0 ? `<tr><td style="padding:8px 0;color:#16a34a;font-size:14px">Promo (${promoCode})</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#16a34a">−A$${promoD.toFixed(2)}</td></tr>` : ''}
+      ${mbD === 0 && promoD === 0 && Number(discount) > 0 ? `<tr><td style="padding:8px 0;color:#16a34a;font-size:14px">Discount${promoCode ? ` (${promoCode})` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#16a34a">−A$${Number(discount).toFixed(2)}</td></tr>` : ''}
       <tr><td style="padding:8px 0;color:#666;font-size:14px">Shipping${shippingMethod ? `<div style="font-size:11px;color:#999;margin-top:2px">${shippingMethod}</div>` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
       <tr><td style="padding:12px 0;font-weight:800;font-size:16px;border-top:2px solid #111">TOTAL</td><td style="border-top:2px solid #111"></td><td style="padding:12px 0;text-align:right;font-weight:800;font-size:18px;border-top:2px solid #111">A$${Number(total).toFixed(2)}</td></tr>
     </table>
+
+    ${intelBox}
 
     <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin-bottom:20px">
       <div style="font-size:13px;font-weight:700;color:#92400e">Expires: ${deadlineStr} AEST</div>
@@ -268,11 +306,17 @@ module.exports = async function handler(req, res) {
     'Email':          email,
     'Phone':          phone || '',
     'Address':        `${address1}${address2 ? ', ' + address2 : ''}, ${suburb} ${state || ''} ${postcode}, ${country}`,
-    'Items':          items.map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty} — A$${(i.price * i.qty).toFixed(2)}`).join('\n'),
+    'Items':          items.map(i => `${i.name}${i.size ? ` (${i.size})` : ''}${i.subscription ? ' [MONTHLY SUB]' : ''} x${i.qty} — A$${(i.price * i.qty).toFixed(2)}`).join('\n'),
     'Subtotal':       Number(subtotal),
+    'Bundle Tier':    bundleTier || 'None',
+    'Bundle Discount': mbD,
+    'Promo Code':     promoCode || '',
+    'Promo Discount': promoD,
     'Discount':       Number(discount) || 0,
+    'Free Shipping':  gotFreeShipping ? 'Yes' : 'No',
     'Shipping':       Number(shipping),
     'Total':          Number(total),
+    'Subscriptions':  subItems.length > 0 ? subItems.map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty}`).join(', ') : 'None',
     'Payment Method': paymentLabel || paymentMethod,
     'Status':         'Pending Payment',
     'Date':           new Date().toISOString(),
