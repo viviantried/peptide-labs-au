@@ -243,53 +243,6 @@
             </div>
           </div>
 
-          <!-- EUR -->
-          <div class="co-pay-opt" id="popt-eur" onclick="selectPayMethod('eur')">
-            <div class="co-pay-opt__hdr">
-              <div class="co-radio-dot"></div>
-              <span>Bank Transfer (EUR)</span>
-            </div>
-            <div class="co-pay-opt__details" id="pdet-eur" style="display:none">
-              <div id="pfields-eur"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive EUR transfer details.</div></div>
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
-            </div>
-          </div>
-
-          <!-- USD -->
-          <div class="co-pay-opt" id="popt-usd" onclick="selectPayMethod('usd')">
-            <div class="co-pay-opt__hdr">
-              <div class="co-radio-dot"></div>
-              <span>Bank Transfer (USD)</span>
-            </div>
-            <div class="co-pay-opt__details" id="pdet-usd" style="display:none">
-              <div id="pfields-usd"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive USD transfer details.</div></div>
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
-            </div>
-          </div>
-
-          <!-- CAD -->
-          <div class="co-pay-opt" id="popt-cad" onclick="selectPayMethod('cad')">
-            <div class="co-pay-opt__hdr">
-              <div class="co-radio-dot"></div>
-              <span>Bank Transfer (CAD)</span>
-            </div>
-            <div class="co-pay-opt__details" id="pdet-cad" style="display:none">
-              <div id="pfields-cad"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive CAD transfer details.</div></div>
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
-            </div>
-          </div>
-
-          <!-- GBP -->
-          <div class="co-pay-opt" id="popt-gbp" onclick="selectPayMethod('gbp')">
-            <div class="co-pay-opt__hdr">
-              <div class="co-radio-dot"></div>
-              <span>Bank Transfer (UK / GBP)</span>
-            </div>
-            <div class="co-pay-opt__details" id="pdet-gbp" style="display:none">
-              <div id="pfields-gbp"><div class="co-pay-intl-note">Place your order first, then email <strong>support@aupeptidelab.com</strong> with your order reference to receive GBP transfer details.</div></div>
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
-            </div>
-          </div>
 
         </div>
         <div class="co-bsb-note" style="margin-top:10px;border-radius:8px;background:#0D1F0D;border:1px solid #1a3a1a">Transfer the exact amount and use your order reference. Orders dispatched once payment confirmed — usually same business day.</div>
@@ -702,25 +655,6 @@
           <div class="product-page-purity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="pdpPurity">≥99% Purity Verified · Third-Party Certified</span></div>
           <div class="product-page-price" id="pdpPrice">$0.00</div>
           <div class="product-page-price-note" id="pdpPriceNote">Per vial · AUD · Research use only</div>
-          <div class="pdp-purchase-type">
-            <div class="purchase-option selected" id="optOnce" onclick="setPurchaseType('once')">
-              <div class="purchase-option__left">
-                <div class="po-radio"></div>
-                <span class="po-label">One-time purchase</span>
-              </div>
-              <span class="po-price" id="pdpOncePrice">$0.00</span>
-            </div>
-            <div class="purchase-option" id="optSubscribe" onclick="setPurchaseType('subscribe')">
-              <div class="purchase-option__left">
-                <div class="po-radio"></div>
-                <div>
-                  <span class="po-label">Subscribe &amp; Save<span class="po-save">10% OFF</span></span>
-                  <div class="po-freq">Monthly · Cancel after 2nd month</div>
-                </div>
-              </div>
-              <span class="po-price" id="pdpSubPrice">$0.00</span>
-            </div>
-          </div>
 
           <!-- Bundle & Save -->
           <div class="pdp-bundle-box">
@@ -1205,10 +1139,6 @@ let coPayApiData    = {};
 const PAY_METHOD_LABELS = {
   aud:  'Bank Transfer (AUS / NZ)',
   intl: 'International Wire Transfer (SWIFT)',
-  eur:  'Bank Transfer (EUR)',
-  usd:  'Bank Transfer (USD)',
-  cad:  'Bank Transfer (CAD)',
-  gbp:  'Bank Transfer (UK / GBP)',
 };
 
 const SHIP_ZONES = {
@@ -1273,7 +1203,7 @@ async function coLoadPayMethods() {
 
 function selectPayMethod(id) {
   coSelectedPayId = id;
-  ['aud', 'intl', 'eur', 'usd', 'cad', 'gbp'].forEach(mid => {
+  ['aud', 'intl'].forEach(mid => {
     const opt = document.getElementById(`popt-${mid}`);
     const det = document.getElementById(`pdet-${mid}`);
     const dot = opt?.querySelector('.co-radio-dot');
@@ -1463,7 +1393,7 @@ async function placeOrder() {
     address1: coVal('co-address1'), address2: coVal('co-address2'),
     suburb: coVal('co-suburb'), state, postcode: coVal('co-postcode'), country,
     phone: coVal('co-phone'),
-    items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty, subscription: i.subscription || false })),
+    items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty })),
     subtotal, shipping: ship, discount, total,
     mbDiscount, promoDiscount,
     promoCode:      appliedPromo ? appliedPromo.code : null,
@@ -1530,25 +1460,11 @@ function setCurrency(val) {
 // ============================================================
 // SUBSCRIPTION TOGGLE
 // ============================================================
-let pdpIsSubscription = false;
-function setPurchaseType(type) {
-  pdpIsSubscription = (type === 'subscribe');
-  document.getElementById('optOnce').classList.toggle('selected', !pdpIsSubscription);
-  document.getElementById('optSubscribe').classList.toggle('selected', pdpIsSubscription);
-  updatePdpPrices();
-}
 function updatePdpPrices() {
   if (!currentProduct) return;
   const p = currentProduct;
-  const activePrice = pdpIsSubscription ? p.price * 0.9 : p.price;
-  document.getElementById('pdpPrice').textContent = fmtPrice(activePrice);
-  document.getElementById('pdpPriceNote').textContent = pdpIsSubscription
-    ? 'Subscribe · 10% off · Cancel after 2nd month · ' + currentCurrency + ' · Research use only'
-    : 'Per vial · ' + currentCurrency + ' · Research use only';
-  const onceEl = document.getElementById('pdpOncePrice');
-  const subEl  = document.getElementById('pdpSubPrice');
-  if (onceEl) onceEl.textContent = fmtPrice(p.price);
-  if (subEl)  subEl.textContent  = fmtPrice(p.price * 0.9);
+  document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
+  document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currentCurrency + ' · Research use only';
 }
 
 // ============================================================
@@ -1624,21 +1540,19 @@ function closeCart() {
 }
 function getStock(productId) { return inventory[productId] ?? 999; }
 
-function addToCart(productId, isSubscription) {
+function addToCart(productId) {
   const p = PRODUCTS.find(x => x.id === productId);
   if (!p) return;
   const stock = getStock(productId);
   if (stock === 0) { showToast(p.name + ' is out of stock'); return; }
   const cartQty = cart.filter(x => x.id === productId).reduce((s, x) => s + x.qty, 0);
   if (cartQty >= stock) { showToast('Only ' + stock + ' in stock'); return; }
-  const sub = !!isSubscription;
-  const price = sub ? Math.round(p.price * 0.9 * 100) / 100 : p.price;
-  const existing = cart.find(x => x.id === productId && x.subscription === sub);
+  const existing = cart.find(x => x.id === productId);
   if (existing) { existing.qty++; }
-  else { cart.push({ id: p.id, name: p.name, size: p.size, price, qty: 1, subscription: sub }); }
+  else { cart.push({ id: p.id, name: p.name, size: p.size, price: p.price, qty: 1 }); }
   renderCart();
   updateCountBadges();
-  showToast(p.name + (sub ? ' (Subscribe & Save)' : '') + ' added to cart');
+  showToast(p.name + ' added to cart');
   openCart();
 }
 function removeFromCart(idx) {
@@ -1685,10 +1599,14 @@ function renderCart() {
 
   let html = '';
   cart.forEach((item, i) => {
+    const prod = PRODUCTS.find(x => x.id === item.id);
+    const imgInner = (prod && prod.img)
+      ? `<img src="${prod.img}" alt="${item.name}">`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:22px;height:22px"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg>`;
     html += `<div class="cart-item">
-      <div class="cart-item__img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:22px;height:22px"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg></div>
+      <div class="cart-item__img">${imgInner}</div>
       <div class="cart-item__info">
-        <div class="cart-item__name">${item.name}${item.subscription ? '<span class="cart-sub-badge">Sub</span>' : ''}</div>
+        <div class="cart-item__name">${item.name}</div>
         <div class="cart-item__size">${item.size} · Research Use Only</div>
         <div class="cart-item__controls">
           <div class="cart-qty-btn" onclick="changeQty(${i},-1)">−</div>
@@ -1844,7 +1762,6 @@ function viewProduct(id) {
   const p = PRODUCTS.find(x=>x.id===id);
   if (!p) return;
   currentProduct = p;
-  pdpIsSubscription = false;
   document.getElementById('pdpBreadcrumb').textContent = p.name;
   document.getElementById('pdpSku').textContent = p.id.replace('PL-','');
   document.getElementById('pdpName').textContent = p.name;
@@ -1867,14 +1784,9 @@ function viewProduct(id) {
           <div style="width:78px;opacity:.72;transform:translateY(10px)">${makeVialSVG(p)}</div>
         </div>`;
   }
-  // Reset subscription toggle
-  document.getElementById('optOnce').classList.add('selected');
-  document.getElementById('optSubscribe').classList.remove('selected');
-  document.getElementById('pdpOncePrice').textContent = fmtPrice(p.price);
-  document.getElementById('pdpSubPrice').textContent  = fmtPrice(p.price * 0.9);
   showPage('product');
 }
-function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id, pdpIsSubscription); }
+function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id); }
 
 // ============================================================
 // CERTIFICATIONS DATA
