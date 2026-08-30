@@ -226,9 +226,8 @@
               <span>Bank Transfer (AUS / NZ)</span>
             </div>
             <div class="co-pay-opt__details" id="pdet-aud">
-              <div class="co-bsb-row"><span>Account Name</span><span>Australian Peptide Labs Store</span></div>
               <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
-              <div class="co-pay-intl-note" style="margin-top:8px">BSB and account number will be shown on the order confirmation page after placing your order.</div>
+              <div class="co-pay-intl-note" style="margin-top:8px">Full bank details will be shown on the confirmation page after placing your order.</div>
             </div>
           </div>
 
@@ -1268,16 +1267,6 @@ async function coLoadPayMethods() {
     const data = await res.json();
     coPayApiData = {};
     (data.methods || []).forEach(m => { coPayApiData[m.id] = m.fields; });
-    // Update international fields if configured
-    ['intl', 'eur', 'usd', 'cad', 'gbp'].forEach(id => {
-      const fields = coPayApiData[id];
-      if (!fields || !fields.length) return;
-      const container = document.getElementById(`pfields-${id}`);
-      if (!container) return;
-      container.innerHTML = fields.map(f =>
-        `<div class="co-bsb-row"><span>${f.label}</span><span>${f.value}</span></div>`
-      ).join('');
-    });
   } catch {}
   coRenderSummary();
 }
