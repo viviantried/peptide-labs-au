@@ -28,7 +28,7 @@ async function sendEmail(to, subject, html) {
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  const { order, email, amt, name, token } = req.query;
+  const { order, email, amt, name, token, reminder_id } = req.query;
 
   if (!order || !email || !token) {
     return res.status(400).send(page('Missing parameters', 'error'));
@@ -77,6 +77,15 @@ module.exports = async function handler(req, res) {
   </div>
 </div>
 </body></html>`;
+
+  if (reminder_id) {
+    try {
+      await fetch(`https://api.resend.com/emails/${reminder_id}/cancel`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${RESEND_KEY}` },
+      });
+    } catch {}
+  }
 
   try {
     await sendEmail(email, `Payment Confirmed — Order ${order} is Being Dispatched`, confirmHtml);

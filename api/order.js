@@ -177,7 +177,7 @@ module.exports = async function handler(req, res) {
     </div>
 
     <div style="text-align:center">
-      <a href="${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}"
+      <a href="${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}${reminderId ? '&reminder_id=' + encodeURIComponent(reminderId) : ''}"
         style="display:inline-block;background:#16a34a;color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;text-decoration:none">
         ✓ Confirm Payment Received
       </a>
@@ -187,12 +187,60 @@ module.exports = async function handler(req, res) {
 </div>
 </body></html>`;
 
+  const reminderHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"/></head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif">
+<div style="max-width:600px;margin:32px auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1)">
+  <div style="background:#000;padding:24px 32px">
+    <div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px">PeptideLab</div>
+    <div style="color:#888;font-size:12px;margin-top:2px">aupeptidelab.com</div>
+  </div>
+  <div style="padding:32px">
+    <div style="display:inline-block;background:#fff8e1;border:2px solid #ffe082;border-radius:50px;padding:8px 20px;margin-bottom:20px">
+      <span style="color:#b45309;font-weight:700;font-size:14px">⏰ Payment Reminder</span>
+    </div>
+    <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">Your order is waiting, ${firstName}!</h1>
+    <p style="color:#666;margin:0 0 24px;font-size:15px">We noticed payment hasn't been received yet for order <strong>${orderName}</strong>. Please transfer as soon as possible to avoid cancellation.</p>
+    <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:22px;margin:0 0 24px">
+      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">Bank Transfer Details</h2>
+      <table style="width:100%;border-collapse:collapse">
+        <tr><td style="padding:6px 0;color:#555;font-size:14px;width:44%">Account Name</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT_NAME}</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">BSB</td><td style="padding:6px 0;font-weight:700;font-size:14px">${BSB}</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">Account Number</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT}</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">Amount</td><td style="padding:6px 0;font-weight:800;font-size:18px;color:#16a34a">A$${Number(total).toFixed(2)}</td></tr>
+        <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
+      </table>
+    </div>
+    <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
+  </div>
+  <div style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;text-align:center">
+    <p style="margin:0;font-size:12px;color:#aaa">PeptideLab — For research use only. Not for human consumption.</p>
+  </div>
+</div>
+</body></html>`;
+
   let emailError = null;
+  let reminderId = '';
   try {
-    await Promise.all([
+    const [, , reminderRes] = await Promise.all([
       sendEmail(email, `Order ${orderName} — Complete Your Bank Transfer`, customerHtml),
       sendEmail(OWNER_EMAIL, `New Order ${orderName} — A$${Number(total).toFixed(2)} (BSB pending)`, ownerHtml),
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: `PeptideLab <${FROM_EMAIL}>`,
+          reply_to: OWNER_EMAIL,
+          to: email,
+          subject: `Reminder: Payment still pending — Order ${orderName}`,
+          html: reminderHtml,
+          scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        }),
+      }),
     ]);
+    if (reminderRes.ok) {
+      const rj = await reminderRes.json();
+      reminderId = rj.id || '';
+    }
   } catch (err) {
     console.error('Email error:', err);
     emailError = err.message;
