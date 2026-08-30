@@ -10,8 +10,22 @@ const ACCOUNT_NAME   = 'Australian Peptide Labs Store';
 const OWNER_EMAIL    = 'support@aupeptidelab.com';
 const FROM_EMAIL     = 'orders@aupeptidelab.com';
 const SITE_URL       = 'https://www.aupeptidelab.com';
-const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN || process.env.airtable_token;
-const AIRTABLE_BASE  = 'appwbIeYvWxx7R9Y8';
+const AIRTABLE_TOKEN    = process.env.AIRTABLE_TOKEN    || process.env.airtable_token;
+const AIRTABLE_BASE     = 'appwbIeYvWxx7R9Y8';
+const RESEND_AUDIENCE   = process.env.RESEND_AUDIENCE_ID || process.env.resend_audience_id;
+
+async function addToAudience(email, firstName, lastName) {
+  if (!RESEND_KEY || !RESEND_AUDIENCE) return;
+  try {
+    await fetch(`https://api.resend.com/audiences/${RESEND_AUDIENCE}/contacts`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, first_name: firstName, last_name: lastName, unsubscribed: false }),
+    });
+  } catch (err) {
+    console.error('Resend audience error:', err.message);
+  }
+}
 
 async function logToAirtable(order) {
   if (!AIRTABLE_TOKEN) return;
@@ -65,7 +79,7 @@ module.exports = async function handler(req, res) {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
     items, subtotal, shipping, discount, total,
-    promoCode, paymentMethod, paymentLabel, shippingMethod,
+    promoCode, paymentMethod, paymentLabel, shippingMethod, marketingConsent,
   } = req.body;
 
   if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !items?.length) {
@@ -245,6 +259,8 @@ module.exports = async function handler(req, res) {
     console.error('Email error:', err);
     emailError = err.message;
   }
+
+  if (marketingConsent) addToAudience(email, firstName, lastName);
 
   logToAirtable({
     'Name':           orderName,

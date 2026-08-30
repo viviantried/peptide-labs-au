@@ -296,6 +296,12 @@
         <div class="co-bsb-note" style="margin-top:10px;border-radius:8px;background:#0D1F0D;border:1px solid #1a3a1a">Transfer the exact amount and use your order reference. Orders dispatched once payment confirmed — usually same business day.</div>
       </div>
 
+      <!-- Marketing consent -->
+      <label class="co-consent-row" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;cursor:pointer">
+        <input type="checkbox" id="coMarketingConsent" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#4ade80;cursor:pointer">
+        <span style="font-size:12px;color:#888;line-height:1.5">I'd like to receive exclusive discounts and new product updates from PeptideLab. Unsubscribe anytime.</span>
+      </label>
+
       <!-- Submit -->
       <button class="co-place-order" id="coPlaceBtn" onclick="placeOrder()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
@@ -1470,9 +1476,10 @@ async function placeOrder() {
     items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty })),
     subtotal, shipping: ship, discount, total,
     promoCode:      appliedPromo ? appliedPromo.code : null,
-    paymentMethod:  coSelectedPayId,
-    paymentLabel:   PAY_METHOD_LABELS[coSelectedPayId],
-    shippingMethod: selectedShipping ? `${selectedShipping.label} — ${selectedShipping.carrier} (${selectedShipping.eta})` : 'Standard',
+    paymentMethod:    coSelectedPayId,
+    paymentLabel:     PAY_METHOD_LABELS[coSelectedPayId],
+    shippingMethod:   selectedShipping ? `${selectedShipping.label} — ${selectedShipping.carrier} (${selectedShipping.eta})` : 'Standard',
+    marketingConsent: document.getElementById('coMarketingConsent')?.checked || false,
   };
 
   const btn = document.getElementById('coPlaceBtn');
