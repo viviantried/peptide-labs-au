@@ -92,8 +92,8 @@ module.exports = async function handler(req, res) {
 
     <div style="font-size:40px;margin-bottom:16px">🧪</div>
     <h1 style="font-size:22px;font-weight:800;color:#111;margin:0 0 12px;line-height:1.3">Thank you for being a part of the PeptideLab community.</h1>
-    <p style="color:#555;margin:0 0 8px;font-size:15px;line-height:1.6">Knowing that our peptides are supporting real research is genuinely why we do this.</p>
-    <p style="color:#777;margin:0 0 28px;font-size:14px;line-height:1.6">Your order <strong style="color:#111">${order}</strong> has had a week to arrive — we'd love to know how everything went.</p>
+    <p style="color:#777;margin:0 0 8px;font-size:14px;line-height:1.6">Your order <strong style="color:#111">${order}</strong> has had a week to arrive.</p>
+    <p style="color:#777;margin:0 0 28px;font-size:14px;line-height:1.6">PeptideLab aims to improve every day so we'd love to know how everything went.</p>
 
     <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin:0 0 24px;text-align:left">
       <div style="font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">A few things we care about</div>
