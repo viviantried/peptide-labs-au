@@ -1472,7 +1472,7 @@ async function placeOrder() {
     promoCode:      appliedPromo ? appliedPromo.code : null,
     paymentMethod:  coSelectedPayId,
     paymentLabel:   PAY_METHOD_LABELS[coSelectedPayId],
-    shippingMethod: selectedShipping ? `${selectedShipping.label} — ${selectedShipping.carrier}` : 'Standard',
+    shippingMethod: selectedShipping ? `${selectedShipping.label} — ${selectedShipping.carrier} (${selectedShipping.eta})` : 'Standard',
   };
 
   const btn = document.getElementById('coPlaceBtn');

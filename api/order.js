@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
     items, subtotal, shipping, discount, total,
-    promoCode, paymentMethod, paymentLabel,
+    promoCode, paymentMethod, paymentLabel, shippingMethod,
   } = req.body;
 
   if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !items?.length) {
@@ -113,7 +113,7 @@ module.exports = async function handler(req, res) {
     <table style="width:100%;border-collapse:collapse;margin:0 0 28px">
       <tr><td style="padding:6px 0;color:#666;font-size:14px">Subtotal</td><td style="padding:6px 0;text-align:right;font-size:14px">A$${Number(subtotal).toFixed(2)}</td></tr>
       ${Number(discount) > 0 ? `<tr><td style="padding:6px 0;color:#16a34a;font-size:14px">Discount${promoCode ? ` (${promoCode})` : ''}</td><td style="padding:6px 0;text-align:right;font-size:14px;color:#16a34a">−A$${Number(discount).toFixed(2)}</td></tr>` : ''}
-      <tr><td style="padding:6px 0;color:#666;font-size:14px">Shipping</td><td style="padding:6px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
+      <tr><td style="padding:6px 0;color:#666;font-size:14px">Shipping${shippingMethod ? `<div style="font-size:11px;color:#999;margin-top:2px">${shippingMethod}</div>` : ''}</td><td style="padding:6px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
       <tr><td style="padding:10px 0;font-weight:700;font-size:16px;border-top:2px solid #111">Total Due</td><td style="padding:10px 0;text-align:right;font-weight:800;font-size:18px;color:#111;border-top:2px solid #111">A$${Number(total).toFixed(2)}</td></tr>
     </table>
 
@@ -167,7 +167,7 @@ module.exports = async function handler(req, res) {
     <table style="width:100%;border-collapse:collapse;margin:0 0 20px">${itemsHtml}
       <tr><td style="padding:8px 0;color:#666;font-size:14px">Subtotal</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">A$${Number(subtotal).toFixed(2)}</td></tr>
       ${Number(discount) > 0 ? `<tr><td style="padding:8px 0;color:#16a34a;font-size:14px">Discount${promoCode ? ` (${promoCode})` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#16a34a">−A$${Number(discount).toFixed(2)}</td></tr>` : ''}
-      <tr><td style="padding:8px 0;color:#666;font-size:14px">Shipping${Number(shipping) === 0 ? ' (free)' : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;font-size:14px">Shipping${shippingMethod ? `<div style="font-size:11px;color:#999;margin-top:2px">${shippingMethod}</div>` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
       <tr><td style="padding:12px 0;font-weight:800;font-size:16px;border-top:2px solid #111">TOTAL</td><td style="border-top:2px solid #111"></td><td style="padding:12px 0;text-align:right;font-weight:800;font-size:18px;border-top:2px solid #111">A$${Number(total).toFixed(2)}</td></tr>
     </table>
 
