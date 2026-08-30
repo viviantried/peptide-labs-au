@@ -1906,6 +1906,25 @@ renderCart();
 updateMobileCartBtn();
 initPopup();
 loadInventory();
+
+(function checkReorder() {
+  const param = new URLSearchParams(location.search).get('reorder');
+  if (!param) return;
+  try {
+    const items = JSON.parse(atob(param));
+    items.forEach(({ id, qty }) => {
+      const p = PRODUCTS.find(x => x.id === id);
+      if (!p || !qty) return;
+      const existing = cart.find(x => x.id === id);
+      if (existing) existing.qty += qty;
+      else cart.push({ id: p.id, name: p.name, size: p.size, price: p.price, qty });
+    });
+    renderCart();
+    updateCountBadges();
+    history.replaceState({}, '', location.pathname);
+    setTimeout(openCart, 600);
+  } catch {}
+})();
 </script>
 
 </body>

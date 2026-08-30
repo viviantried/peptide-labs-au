@@ -26,7 +26,7 @@ function makeToken(order, email, action) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method not allowed');
 
-  const { order, email, token, tracking, carrier } = req.body || {};
+  const { order, email, token, tracking, carrier, items } = req.body || {};
 
   if (!order || !email || !token || !tracking) {
     return res.status(400).send(page('Missing required fields.', 'error'));
@@ -38,6 +38,7 @@ module.exports = async function handler(req, res) {
   }
 
   const firstName = email.split('@')[0];
+  const reorderUrl = items ? `${SITE_URL}/?reorder=${encodeURIComponent(items)}` : null;
   const trackUrl  = CARRIER_TRACK_URLS[carrier]
     ? CARRIER_TRACK_URLS[carrier] + encodeURIComponent(tracking)
     : null;
@@ -69,6 +70,13 @@ module.exports = async function handler(req, res) {
         📬 Delivery typically within <strong>3–10 business days</strong> depending on your location
       </div>
     </div>
+
+    ${reorderUrl ? `
+    <div style="background:#f8f4ff;border:1px solid #ddd6fe;border-radius:10px;padding:20px;margin:0 0 24px;text-align:center">
+      <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:6px">Need to reorder?</div>
+      <p style="font-size:13px;color:#666;margin:0 0 14px">One click adds your previous items back to your cart — ready to checkout in seconds.</p>
+      <a href="${reorderUrl}" style="display:inline-block;background:#111;color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:8px;text-decoration:none">Reorder Now →</a>
+    </div>` : ''}
 
     <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
   </div>

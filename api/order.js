@@ -96,6 +96,8 @@ module.exports = async function handler(req, res) {
     hour: '2-digit', minute: '2-digit',
   });
 
+  const reorderData = encodeURIComponent(Buffer.from(JSON.stringify(items.map(i => ({ id: i.id, qty: i.qty })))).toString('base64'));
+
   const totalQty = items.reduce((s, i) => s + i.qty, 0);
   const bundleTier = totalQty >= 5 ? '5+ item bundle — 10% off'
     : totalQty >= 3 ? '3+ item bundle — 5% off'
@@ -229,7 +231,7 @@ module.exports = async function handler(req, res) {
     </div>
 
     <div style="text-align:center">
-      <a href="${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}${reminderId ? '&reminder_id=' + encodeURIComponent(reminderId) : ''}"
+      <a href="${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}&items=${reorderData}${reminderId ? '&reminder_id=' + encodeURIComponent(reminderId) : ''}"
         style="display:inline-block;background:#16a34a;color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;text-decoration:none">
         ✓ Confirm Payment Received
       </a>
