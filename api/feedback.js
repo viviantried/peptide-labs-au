@@ -88,17 +88,17 @@ module.exports = async function handler(req, res) {
 
 function feedbackForm({ order, email, token, rating }) {
   const BASE = 'https://www.aupeptidelab.com';
-  const starBtns = [5,4,3,2,1].map(n => {
-    const col = STAR_COLORS[n];
-    const active = rating === n;
+  const activeCol = rating ? (STAR_COLORS[rating] || '#111') : '#d1d5db';
+  const starBtns = [1,2,3,4,5].map(n => {
+    const filled = rating && n <= rating;
     return `<a href="${BASE}/api/feedback?order=${encodeURIComponent(order)}&email=${encodeURIComponent(email)}&token=${token}&rating=${n}"
-      style="display:inline-block;font-size:32px;color:${active ? col : '#d1d5db'};text-decoration:none;padding:4px;transition:color 0.15s" title="${n} star${n>1?'s':''}">★</a>`;
+      style="display:inline-block;font-size:38px;color:${filled ? activeCol : '#d1d5db'};text-decoration:none;padding:2px 4px" title="${n} star${n>1?'s':''}">★</a>`;
   }).join('');
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>PeptideLab Feedback</title></head>
 <body style="margin:0;padding:40px 20px;background:#f5f5f5;font-family:Arial,sans-serif;text-align:center">
 <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:40px;box-shadow:0 2px 16px rgba(0,0,0,.08)">
-  <div style="font-size:32px;margin-bottom:10px">🧪</div>
+  <img src="https://www.aupeptidelab.com/images/logo.jpg" alt="PeptideLab" style="height:44px;width:auto;border-radius:6px;display:block;margin:0 auto 10px">
   <div style="font-size:20px;font-weight:800;color:#111;margin-bottom:4px">PeptideLab</div>
   <div style="font-size:13px;color:#999;margin-bottom:20px">Order ${order}</div>
 
