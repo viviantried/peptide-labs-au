@@ -77,7 +77,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).send(page(`
       <div style="font-size:40px;margin-bottom:12px">${'★'.repeat(r)}${'☆'.repeat(5-r)}</div>
-      <h2 style="color:#111;margin:0 0 8px">Thank you so much, it means a lot.</h2>
+      <h2 style="color:#111;margin:0 0 8px">Thank you so much, it means a lot to us.</h2>
       <p style="color:#555;margin:0 0 10px">Your feedback helps us serve the research community better. We read every single one.</p>
       <p style="color:#aaa;font-size:13px;margin:0">The PeptideLab team</p>
     `, 'success'));
