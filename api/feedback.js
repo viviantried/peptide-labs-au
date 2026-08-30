@@ -98,8 +98,6 @@ function feedbackForm({ order, email, token, rating }) {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>PeptideLab Feedback</title></head>
 <body style="margin:0;padding:40px 20px;background:#f5f5f5;font-family:Arial,sans-serif;text-align:center">
 <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:40px;box-shadow:0 2px 16px rgba(0,0,0,.08)">
-  <img src="https://www.aupeptidelab.com/images/logo.jpg" alt="PeptideLab" style="height:44px;width:auto;border-radius:6px;display:block;margin:0 auto 10px">
-  <div style="font-size:20px;font-weight:800;color:#111;margin-bottom:4px">PeptideLab</div>
   <div style="font-size:13px;color:#999;margin-bottom:20px">Order ${order}</div>
 
   <h2 style="font-size:20px;font-weight:700;color:#111;margin:0 0 8px">How was your experience?</h2>

@@ -90,10 +90,6 @@ module.exports = async function handler(req, res) {
   </div>
   <div style="padding:36px;text-align:center">
 
-    <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:20px">
-      <img src="https://www.aupeptidelab.com/images/logo.jpg" alt="PeptideLab" style="height:44px;width:auto;border-radius:6px">
-      <span style="font-size:20px;font-weight:800;color:#111;letter-spacing:-0.5px">PeptideLab</span>
-    </div>
     <h1 style="font-size:22px;font-weight:800;color:#111;margin:0 0 12px;line-height:1.3">Thank you for being a part of the PeptideLab community.</h1>
     <p style="color:#777;margin:0 0 28px;font-size:14px;line-height:1.6">We're a small team and we personally pack every order. Knowing it arrived the way it should means everything to us.</p>
 
