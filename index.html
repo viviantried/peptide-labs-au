@@ -1296,7 +1296,8 @@ function coRenderSummary() {
   }
 
   document.getElementById('coSumItems').innerHTML = cart.map(i => {
-    const img = i.img ? `<img src="${i.img}" alt="${i.name}" />` : '';
+    const prod = PRODUCTS.find(x => x.id === i.id);
+    const img = (prod && prod.img) ? `<img src="${prod.img}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />` : '';
     return `<div class="co-sum-item">
       <div class="co-sum-item__img">${img}<div class="co-sum-item__badge">${i.qty}</div></div>
       <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px">${i.size}</span>` : ''}</div>
