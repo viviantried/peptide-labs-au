@@ -1190,6 +1190,7 @@ ${n2?`<text x="35" y="${nY+9}" font-family="'Plus Jakarta Sans',Arial,sans-serif
 const FREE_SHIP_THRESHOLD = 200;
 const LOW_STOCK_THRESHOLD = 5;
 let inventory = {};
+let restocking = {};
 let cart = [];
 
 // ============================================================
@@ -1756,8 +1757,10 @@ function makeCard(p, mini) {
   const stock = getStock(p.id);
   const oos = stock === 0;
   const low = !oos && stock <= LOW_STOCK_THRESHOLD;
-  const badgeLabel = oos ? 'Out of Stock' : p.badge;
+  const isRestocking = !oos && restocking[p.id] === true;
+  const badgeLabel = oos ? 'Out of Stock' : isRestocking ? 'Restocking Soon' : p.badge;
   const badgeClass = oos ? 'product-card__badge product-card__badge--oos'
+    : isRestocking ? 'product-card__badge product-card__badge--restocking'
     : p.badgeHot ? 'product-card__badge product-card__badge--hot'
     : p.badge === 'In Stock' ? 'product-card__badge product-card__badge--instock'
     : 'product-card__badge';
@@ -1831,6 +1834,7 @@ async function loadInventory() {
     const res = await fetch('/api/inventory');
     const data = await res.json();
     inventory = data.stock || {};
+    restocking = data.restocking || {};
     renderFeatured();
     renderShop();
     if (currentProduct) updatePdpStock(currentProduct.id);

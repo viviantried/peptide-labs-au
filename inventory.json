@@ -1,11 +1,15 @@
 {
-  "PL-001": 50,
-  "PL-002": 100,
-  "PL-003": 80,
-  "PL-004": 60,
-  "PL-005": 75,
-  "PL-006": 75,
-  "PL-007": 90,
-  "PL-008": 70,
-  "PL-009": 70
+  "PL-001": { "stock": 50, "weekly_sold": 0, "restocking": false },
+  "PL-002": { "stock": 100, "weekly_sold": 0, "restocking": false },
+  "PL-003": { "stock": 80, "weekly_sold": 0, "restocking": false },
+  "PL-004": { "stock": 60, "weekly_sold": 0, "restocking": false },
+  "PL-005": { "stock": 75, "weekly_sold": 0, "restocking": false },
+  "PL-006": { "stock": 75, "weekly_sold": 0, "restocking": false },
+  "PL-007": { "stock": 90, "weekly_sold": 0, "restocking": false },
+  "PL-008": { "stock": 70, "weekly_sold": 0, "restocking": false },
+  "PL-009": { "stock": 70, "weekly_sold": 0, "restocking": false },
+  "PL-011": { "stock": 50, "weekly_sold": 0, "restocking": false },
+  "PL-012": { "stock": 50, "weekly_sold": 0, "restocking": false },
+  "PL-013": { "stock": 40, "weekly_sold": 0, "restocking": false },
+  "PL-014": { "stock": 200, "weekly_sold": 0, "restocking": false }
 }
