@@ -16,16 +16,16 @@ const RESEND_AUDIENCE   = process.env.RESEND_AUDIENCE_ID || process.env.resend_a
 const PRODUCT_CATALOG = {
   'PL-001': { name:'Retatrutide', size:'10mg', price:135 },
   'PL-002': { name:'BPC-157', size:'10mg', price:85 },
-  'PL-003': { name:'TB-500', size:'5mg', price:90 },
+  'PL-003': { name:'TB-500', size:'5mg', price:79 },
   'PL-004': { name:'Tesamorelin', size:'5mg', price:105 },
-  'PL-005': { name:'Semax', size:'10mg', price:75 },
-  'PL-006': { name:'Selank', size:'10mg', price:75 },
+  'PL-005': { name:'Semax', size:'10mg', price:69 },
+  'PL-006': { name:'Selank', size:'10mg', price:69 },
   'PL-007': { name:'Deep Sleep Inducing Peptide', size:'5mg', price:55 },
-  'PL-008': { name:'Melanotan-2', size:'10mg', price:75 },
-  'PL-009': { name:'Melanotan-1', size:'10mg', price:75 },
-  'PL-011': { name:'NAD+', size:'500mg', price:85 },
+  'PL-008': { name:'Melanotan-2', size:'10mg', price:69 },
+  'PL-009': { name:'Melanotan-1', size:'10mg', price:69 },
+  'PL-011': { name:'NAD+', size:'500mg', price:75 },
   'PL-012': { name:'GHK-Cu', size:'50mg', price:49 },
-  'PL-013': { name:'Glutathione', size:'1500mg', price:95 },
+  'PL-013': { name:'Glutathione', size:'1500mg', price:85 },
   'PL-014': { name:'BAC Water', size:'10ml', price:19 },
 };
 const PROMO_CODES = { VIVIAN: { type:'percent', value:10 } };
