@@ -463,8 +463,8 @@
       <div class="hero__inner">
         <div class="hero__content">
           <div class="hero__eyebrow"><span class="hero__eyebrow-dot"></span>Australian Research Peptides</div>
-          <h1 class="hero__title">Your research.<br/><em>Precisely supplied.</em></h1>
-          <p class="hero__sub">Explore our research compound catalogue, compare specifications, and build your laboratory order. Dispatched from Australia, with standard and express delivery.</p>
+          <h1 class="hero__title">Built for serious<br/><em>research orders.</em></h1>
+          <p class="hero__sub">A clearer way to source research compounds: browse specifications, see the price upfront, and choose delivery at checkout.</p>
           <div class="hero__actions">
             <button class="btn btn--teal btn--lg" onclick="showPage('shop')">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -476,30 +476,19 @@
             </button>
           </div>
           <div class="hero__stats">
-            <div><div class="hero__stat-value">Specs</div><div class="hero__stat-label">On every product</div></div>
-            <div><div class="hero__stat-value">3rd</div><div class="hero__stat-label">Party Certified</div></div>
-            <div><div class="hero__stat-value">AU</div><div class="hero__stat-label">Express Delivery</div></div>
+            <div><div class="hero__stat-value">14</div><div class="hero__stat-label">Products to explore</div></div>
+            <div><div class="hero__stat-value">AU</div><div class="hero__stat-label">Dispatch location</div></div>
             <div><div class="hero__stat-value">$200</div><div class="hero__stat-label">Free Standard Shipping</div></div>
           </div>
         </div>
         <div class="hero__visual">
-          <div class="hero__card-stack">
-            <div class="hero__floating-badge">✓ Batch Certified</div>
-            <div class="hero__main-card">
-              <div class="hero__vial-row">
-                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">Retarut.</div></div>
-                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">BPC-157</div></div>
-                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">TB-500</div></div>
-                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">Selank</div></div>
-                <div class="hero__vial"><img class="hero__vial-img" src="images/hero-vial.jpg" alt="Vial"><div class="hero__vial-label">Semax</div></div>
-              </div>
-              <div class="hero__card-meta">
-                <div class="hero__meta-chip"><div class="hero__meta-chip-val">99.2%</div><div class="hero__meta-chip-key">Purity</div></div>
-                <div class="hero__meta-chip"><div class="hero__meta-chip-val">HPLC</div><div class="hero__meta-chip-key">Tested</div></div>
-                <div class="hero__meta-chip"><div class="hero__meta-chip-val">MS</div><div class="hero__meta-chip-key">Verified</div></div>
-              </div>
+          <div class="hero__showcase">
+            <div class="hero__showcase-image"><img src="images/retatrutide.jpg" alt="Retatrutide 10mg research compound" /></div>
+            <div class="hero__showcase-card">
+              <div class="hero__showcase-label">Featured compound</div>
+              <div class="hero__showcase-name">Retatrutide <span>10mg</span></div>
+              <div class="hero__showcase-bottom"><strong>A$135</strong><button onclick="viewProduct('PL-001')">View product <span>→</span></button></div>
             </div>
-            <div class="hero__coa-badge"><span class="coa-dot"></span>Certificates Available</div>
           </div>
         </div>
       </div>
@@ -521,6 +510,16 @@
       </div>
     </div>
   </div>
+
+  <section class="shop-shortcuts" aria-label="Shop by research category">
+    <div class="container shop-shortcuts__inner">
+      <p>Shop by research area</p>
+      <button onclick="showPage('shop');setTimeout(()=>filterProducts('metabolic',document.querySelector('[onclick*=metabolic]')),0)">Metabolic <span>→</span></button>
+      <button onclick="showPage('shop');setTimeout(()=>filterProducts('recovery',document.querySelector('[onclick*=recovery]')),0)">Recovery <span>→</span></button>
+      <button onclick="showPage('shop');setTimeout(()=>filterProducts('cognitive',document.querySelector('[onclick*=cognitive]')),0)">Cognitive <span>→</span></button>
+      <button onclick="showPage('shop')">Browse all <span>→</span></button>
+    </div>
+  </section>
 
   <!-- FEATURED PRODUCTS -->
   <section class="section" style="background:var(--body-bg)">
