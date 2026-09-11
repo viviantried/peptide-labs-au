@@ -9,6 +9,7 @@ module.exports = function handler(req, res) {
 
   const BSB     = process.env.BSB_NUMBER     || process.env.bsb_number;
   const ACCOUNT = process.env.ACCOUNT_NUMBER || process.env.account_number;
+  const ACCOUNT_ADDRESS = process.env.BENEFICIARY_ADDRESS || process.env.beneficiary_address || '';
 
   if (BSB && ACCOUNT) {
     methods.push({
@@ -30,9 +31,12 @@ module.exports = function handler(req, res) {
         { label: 'Account Name', value: 'Australian Peptide Labs Store' },
         { label: 'Bank',         value: 'Commonwealth Bank of Australia' },
         { label: 'SWIFT / BIC',  value: 'CTBAAU2S' },
+        { label: 'BSB',           value: BSB },
         { label: 'Account No.',  value: ACCOUNT },
+        { label: '14-digit account', value: `${BSB}${ACCOUNT}`.replace(/\D/g, '') },
+        { label: 'Beneficiary address', value: ACCOUNT_ADDRESS },
         { label: 'Currency',     value: 'AUD' },
-      ],
+      ].filter(f => f.value),
     });
   }
 

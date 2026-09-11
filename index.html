@@ -220,11 +220,11 @@
         <p style="font-size:12px;color:#555;margin:0 0 12px">All transactions are secure and encrypted. Bank transfer only.</p>
         <div class="co-pay-group" id="coPayGroup">
 
-          <!-- AUS / NZ -->
+          <!-- AUSTRALIA -->
           <div class="co-pay-opt co-pay-opt--on" id="popt-aud" onclick="selectPayMethod('aud')">
             <div class="co-pay-opt__hdr">
               <div class="co-radio-dot on"></div>
-              <span>Bank Transfer (AUS / NZ)</span>
+              <span>Australian Bank Transfer</span>
             </div>
             <div class="co-pay-opt__details" id="pdet-aud">
               <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
@@ -232,21 +232,21 @@
             </div>
           </div>
 
-          <!-- INTL SWIFT -->
+          <!-- INTERNATIONAL SWIFT -->
           <div class="co-pay-opt" id="popt-intl" onclick="selectPayMethod('intl')">
             <div class="co-pay-opt__hdr">
               <div class="co-radio-dot"></div>
               <span>International Wire Transfer (SWIFT)</span>
             </div>
             <div class="co-pay-opt__details" id="pdet-intl" style="display:none">
-              <div id="pfields-intl"><div class="co-pay-intl-note">SWIFT transfer details will be shown on the order confirmation page after placing your order.</div></div>
+              <div id="pfields-intl"><div class="co-pay-intl-note">Pay in AUD using SWIFT. Full beneficiary details will be shown after placing your order. International transfers may take 1–3 business days.</div></div>
               <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
             </div>
           </div>
 
 
         </div>
-        <div class="co-bsb-note" style="margin-top:10px;border-radius:8px;background:#0D1F0D;border:1px solid #1a3a1a">Transfer the exact amount and use your order reference. Orders dispatched once payment confirmed — usually same business day.</div>
+        <div class="co-bsb-note" id="coPaymentNote" style="margin-top:10px;border-radius:8px;background:#0D1F0D;border:1px solid #1a3a1a">Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.</div>
       </div>
 
       <!-- Marketing consent -->
@@ -299,7 +299,7 @@
       <div class="co-success__block">
         <div class="co-success__block-title">How to Finalise Your Payment</div>
 
-        <div class="co-success__step-label">Step 1: Complete a Bank Transfer</div>
+        <div class="co-success__step-label" id="coSuccessPaymentTitle">Step 1: Complete a Bank Transfer</div>
         <p class="co-success__step-body">Please send the full order amount to the details listed below:</p>
         <div class="co-success__bank-fields" id="coSuccessFields"></div>
         <div class="co-success__amount-row">
@@ -321,12 +321,12 @@
 
       <div class="co-success__notice co-success__notice--yellow">
         <div style="font-weight:700;margin-bottom:4px">⚠ Important</div>
-        Orders not paid within 24 hours will be automatically cancelled.
+        <span id="coSuccessDeadline">Orders not paid within 24 hours will be automatically cancelled.</span>
       </div>
 
       <div class="co-success__notice co-success__notice--blue">
         <div style="font-weight:700;margin-bottom:4px">ℹ Additional Information</div>
-        If the account name displayed differs, this is normal. As long as the BSB and account number are correct, the payment will be successful.
+        <span id="coSuccessPaymentHelp">Use the exact account details and order reference shown above.</span>
       </div>
 
       <p style="font-size:13px;color:#555;margin:0 0 24px">A confirmation email with all details has been sent to you.</p>
@@ -1140,7 +1140,7 @@ let coSelectedPayId = 'aud';
 let coPayApiData    = {};
 
 const PAY_METHOD_LABELS = {
-  aud:  'Bank Transfer (AUS / NZ)',
+  aud:  'Australian Bank Transfer',
   intl: 'International Wire Transfer (SWIFT)',
 };
 
@@ -1180,6 +1180,7 @@ function openCheckout() {
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
   document.body.style.overflow = 'hidden';
+  coUpdatePaymentForCountry();
   coRenderShippingOptions();
   coRenderSummary();
   coLoadPayMethods();
@@ -1220,6 +1221,20 @@ function selectPayMethod(id) {
       if (det) det.style.display = 'none';
     }
   });
+}
+
+function coUpdatePaymentForCountry() {
+  const country = document.getElementById('co-country')?.value || 'AU';
+  const isDomestic = country === 'AU';
+  const audOpt = document.getElementById('popt-aud');
+  const intlOpt = document.getElementById('popt-intl');
+  if (audOpt) audOpt.style.display = isDomestic ? '' : 'none';
+  if (intlOpt) intlOpt.style.display = isDomestic ? 'none' : '';
+  selectPayMethod(isDomestic ? 'aud' : 'intl');
+  const note = document.getElementById('coPaymentNote');
+  if (note) note.textContent = isDomestic
+    ? 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.'
+    : 'Send the payment in AUD and use your order reference. Select a fee option that ensures the full order total reaches us. International transfers may take 1–3 business days to clear.';
 }
 
 function coGetShipMethods() {
@@ -1348,6 +1363,7 @@ function coCountryChange() {
   const isAU = country === 'AU';
   document.getElementById('co-state-select').style.display = isAU ? '' : 'none';
   document.getElementById('co-state-text').style.display   = isAU ? 'none' : '';
+  coUpdatePaymentForCountry();
   coRenderShippingOptions();
   coRenderSummary();
 }
@@ -1419,10 +1435,20 @@ async function placeOrder() {
     document.getElementById('coBody').style.display = 'none';
     document.getElementById('coSuccessAmt').textContent = `A$${Number(data.total).toFixed(2)}`;
     document.getElementById('coSuccessRef').textContent = data.orderName;
+    const isInternationalPayment = data.paymentMethod === 'intl';
+    document.getElementById('coSuccessPaymentTitle').textContent = isInternationalPayment
+      ? 'Step 1: Complete an International Wire Transfer'
+      : 'Step 1: Complete an Australian Bank Transfer';
+    document.getElementById('coSuccessDeadline').textContent = isInternationalPayment
+      ? 'International orders are reserved for 72 hours to allow the SWIFT transfer to arrive.'
+      : 'Orders not paid within 24 hours will be automatically cancelled.';
+    document.getElementById('coSuccessPaymentHelp').textContent = isInternationalPayment
+      ? 'Send in AUD and choose a fee option that ensures the full order total reaches us. International transfers usually take 1–3 business days.'
+      : 'Use the exact BSB, account number and order reference shown above.';
     // Render selected bank fields — prefer API data, fall back to order response BSB
-    const apiFields = coPayApiData[coSelectedPayId] || [];
+    const apiFields = data.paymentFields || coPayApiData[data.paymentMethod || coSelectedPayId] || [];
     const fields = apiFields.length ? apiFields
-      : (coSelectedPayId === 'aud' && data.bsb
+      : ((data.paymentMethod || coSelectedPayId) === 'aud' && data.bsb
           ? [{ label: 'Account Name', value: 'Australian Peptide Labs Store' },
              { label: 'BSB',          value: data.bsb },
              { label: 'Account No.',  value: data.acct }]
