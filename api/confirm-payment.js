@@ -5,12 +5,13 @@
 const crypto = require('crypto');
 
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
-const SECRET       = process.env.CONFIRM_SECRET  || process.env.confirm_secret;
+const SECRET       = process.env.CONFIRM_SECRET  || process.env.confirm_secret || RESEND_KEY;
+const LEGACY_SECRET = 'pl-confirm-2024';
 const FROM_EMAIL   = 'orders@aupeptidelab.com';
 const SITE_URL     = 'https://www.aupeptidelab.com';
 
-function makeToken(order, email, amt) {
-  return crypto.createHmac('sha256', SECRET)
+function makeToken(order, email, amt, secret = SECRET) {
+  return crypto.createHmac('sha256', secret)
     .update(`${order}:${email}:${amt}`)
     .digest('hex')
     .slice(0, 20);
@@ -27,7 +28,7 @@ async function sendEmail(to, subject, html) {
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  if (!SECRET) return res.status(500).send(page('Server configuration error.', 'error'));
+  if (!SECRET || !RESEND_KEY) return res.status(500).send(page('Server configuration error.', 'error'));
 
   const { order, email, amt, name, token, reminder_id, items } = req.query;
 
@@ -36,7 +37,10 @@ module.exports = async function handler(req, res) {
   }
 
   const expected = makeToken(order, email, amt || '');
-  if (token !== expected) {
+  const legacyExpected = /^PL-\d{5}$/.test(order)
+    ? makeToken(order, email, amt || '', LEGACY_SECRET)
+    : null;
+  if (token !== expected && token !== legacyExpected) {
     return res.status(403).send(page('Invalid or expired confirmation link.', 'error'));
   }
 
