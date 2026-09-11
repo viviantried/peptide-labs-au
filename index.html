@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
-  <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
+  <meta name="description" content="Explore PeptideLab research compounds. Australian dispatch, discreet packaging and worldwide shipping to eligible destinations. Free standard shipping at A$200." />
   <base href="/" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
   <link rel="icon" type="image/png" href="images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="images/favicon.png?v=3" />
 </head>
@@ -14,15 +14,15 @@
 
 <!-- CART OVERLAY + PANEL -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
-<div class="cart-panel" id="cartPanel">
+<div class="cart-panel" id="cartPanel" role="dialog" aria-modal="true" aria-label="Your cart" aria-hidden="true" inert>
   <div class="cart-header">
     <div class="cart-header__title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       Your Cart
     </div>
-    <div class="cart-close" onclick="closeCart()">
+    <button type="button" class="cart-close" id="cartCloseBtn" aria-label="Close cart" onclick="closeCart()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </div>
+    </button>
   </div>
   <div class="free-ship-bar" id="freeShipBar">
     <div class="free-ship-bar__label">
@@ -59,7 +59,7 @@
       </button>
       <button class="btn btn--outline btn--full btn--sm" onclick="closeCart()">Continue Shopping</button>
     </div>
-    <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
+    <div class="cart-disclaimer">Discreet packaging · Worldwide shipping to eligible destinations<br>Bank transfer in AUD · Display currency: <span id="cartCurrencyNote">AUD</span><br>Research use only. Shipping and any import charges are additional.</div>
   </div>
 </div>
 
@@ -369,31 +369,9 @@
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar">
-  <strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Standard and express delivery<span>•</span>Worldwide delivery
+  <strong>Free standard shipping at A$200+</strong><span>·</span>Discreet packaging<span>·</span>Worldwide shipping to eligible destinations
 </div>
 
-<!-- SHIPPING BANNER -->
-<div class="ship-banner">
-  <div class="ship-banner__item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-    Free Standard Shipping From $200 AUD
-  </div>
-  <div class="ship-divider"></div>
-  <div class="ship-banner__item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    Express AU Delivery 1–2 Days
-  </div>
-  <div class="ship-divider"></div>
-  <div class="ship-banner__item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-    Ships Worldwide
-  </div>
-  <div class="ship-divider"></div>
-  <div class="ship-banner__item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-    Third-Party Batch Certified
-  </div>
-</div>
 
 <!-- NAVIGATION -->
 <nav class="nav">
@@ -456,145 +434,94 @@
 <!-- ============================================================ -->
 <!--  PAGE: HOME                                                   -->
 <!-- ============================================================ -->
-<div class="page active" id="page-home">
-
-  <section class="hero">
-    <div class="container">
-      <div class="hero__inner">
-        <div class="hero__content">
-          <div class="hero__eyebrow"><span class="hero__eyebrow-dot"></span>Australian Research Peptides</div>
-          <h1 class="hero__title">Built for serious<br/><em>research orders.</em></h1>
-          <p class="hero__sub">A clearer way to source research compounds: browse specifications, see the price upfront, and choose delivery at checkout.</p>
-          <div class="hero__actions">
-            <button class="btn btn--teal btn--lg" onclick="showPage('shop')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              Explore the catalogue
-            </button>
-            <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              View Certifications
-            </button>
-          </div>
-          <div class="hero__stats">
-            <div><div class="hero__stat-value">14</div><div class="hero__stat-label">Products to explore</div></div>
-            <div><div class="hero__stat-value">AU</div><div class="hero__stat-label">Dispatch location</div></div>
-            <div><div class="hero__stat-value">$200</div><div class="hero__stat-label">Free Standard Shipping</div></div>
-          </div>
+<main class="page active" id="page-home">
+  <section class="lab-hero">
+    <div class="container lab-hero__grid">
+      <div class="lab-hero__copy">
+        <p class="lab-eyebrow">AUSTRALIAN RESEARCH SUPPLY</p>
+        <h1>Research essentials.<br><span>Delivered discreetly.</span></h1>
+        <p class="lab-hero__intro">Research compounds, clear specifications, and straightforward ordering. Australian dispatch. Worldwide shipping to eligible destinations.</p>
+        <div class="lab-hero__actions">
+          <a class="lab-button lab-button--primary" href="/shop" onclick="event.preventDefault();browseCategory('all')">Explore the catalogue <span aria-hidden="true">↗</span></a>
+          <a class="lab-text-link" href="/quality-testing" onclick="event.preventDefault();showPage('quality')">View testing information</a>
         </div>
-        <div class="hero__visual">
-          <div class="hero__showcase">
-            <div class="hero__showcase-image"><img src="images/retatrutide.jpg" alt="Retatrutide 10mg research compound" /></div>
-            <div class="hero__showcase-card">
-              <div class="hero__showcase-label">Featured compound</div>
-              <div class="hero__showcase-name">Retatrutide <span>10mg</span></div>
-              <div class="hero__showcase-bottom"><strong>A$135</strong><button onclick="viewProduct('PL-001')">View product <span>→</span></button></div>
-            </div>
-          </div>
+        <p class="lab-hero__notice">For laboratory research only. Not for human or veterinary use.</p>
+        <div class="lab-hero__foot"><span>Discreet packaging</span><span>Free standard shipping A$200+</span></div>
+      </div>
+      <div class="lab-spotlight">
+        <div class="lab-spotlight__top"><span>COMPOUND SPOTLIGHT</span><span id="spotlightIndex">01 / 03</span></div>
+        <a id="spotlightLink" href="/products/ghk-cu" onclick="event.preventDefault();viewProduct(spotlightId)"><img id="spotlightImage" src="/images/ghk-cu.jpg" alt="GHK-Cu 50mg research compound" width="420" height="400" fetchpriority="high"></a>
+        <div class="lab-spotlight__caption"><div><span class="lab-eyebrow" id="spotlightSize">50mg · Research compound</span><h2 id="spotlightName">GHK-Cu</h2></div><strong id="spotlightPrice">A$49.00</strong></div>
+        <div class="lab-spotlight__controls" aria-label="Choose featured compound">
+          <button type="button" data-spotlight="PL-012" aria-pressed="true" onclick="setSpotlight('PL-012')">GHK-Cu</button>
+          <button type="button" data-spotlight="PL-002" aria-pressed="false" onclick="setSpotlight('PL-002')">BPC-157</button>
+          <button type="button" data-spotlight="PL-003" aria-pressed="false" onclick="setSpotlight('PL-003')">TB-500</button>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="trust-strip">
-    <div class="container">
-      <div class="trust-strip__inner">
-        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Third-Party Certified</div>
-        <div class="trust-divider"></div>
-        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Free Standard From $200</div>
-        <div class="trust-divider"></div>
-        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AU Express 1–2 Days</div>
-        <div class="trust-divider"></div>
-        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure Checkout</div>
-        <div class="trust-divider"></div>
-        <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Research Use Only</div>
-      </div>
-    </div>
-  </div>
+  <section class="lab-services" aria-label="Ordering benefits"><div class="container lab-services__grid">
+    <div><span class="lab-service-number">01</span><h2>Discreet packaging</h2><p>Plain outer packaging for every order.</p></div>
+    <div><span class="lab-service-number">02</span><h2>Worldwide shipping</h2><p>Eligible destinations. Standard and express.</p></div>
+    <div><span class="lab-service-number">03</span><h2>Australian dispatch</h2><p>Tracking details sent after dispatch.</p></div>
+    <div><span class="lab-service-number">04</span><h2>Clear payment steps</h2><p>Bank transfer, with an order reference.</p></div>
+  </div></section>
 
-  <section class="shop-shortcuts" aria-label="Shop by research category">
-    <div class="container shop-shortcuts__inner">
-      <p>Shop by research area</p>
-      <button onclick="showPage('shop');setTimeout(()=>filterProducts('metabolic',document.querySelector('[onclick*=metabolic]')),0)">Metabolic <span>→</span></button>
-      <button onclick="showPage('shop');setTimeout(()=>filterProducts('recovery',document.querySelector('[onclick*=recovery]')),0)">Recovery <span>→</span></button>
-      <button onclick="showPage('shop');setTimeout(()=>filterProducts('cognitive',document.querySelector('[onclick*=cognitive]')),0)">Cognitive <span>→</span></button>
-      <button onclick="showPage('shop')">Browse all <span>→</span></button>
-    </div>
-  </section>
-
-  <!-- FEATURED PRODUCTS -->
-  <section class="section" style="background:var(--body-bg)">
+  <section class="lab-section lab-collection" id="homeCollection">
     <div class="container">
-      <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;">
-        <div>
-          <div class="section-label">Featured Products</div>
-          <h2 class="section-title" style="margin-bottom:8px">Research Compound Catalog</h2>
-          <p class="section-sub" style="max-width:520px">Third-party batch-certified compounds for laboratory research. All prices in AUD. Free standard shipping on orders of $200 or more.</p>
-        </div>
-        <button class="btn btn--outline" onclick="showPage('shop')">View All →</button>
+      <div class="lab-section-heading"><div><p class="lab-eyebrow">THE RESEARCH COLLECTION</p><h2>Find your next compound.</h2></div><a class="lab-text-link" href="/shop" onclick="event.preventDefault();browseCategory('all')">View all <span id="homeProductCount"></span> products ↗</a></div>
+      <div class="lab-discovery" aria-label="Browse products">
+        <button data-home-category="featured" aria-pressed="true" onclick="renderFeatured('featured')">Featured selection</button>
+        <button data-home-category="cellular" aria-pressed="false" onclick="renderFeatured('cellular')">Cellular research</button>
+        <button data-home-category="cognitive" aria-pressed="false" onclick="renderFeatured('cognitive')">Cognitive research</button>
+        <button data-home-category="accessories" aria-pressed="false" onclick="renderFeatured('accessories')">Laboratory supplies</button>
       </div>
+      <section class="lab-compare" id="homeComparePanel" hidden aria-label="Compare selected compounds"></section>
       <div class="products-grid" id="featuredGrid"></div>
+      <p class="lab-small-note">For laboratory research only. All orders are charged in AUD.</p>
     </div>
   </section>
 
-  <!-- DISCLAIMER -->
-  <section class="section--sm" style="background:var(--body-bg)">
-    <div class="container--narrow">
-      <div class="disclaimer-banner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <div>
-          <div class="disclaimer-banner__title">Important Research Use Notice</div>
-          <div class="disclaimer-banner__text">All products sold by PeptideLab are intended strictly for <strong>laboratory research purposes only</strong>. They are <strong>not for human consumption</strong>, not intended for veterinary use, and are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Customers are responsible for compliance with all applicable laws in their jurisdiction.</div>
+  <section class="lab-section lab-delivery" id="deliveryDetails">
+    <div class="container lab-delivery__grid">
+      <div><p class="lab-eyebrow">FROM OUR DOOR TO YOUR LAB</p><h2>Discreet outside.<br>Clearly documented inside.</h2><p>Plain outer packaging keeps your delivery low-profile. Required shipping labels and customs declarations remain accurate and visible where required.</p>
+        <details class="lab-detail"><summary>What does worldwide shipping mean?</summary><p>We ship to eligible international destinations where import is permitted. Availability depends on the product, destination and carrier. Contact us before ordering if you are unsure. Customs duties, import taxes and bank fees may apply and are not included in the estimate.</p></details>
+        <details class="lab-detail"><summary>When does my order ship?</summary><p>Dispatch follows verification of cleared payment. Delivery estimates are transit times after dispatch, not from the time you submit your order. Tracking is sent by email.</p></details>
+        <a class="lab-text-link" href="/shipping" onclick="event.preventDefault();showPage('shipping')">Read the shipping policy ↗</a>
+      </div>
+      <div class="lab-estimator">
+        <p class="lab-eyebrow">PLAN YOUR DELIVERY</p><h3>See shipping before checkout.</h3>
+        <div class="lab-field-row">
+          <label>Destination<select id="homeShipZone" onchange="renderHomeShipping()"><option value="AU">Australia</option><option value="NZ">New Zealand</option><option value="INTL">Other eligible destination</option></select></label>
+          <label>Product subtotal (AUD)<input id="homeShipSubtotal" type="number" min="0" step="0.01" value="150" oninput="renderHomeShipping()"></label>
         </div>
+        <div class="lab-estimator__rates" id="homeShipRates" aria-live="polite"></div>
+        <p class="lab-small-note">Free standard shipping at A$200 before discounts; express is a A$5 upgrade. Transit estimates exclude payment clearance and customs delays.</p>
+        <button class="lab-text-link" type="button" onclick="document.getElementById('homeShipSubtotal').value=getCartTotal().toFixed(2);renderHomeShipping()">Use my current cart subtotal</button>
       </div>
     </div>
   </section>
 
-  <!-- WHY CHOOSE US -->
-  <section class="section section--contrast">
-    <div class="container">
-      <div class="section-header section-header--center">
-        <div class="section-label">Why PeptideLab</div>
-        <h2 class="section-title">Australia's Research Peptide Standard</h2>
-        <p class="section-sub">Australian-owned and operated. We supply the research community with compounds that meet professional standards, shipped fast from our local fulfilment centre.</p>
-      </div>
-      <div class="why-grid">
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="why-card__title">Third-Party Batch Certified</div><p class="why-card__text">Every batch independently tested. HPLC and MS results documented per batch. Certificates available in our directory — not hidden, not on request.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="why-card__title">Standard or Express AU Delivery</div><p class="why-card__text">Choose $10 standard or $15 express delivery within Australia. Orders of $200 AUD or more receive free standard shipping, or express for a $5 upgrade.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="why-card__title">Ships Worldwide</div><p class="why-card__text">International shipping to destinations where research compound import is permitted. Customers responsible for local compliance.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="why-card__title">Discreet Packaging</div><p class="why-card__text">All orders shipped in plain, unmarked outer packaging. Cold-chain protocols applied where required. Tracking provided for all orders.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div class="why-card__title">Transparent Documentation</div><p class="why-card__text">Our full batch certificate directory is publicly available. Every compound, every lot, every test date — no gatekeeping.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="why-card__title">Secure Ordering</div><p class="why-card__text">Orders are submitted through an encrypted connection. Payment instructions and a unique bank-transfer reference are provided after ordering.</p></div>
-      </div>
+  <section class="lab-section lab-ordering"><div class="container">
+    <div class="lab-section-heading"><div><p class="lab-eyebrow">STRAIGHTFORWARD FROM THE START</p><h2>One order. Three clear steps.</h2></div><p>No customer account required.</p></div>
+    <div class="lab-steps">
+      <article><span>01 / SELECT</span><h3>Build your research order</h3><p>Compare sizes and specifications. Existing quantity savings apply automatically in your cart.</p></article>
+      <article><span>02 / TRANSFER</span><h3>Pay with your order reference</h3><p>Receive the amount due in AUD and bank details. International orders use the SWIFT transfer option.</p></article>
+      <article><span>03 / TRACK</span><h3>Follow your delivery</h3><p>Payment is verified before dispatch. Keep your order reference and watch for your tracking email.</p></article>
     </div>
-  </section>
+  </div></section>
 
-
-  <!-- FAQ PREVIEW -->
-  <section class="section section--contrast">
-    <div class="container--narrow">
-      <div class="section-header section-header--center"><div class="section-label">FAQ</div><h2 class="section-title">Common Questions</h2><p class="section-sub">Quick answers for Australian and international research customers.</p></div>
-      <div class="faq-list">
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Are these products for human use?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">No. All products are for laboratory research purposes only. Not for human consumption, veterinary use, or any clinical application. By purchasing you confirm products will be used in a supervised laboratory research setting.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Orders of $200 AUD or more receive free standard shipping. Express remains available for a $5 AUD upgrade.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How are products shipped within Australia?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Australian customers can choose standard delivery for $10 AUD or express delivery for $15 AUD. Orders of $200 AUD or more receive free standard delivery, or express for a $5 upgrade. All orders include tracking and discreet, unmarked packaging.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How should peptides be stored?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Store lyophilised peptides at -20°C or below in a dry, dark environment. Avoid repeated freeze-thaw cycles. Once reconstituted, store at 2–8°C and use within the timeframe required by your research protocol. See each product's specification sheet for compound-specific guidance.</div></div>
-      </div>
-      <div style="text-align:center;margin-top:32px;"><button class="btn btn--outline" onclick="showPage('faq')">View All FAQs →</button></div>
+  <section class="lab-section lab-help"><div class="container lab-help__grid">
+    <div><p class="lab-eyebrow">DETAILS THAT MATTER</p><h2>Before you order.</h2><p>Questions about a specification, shipment or payment?</p><a class="lab-text-link" href="mailto:support@aupeptidelab.com">support@aupeptidelab.com ↗</a></div>
+    <div>
+      <details class="lab-detail"><summary>Where can I find testing documentation?</summary><p>Our testing page links to the supplier's certificate directory. Confirm that the compound, supplied quantity and batch match your order; a directory listing alone does not verify your vial.</p><a href="/quality-testing" onclick="event.preventDefault();showPage('quality')">View testing information</a></details>
+      <details class="lab-detail"><summary>How do quantity savings work?</summary><p>Across your cart, 2 items save 3%, 3–4 items save 5%, and 5 or more save 10%. The discount is calculated automatically. Select only the materials your research requires.</p></details>
+      <details class="lab-detail"><summary>Can I pay from outside Australia?</summary><p>Yes, international bank-transfer instructions are shown for non-Australian orders. Payment is due in AUD. Your bank may charge currency-conversion or intermediary fees; dispatch begins after the full payment clears.</p></details>
+      <details class="lab-detail"><summary>Are these products for human use?</summary><p>No. These materials are supplied strictly for laboratory research, not for human or veterinary use, clinical application or self-administration.</p></details>
     </div>
-  </section>
-
-  <section class="final-cta">
-    <div class="container">
-      <h2 class="final-cta__title">Explore Research Peptides</h2>
-      <p class="final-cta__sub">Browse our full catalog of batch-certified research compounds. Express delivery across Australia. Ships worldwide.</p>
-      <div class="final-cta__actions">
-        <button class="btn btn--teal btn--lg" onclick="showPage('shop')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop Research Peptides</button>
-        <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">View Batch Certificates</button>
-      </div>
-      <p class="final-cta__disclaimer">For laboratory research use only · Not for human consumption · Not intended to diagnose, treat, cure, or prevent any disease · All prices AUD</p>
-    </div>
-  </section>
-</div>
+  </div></section>
+</main>
 
 <!-- ============================================================ -->
 <!--  PAGE: SHOP                                                   -->
@@ -603,8 +530,8 @@
   <div class="collection-hero">
     <div class="container">
       <div class="section-label" style="color:var(--teal-400)">Research Catalog</div>
-      <h1 class="collection-hero__title">Research Compound Catalog</h1>
-      <p class="collection-hero__sub">All compounds independently batch-certified. Prices in AUD. Free standard shipping on orders of $200 AUD or more.</p>
+      <h1 class="collection-hero__title">The research collection.</h1>
+      <p class="collection-hero__sub">Compare specifications. Find your materials. Discreet packaging and worldwide shipping to eligible destinations.</p>
     </div>
   </div>
   <section class="section" style="background:var(--body-bg)">
@@ -613,6 +540,7 @@
         <div style="font-size:14px;color:var(--text-secondary);font-weight:500;" id="catalogCount" aria-live="polite"></div>
         <label class="catalog-search">Find a compound<input type="search" id="catalogSearch" placeholder="Search name or size" oninput="renderShop()" /></label>
         <label class="catalog-search">Sort by<select id="catalogSort" onchange="renderShop()"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="name">Name: A–Z</option></select></label>
+        <label class="catalog-stock"><input id="catalogInStock" type="checkbox" onchange="renderShop()"> Available only</label>
         <div class="collection-filters">
           <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
           <button class="filter-btn" onclick="filterProducts('metabolic',this)">Metabolic</button>
@@ -623,6 +551,8 @@
           <button class="filter-btn" onclick="filterProducts('accessories',this)">Accessories</button>
         </div>
       </div>
+      <section class="lab-compare" id="comparePanel" hidden aria-label="Compare selected compounds"></section>
+      <p class="lab-small-note catalog-currency-note">Currency conversions are indicative, not live quotes. All payments are in AUD.</p>
       <div class="products-grid" id="shopGrid"></div>
       <div style="margin-top:32px;padding:14px 20px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md);font-size:12px;color:var(--warning-text);text-align:center;">
         All products sold for <strong>laboratory research purposes only</strong> · Not for human consumption · Customers responsible for compliance with applicable laws in their jurisdiction
@@ -661,21 +591,10 @@
           <div class="product-page-purity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="pdpPurity">≥99% Purity Verified · Third-Party Certified</span></div>
           <div class="product-page-price" id="pdpPrice">$0.00</div>
           <div class="product-page-price-note" id="pdpPriceNote">Per vial · AUD · Research use only</div>
-          <div class="purchase-details"><span>Australian dispatch</span><span>Standard + express delivery</span><span>Free standard shipping at A$200+</span></div>
+          <div class="purchase-details"><span>Discreet packaging</span><span>Worldwide shipping · eligible destinations</span><span>Free standard shipping at A$200+</span></div>
 
-          <!-- Bundle & Save -->
-          <div class="pdp-bundle-box">
-            <div class="pdp-bundle-box__title">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-              Bundle &amp; Save — mix &amp; match any products
-            </div>
-            <div class="pdp-bundle-box__tiers">
-              <div class="pdp-bundle-box__tier"><span class="pbt-qty">2 items</span><span class="pbt-save">3% off</span></div>
-              <div class="pdp-bundle-box__tier"><span class="pbt-qty">3+ items</span><span class="pbt-save">5% off</span></div>
-              <div class="pdp-bundle-box__tier pdp-bundle-box__tier--best"><span class="pbt-qty">5+ items</span><span class="pbt-save">10% off</span></div>
-            </div>
-          </div>
 
+          <fieldset class="lab-quantity"><legend>Choose quantity</legend><div id="pdpQuantities"></div><p id="pdpSelectionPrice" aria-live="polite"></p><small>Quantity savings shown for this selection. Your cart combines all eligible items.</small></fieldset>
           <div class="product-page-variants" id="pdpVariants"></div>
           <div id="pdpStockBadge" style="display:none"></div>
           <div class="product-page-actions">
@@ -684,24 +603,19 @@
               Add to Cart
             </button>
           </div>
+          <div class="lab-pdp-delivery"><label>Delivery estimate<select id="pdpShipZone" onchange="renderPdpSelection()"><option value="AU">Australia</option><option value="NZ">New Zealand</option><option value="INTL">Other eligible destination</option></select></label><div id="pdpShippingEstimate" aria-live="polite"></div><a href="/shipping" onclick="event.preventDefault();showPage('shipping')">Shipping policy</a> · <a href="/refunds" onclick="event.preventDefault();showPage('refund')">Returns &amp; damaged orders</a></div>
           <div class="product-cert-box">
-            <div><div class="product-cert-box__title">Batch Certification Available</div><div class="product-cert-box__sub">Independent laboratory tested · HPLC + MS verified · All batches documented</div></div>
+            <div><div class="product-cert-box__title">Supplier testing documentation</div><div class="product-cert-box__sub">Check the compound, supplied quantity and batch against your order. The supplier directory is not a vial-specific certificate.</div></div>
             <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--outline-teal btn--sm">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               View Certificates
             </a>
           </div>
-          <div class="product-page-info-tabs">
-            <div class="tab-buttons">
-              <div class="tab-btn active" onclick="switchTab(this,'desc')">Description</div>
-              <div class="tab-btn" onclick="switchTab(this,'specs')">Specifications</div>
-              <div class="tab-btn" onclick="switchTab(this,'storage')">Storage</div>
-              <div class="tab-btn" onclick="switchTab(this,'shipping-info')">Shipping</div>
-            </div>
-            <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Each batch is independently tested and documented.</p></div>
-            <div class="tab-content" id="tab-specs"><table class="spec-table" id="pdpSpecTable"></table></div>
-            <div class="tab-content" id="tab-storage"><p><strong>Lyophilised Storage</strong></p><p>Store at <strong>-20°C or below</strong> in a dry, dark environment. Avoid repeated freeze-thaw cycles. Properly stored lyophilised compound is stable for up to 24 months from manufacture date.</p><p><strong>After Reconstitution</strong></p><p>Store at <strong>2–8°C</strong> (refrigerated). Use within the timeframe required by your laboratory protocol. Do not freeze reconstituted solution unless required by research conditions.</p><p><strong>Handling</strong></p><p>Handle with appropriate laboratory PPE. Reconstitute in a sterile environment using appropriate laboratory-grade solvent per research protocol.</p></div>
-            <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. Orders of $200 AUD or more receive <strong>free standard shipping</strong>, with express available as a $5 AUD upgrade.</p><p>Standard and express shipping options are also available to eligible international destinations. Customers are responsible for local import compliance. All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
+          <div class="lab-product-details">
+            <details class="lab-detail" open><summary>Description</summary><p id="pdpDesc"></p><p>For laboratory research only. Not for human or veterinary use.</p></details>
+            <details class="lab-detail"><summary>Specifications</summary><table class="spec-table" id="pdpSpecTable"></table></details>
+            <details class="lab-detail"><summary>Storage &amp; handling</summary><p>Follow the storage conditions in the applicable batch documentation and your laboratory protocol. Handle with appropriate laboratory PPE. Contact us before ordering if you need compound-specific stability or handling information.</p></details>
+            <details class="lab-detail"><summary>Shipping &amp; discreet packaging</summary><p>Choose standard or express shipping. At A$200 before discounts, standard shipping is free and express costs A$5.</p><p>Plain outer packaging, with required shipping labels and customs declarations. Worldwide shipping is subject to destination eligibility and local import requirements. Transit estimates begin after dispatch; payment must clear first.</p></details>
           </div>
           <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
           <div style="margin-top:24px;" id="pdpFaq"></div>
@@ -719,7 +633,7 @@
     <div class="container--narrow" style="text-align:center;">
       <div class="section-label" style="color:var(--teal-400)">Quality &amp; Testing</div>
       <h1 class="policy-hero__title">Batch Certification Directory</h1>
-      <p class="policy-hero__sub">Every compound, every batch, every test date. Independently certified by accredited third-party laboratories.</p>
+      <p class="policy-hero__sub">Supplier testing references and documentation. Confirm that any certificate matches the compound, supplied quantity and batch in your order.</p>
     </div>
   </div>
   <section class="section">
@@ -729,8 +643,8 @@
       <div style="margin-top:72px;">
         <div class="section-header">
           <div class="section-label">Batch Certificate Directory</div>
-          <h2 class="section-title">All Tested Batches</h2>
-          <p class="section-sub">Full list of independently certified batches. Click any entry to view the original certificate from the accredited laboratory.</p>
+          <h2 class="section-title">Archived supplier references</h2>
+          <p class="section-sub">These existing references link to the supplier directory, not to individual laboratory reports. Ask us to confirm the applicable batch before ordering.</p>
         </div>
         <div class="cert-search-bar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -739,8 +653,8 @@
         <div class="cert-grid" id="certGrid"></div>
         <div style="margin-top:32px;padding:20px 24px;background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
           <div>
-            <div style="font-size:15px;font-weight:700;color:var(--navy-800);margin-bottom:4px;">View Full Certificate Archive</div>
-            <div style="font-size:13px;color:var(--text-muted);">All certificates issued by independent accredited laboratories. Click below to access the full archive.</div>
+            <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">View Supplier Certificate Archive</div>
+            <div style="font-size:13px;color:var(--text-muted);">Open the supplier directory to review the available reports and their scope.</div>
           </div>
           <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--teal">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -1030,7 +944,7 @@
 <!-- MOBILE STICKY CTA -->
 <div class="mobile-cta" id="mobileCta">
   <button class="btn btn--outline-white btn--sm" style="flex:1;font-size:12px" onclick="openCart()">Cart (<span id="mobileCTACount">0</span>)</button>
-  <button class="btn btn--teal btn--sm" style="flex:2" onclick="showPage('shop')">
+  <button class="btn btn--teal btn--sm" id="mobilePrimaryBtn" style="flex:2" onclick="mobilePrimaryAction()">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
     Shop Peptides
   </button>
@@ -1051,7 +965,7 @@ const PRODUCTS = [
   { id:'PL-007', name:'Deep Sleep Inducing Peptide', size:'5mg', price:55, category:'cognitive', img:'images/dsip.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'DSIP (Delta Sleep-Inducing Peptide) is a nonapeptide research compound supplied for laboratory study. Batch tested and certified.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['Common Name','DSIP'],['CAS Number','62568-57-4'],['Molecular Formula','C₃₅H₄₈N₁₀O₁₅'],['Molecular Weight','848.82 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥98%'],['Quantity','5mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-008', name:'Melanotan-2', size:'10mg', price:69, category:'cognitive', img:'images/melanotan-2.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-2 (MT-2) is a synthetic melanocortin analogue research compound. Each batch independently tested per laboratory standards.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','121062-08-6'],['Molecular Formula','C₅₀H₆₉N₁₅O₉'],['Molecular Weight','1024.19 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-009', name:'Melanotan-1', size:'10mg', price:69, category:'cognitive', img:'images/melanotan-1.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-1 (MT-1 / Afamelanotide) is a synthetic melanocortin research compound supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','75921-69-6'],['Molecular Weight','~1646 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
-  { id:'PL-011', name:'NAD+', size:'500mg', price:75, category:'cellular', img:'images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','100mg per vial'],['Third-Party Certified','Yes']] },
+  { id:'PL-011', name:'NAD+', size:'500mg', price:75, category:'cellular', img:'images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','500mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-013', name:'Glutathione', size:'1500mg', price:85, category:'cellular', img:'images/glutathione.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'Glutathione (GSH) is a tripeptide antioxidant research compound for laboratory cellular biology study. Independently batch-tested.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','70-18-8'],['Molecular Formula','C₁₀H₁₇N₃O₆S'],['Molecular Weight','307.32 g/mol'],['Appearance','White powder'],['Purity (HPLC)','≥98%'],['Quantity','1500mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-014', name:'BAC Water', size:'10ml', price:19, category:'accessories', img:'images/bac-water.jpg', purity:'Pharmaceutical Grade', badge:'Accessory', badgeHot:false, desc:'Bacteriostatic Water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research compounds.', tags:['0.9% Benzyl Alcohol','10ml vial','Lab Grade'], specs:[['Type','Bacteriostatic Water'],['Benzyl Alcohol','0.9%'],['Volume','10ml'],['Container','Multi-dose vial'],['Use','Laboratory reconstitution only']] }
 ];
@@ -1131,6 +1045,12 @@ const LOW_STOCK_THRESHOLD = 5;
 let inventory = {};
 let restocking = {};
 let cart = [];
+let cartReturnFocus = null;
+let homeCategory = 'featured';
+let spotlightId = 'PL-012';
+let comparedIds = [];
+let pdpQuantity = 1;
+let activePage = 'home';
 
 // ============================================================
 // CHECKOUT
@@ -1177,6 +1097,7 @@ function coShipLabel(method, subtotal) {
 
 function openCheckout() {
   if (!cart.length) return;
+  closeCart();
   const overlay = document.getElementById('coOverlay');
   document.getElementById('coSuccess').classList.remove('visible');
   document.getElementById('coBody').style.display = 'grid';
@@ -1485,7 +1406,7 @@ function setCurrency(val) {
   currentCurrency = val;
   const note = document.getElementById('cartCurrencyNote');
   if (note) note.textContent = val;
-  renderFeatured(); renderShop();
+  renderFeatured(); renderShop(); setSpotlight(spotlightId); renderComparison();
   updatePdpPrices();
   renderCart();
 }
@@ -1498,6 +1419,7 @@ function updatePdpPrices() {
   const p = currentProduct;
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
   document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currentCurrency + ' · Research use only';
+  renderPdpSelection();
 }
 
 // ============================================================
@@ -1549,36 +1471,43 @@ function getMultibuyLabel(qty) {
 // SHIPPING ZONE
 // ============================================================
 function getShippingCost(subtotalAUD, countryCode) {
-  if (subtotalAUD >= FREE_SHIP_THRESHOLD) return 0;
-  // AU and NZ get standard AU rate; everyone else pays international
-  return (countryCode === 'AU' || countryCode === 'NZ') ? 10 : 20;
+  return coShipPrice(SHIP_ZONES[countryCode === 'AU' ? 'AU' : countryCode === 'NZ' ? 'NZ' : 'INTL'][0], subtotalAUD);
 }
 
 // ============================================================
 // CART LOGIC
 // ============================================================
 function openCart() {
+  const panel = document.getElementById('cartPanel');
+  if (!panel.classList.contains('open')) cartReturnFocus = document.activeElement;
+  panel.inert = false;
+  panel.setAttribute('aria-hidden', 'false');
   document.getElementById('cartOverlay').classList.add('open');
   document.getElementById('cartPanel').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('cartCloseBtn').focus();
 }
 function closeCart() {
   document.getElementById('cartOverlay').classList.remove('open');
   document.getElementById('cartPanel').classList.remove('open');
   document.body.style.overflow = '';
+  document.getElementById('cartPanel').inert = true;
+  document.getElementById('cartPanel').setAttribute('aria-hidden', 'true');
+  if (cartReturnFocus?.isConnected) cartReturnFocus.focus();
 }
 function getStock(productId) { return inventory[productId] ?? 999; }
 
-function addToCart(productId) {
+function addToCart(productId, quantity = 1) {
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 50) return;
   const p = PRODUCTS.find(x => x.id === productId);
   if (!p) return;
   const stock = getStock(productId);
   if (stock === 0) { showToast(p.name + ' is out of stock'); return; }
   const cartQty = cart.filter(x => x.id === productId).reduce((s, x) => s + x.qty, 0);
-  if (cartQty >= stock) { showToast('Only ' + stock + ' in stock'); return; }
+  if (cartQty + quantity > Math.min(stock, 50)) { showToast('Requested quantity is not available'); return; }
   const existing = cart.find(x => x.id === productId);
-  if (existing) { existing.qty++; }
-  else { cart.push({ id: p.id, name: p.name, size: p.size, price: p.price, qty: 1 }); }
+  if (existing) { existing.qty += quantity; }
+  else { cart.push({ id: p.id, name: p.name, size: p.size, price: p.price, qty: quantity }); }
   renderCart();
   updateCountBadges();
   showToast(p.name + ' added to cart');
@@ -1590,6 +1519,8 @@ function removeFromCart(idx) {
   updateCountBadges();
 }
 function changeQty(idx, delta) {
+  if (!cart[idx]) return;
+  if (cart[idx].qty + delta > Math.min(getStock(cart[idx].id), 50)) { showToast('Requested quantity is not available'); return; }
   cart[idx].qty = Math.max(1, cart[idx].qty + delta);
   renderCart();
   updateCountBadges();
@@ -1600,78 +1531,22 @@ function getCartCount() { return cart.reduce((s, i) => s + i.qty, 0); }
 // ============================================================
 // CART SUGGESTIONS
 // ============================================================
-const PAIRINGS = {
-  'PL-001': ['PL-004','PL-002','PL-003','PL-014'],
-  'PL-002': ['PL-003','PL-001','PL-004','PL-014'],
-  'PL-003': ['PL-002','PL-001','PL-004','PL-014'],
-  'PL-004': ['PL-001','PL-003','PL-002','PL-014'],
-  'PL-005': ['PL-006','PL-007','PL-014'],
-  'PL-006': ['PL-005','PL-007','PL-014'],
-  'PL-007': ['PL-006','PL-005','PL-014'],
-  'PL-008': ['PL-009','PL-014'],
-  'PL-009': ['PL-008','PL-014'],
-  'PL-011': ['PL-012','PL-013'],
-  'PL-012': ['PL-011','PL-013'],
-  'PL-013': ['PL-011','PL-012'],
-  'PL-014': ['PL-002','PL-001','PL-003'],
-};
-
 function renderCartSuggestions() {
-  const el = document.getElementById('cartSuggestionsEl');
-  if (cart.length === 0) { el.style.display = 'none'; return; }
-
-  const cartIds = new Set(cart.map(i => i.id));
-
-  // Build scored suggestion list
-  const scores = {};
-  cart.forEach(item => {
-    (PAIRINGS[item.id] || []).forEach((pid, rank) => {
-      if (!cartIds.has(pid)) scores[pid] = (scores[pid] || 0) + (10 - rank);
-    });
-  });
-  // Always boost BAC Water if cart has any non-BAC item
-  if (!cartIds.has('PL-014')) scores['PL-014'] = (scores['PL-014'] || 0) + 20;
-
-  const suggestions = Object.entries(scores)
-    .sort((a, b) => b[1] - a[1])
-    .map(([id]) => PRODUCTS.find(p => p.id === id))
-    .filter(p => p && getStock(p.id) > 0)
-    .slice(0, 1);
-
-  if (suggestions.length === 0) { el.style.display = 'none'; return; }
-
-  // Bundle tier nudge
-  const qty = getCartCount();
-  const nextTier = qty < 2 ? { need: 2 - qty, pct: 3 }
-    : qty < 3 ? { need: 3 - qty, pct: 5 }
-    : qty < 5 ? { need: 5 - qty, pct: 10 }
-    : null;
-  const nudge = nextTier
-    ? `<div style="margin-bottom:12px;padding:8px 12px;background:#0d1a0d;border:1px solid #1e3a1e;border-radius:8px;font-size:12px;color:#4ade80;font-weight:700">Add ${nextTier.need} more item${nextTier.need > 1 ? 's' : ''} → unlock ${nextTier.pct}% off your order</div>`
-    : '';
-
-  const cards = suggestions.map(p => {
-    const imgHtml = p.img
-      ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">`
-      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2a3a,#0d1a2a);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5" style="width:16px;height:16px"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg></div>`;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
-      <div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden">${imgHtml}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:1px">${p.size} · ${fmtPrice(p.price)}</div>
-      </div>
-      <button onclick="addToCart('${p.id}')" style="flex-shrink:0;background:transparent;border:1.5px solid var(--teal-400);color:var(--teal-400);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">+ Add</button>
-    </div>`;
-  }).join('');
-
-  el.style.display = 'block';
-  el.innerHTML = `<div style="padding:12px 16px;border-top:1px solid var(--border)">
-    <div style="font-size:14px;font-weight:700;color:var(--text-muted);margin-bottom:10px">Optional addition to your research order</div>
-    ${nudge}${cards}
-  </div>`;
+  const el=document.getElementById('cartSuggestionsEl');
+  if(!cart.length){el.style.display='none';return;}
+  const count=getCartCount();
+  const next=count<2?{need:2-count,pct:3}:count<3?{need:3-count,pct:5}:count<5?{need:5-count,pct:10}:null;
+  const supply=PRODUCTS.find(p=>p.id==='PL-014');
+  const eligible=supply && getStock(supply.id)>0 && !cart.some(i=>i.id===supply.id) && cart.some(i=>i.id!=='PL-014');
+  const message=next?`<p>${next.need} more item${next.need===1?'':'s'} qualifies for ${next.pct}% quantity savings. Choose only what your research needs.</p>`:'<p>Your 10% quantity discount is applied.</p>';
+  const accessory=eligible?`<div class="lab-cart-addition__row"><img src="${supply.img}" alt="${supply.name}"><div>${supply.name}<small>${supply.size} · ${fmtPrice(supply.price)} before discounts</small></div><button type="button" onclick="addToCart('${supply.id}')">+ Add</button></div>`:'';
+  el.style.display='block';
+  el.innerHTML='<div class="lab-cart-addition"><h3>'+(eligible?'Optional laboratory supply':'Quantity savings')+'</h3>'+message+accessory+'</div>';
 }
 
 function renderCart() {
+  saveLocalCart();
+  if (currentProduct) renderPdpSelection();
   const el     = document.getElementById('cartItemsEl');
   const footer = document.getElementById('cartFooter');
   const empty  = document.getElementById('cartEmpty');
@@ -1713,16 +1588,16 @@ function renderCart() {
         <div class="cart-item__name">${item.name}</div>
         <div class="cart-item__size">${item.size} · Research Use Only</div>
         <div class="cart-item__controls">
-          <div class="cart-qty-btn" onclick="changeQty(${i},-1)">−</div>
+          <button class="cart-qty-btn" aria-label="Decrease ${item.name} quantity" onclick="changeQty(${i},-1)">−</button>
           <div class="cart-qty-num">${item.qty}</div>
-          <div class="cart-qty-btn" onclick="changeQty(${i},1)">+</div>
+          <button class="cart-qty-btn" aria-label="Increase ${item.name} quantity" onclick="changeQty(${i},1)">+</button>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;padding-right:20px;">
         <div class="cart-item__price">${fmtPrice(item.price * item.qty)}</div>
         <div style="font-size:11px;color:var(--text-muted)">${fmtPrice(item.price)} each</div>
       </div>
-      <div class="cart-item__remove" onclick="removeFromCart(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      <button class="cart-item__remove" aria-label="Remove ${item.name}" onclick="removeFromCart(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>`;
   });
   el.innerHTML = html;
@@ -1771,7 +1646,7 @@ function makeCard(p, mini) {
   const oos = stock === 0;
   const low = !oos && stock <= LOW_STOCK_THRESHOLD;
   const isRestocking = !oos && restocking[p.id] === true;
-  const badgeLabel = oos ? 'Out of Stock' : isRestocking ? 'Restocking Soon' : p.badge;
+  const badgeLabel = oos ? 'Out of Stock' : isRestocking ? 'Restocking Soon' : (Object.prototype.hasOwnProperty.call(inventory,p.id) ? 'In Stock' : 'Research use');
   const badgeClass = oos ? 'product-card__badge product-card__badge--oos'
     : isRestocking ? 'product-card__badge product-card__badge--restocking'
     : p.badgeHot ? 'product-card__badge product-card__badge--hot'
@@ -1788,7 +1663,8 @@ function makeCard(p, mini) {
       <a class="product-card__name" href="/products/${PRODUCT_SLUGS[p.id]}" onclick="event.preventDefault();event.stopPropagation();viewProduct('${p.id}')">${p.name} <span class="product-card__size">${p.size}</span></a>
       <div class="product-card__sub">${p.desc.split('.')[0]}.</div>
       <div class="product-card__meta"><span class="product-card__tag">${p.tags[0]}</span></div>
-      <div class="product-card__price">${fmtPrice(p.price)}</div>
+      <div class="product-card__price">${fmtPrice(p.price)} <small>/ vial</small></div>
+      <label class="lab-compare-toggle" onclick="event.stopPropagation()"><input type="checkbox" ${comparedIds.includes(p.id) ? 'checked' : ''} onchange="toggleCompare('${p.id}',this)"> Compare specifications</label>
       ${low ? `<div class="product-card__low-stock">Only ${stock} left</div>` : ''}
       <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
         ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
@@ -1801,22 +1677,27 @@ function makeCard(p, mini) {
   </div>`;
 }
 
-function renderFeatured() {
-  const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0,8);
+function renderFeatured(category) {
+  if (category) homeCategory = category;
+  const featured = homeCategory === 'featured' ? ['PL-002','PL-012','PL-003','PL-001'].map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean) : PRODUCTS.filter(p => p.category === homeCategory);
   document.getElementById('featuredGrid').innerHTML = featured.map(p=>makeCard(p,false)).join('');
+  document.querySelectorAll('[data-home-category]').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.homeCategory === homeCategory)));
+  document.getElementById('homeProductCount').textContent = PRODUCTS.length;
 }
 let catalogCategory = 'all';
 function renderShop(filter) {
   if (filter) catalogCategory = filter;
   const search = (document.getElementById('catalogSearch')?.value || '').trim().toLowerCase();
   const sort = document.getElementById('catalogSort')?.value || 'featured';
-  const list = PRODUCTS.filter(p => (catalogCategory === 'all' || p.category === catalogCategory) && (p.name + ' ' + p.size).toLowerCase().includes(search));
+  const normalize = value => value.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const inStock = document.getElementById('catalogInStock').checked;
+  const list = PRODUCTS.filter(p => (catalogCategory === 'all' || p.category === catalogCategory) && normalize(p.name + p.size).includes(normalize(search)) && (!inStock || getStock(p.id) > 0));
   if (sort === 'low') list.sort((a,b) => a.price-b.price);
   if (sort === 'high') list.sort((a,b) => b.price-a.price);
   if (sort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
-  document.getElementById('catalogCount').textContent = `${list.length} compounds · Prices in ${currentCurrency}`;
+  document.getElementById('catalogCount').textContent = `${list.length} product${list.length === 1 ? '' : 's'} · Prices in ${currentCurrency}`;
   document.getElementById('shopGrid').innerHTML = list.map(p=>makeCard(p,false)).join('');
-  if (!list.length) document.getElementById('shopGrid').innerHTML = '<p class="catalog-empty">No matching compounds. Try another name or choose All categories.</p>';
+  if (!list.length) document.getElementById('shopGrid').innerHTML = '<div class="catalog-empty"><h2>No matching compounds</h2><p>Try another name or reset the filters.</p><button class="lab-button lab-button--primary" onclick="browseCategory(\'all\')">Reset filters</button></div>';
 }
 
 function updatePdpStock(productId) {
@@ -1857,14 +1738,16 @@ async function loadInventory() {
     const data = await res.json();
     inventory = data.stock || {};
     restocking = data.restocking || {};
+    cart = cart.map(item => ({...item, qty:Math.min(item.qty,getStock(item.id))})).filter(item=>item.qty>0);
+    renderCart(); updateCountBadges();
     renderFeatured();
     renderShop();
-    if (currentProduct) updatePdpStock(currentProduct.id);
+    if (currentProduct) { updatePdpStock(currentProduct.id); renderPdpSelection(); }
   } catch {}
 }
 function filterProducts(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  (btn || document.querySelector('.filter-btn[onclick*="\''+cat+'\'"]'))?.classList.add('active');
   renderShop(cat);
 }
 
@@ -1884,11 +1767,12 @@ function viewProduct(id, updateHistory = true) {
   const p = PRODUCTS.find(x=>x.id===id);
   if (!p) return;
   currentProduct = p;
+  pdpQuantity = 1;
   document.getElementById('pdpBreadcrumb').textContent = p.name;
   document.getElementById('pdpSku').textContent = p.id.replace('PL-','');
   document.getElementById('pdpName').textContent = p.name;
   document.getElementById('pdpId').textContent = p.size + ' · Research Compound · For Laboratory Use Only';
-  document.getElementById('pdpPurity').textContent = p.purity + ' · Third-Party Certified';
+  document.getElementById('pdpPurity').textContent = p.purity + ' · Listed specification';
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
   document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currentCurrency + ' · Research use only';
   document.getElementById('pdpImgLabel').textContent = p.name + ' · ' + p.size + ' · Research Grade';
@@ -1896,6 +1780,7 @@ function viewProduct(id, updateHistory = true) {
   document.getElementById('pdpSpecTable').innerHTML = p.specs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
   document.getElementById('pdpAddBtn').onclick = () => pdpAddToCart();
   updatePdpStock(id);
+  renderPdpSelection();
   // Render label vials on product page
   const pdpVials = document.getElementById('pdpVials');
   if (pdpVials) {
@@ -1909,7 +1794,7 @@ function viewProduct(id, updateHistory = true) {
   showPage('product', false);
   if (updateHistory) history.pushState({ page:'product', productId:id }, '', `/products/${PRODUCT_SLUGS[id]}`);
 }
-function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id); }
+function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id, pdpQuantity); }
 
 // ============================================================
 // CERTIFICATIONS DATA
@@ -1934,7 +1819,7 @@ function renderCerts(query) {
     <div class="cert-compound">
       <div class="cert-compound__header">
         <div class="cert-compound__name">${c.name}</div>
-        <div class="cert-compound__count">${c.batches.length} batch${c.batches.length!==1?'es':''}</div>
+        <div class="cert-compound__count">${c.batches.length} reference${c.batches.length!==1?'s':''}</div>
       </div>
       <div class="cert-batches">
         ${c.batches.map(b=>`
@@ -1964,6 +1849,7 @@ function showPage(id, updateHistory = true) {
   const links = document.querySelectorAll('.nav__link');
   if (map[id]!==undefined) links[map[id]]?.classList.add('active');
   if (updateHistory && PAGE_PATHS[id]) history.pushState({ page:id }, '', PAGE_PATHS[id]);
+  updateMobilePurchase(id);
 }
 
 function routeFromLocation() {
@@ -2032,9 +1918,115 @@ function trackOrder() {
 }
 
 // ============================================================
+// STORE EXPERIENCE
+// ============================================================
+function saveLocalCart() {
+  try { localStorage.setItem('pl-cart-v1', JSON.stringify({saved:Date.now(),items:cart.map(({id,qty})=>({id,qty}))})); } catch {}
+}
+function restoreLocalCart() {
+  try {
+    const data = JSON.parse(localStorage.getItem('pl-cart-v1') || 'null');
+    if (!data || !Number.isFinite(data.saved) || Date.now()-data.saved>7*86400000 || !Array.isArray(data.items)) return;
+    const quantities = new Map();
+    data.items.slice(0,100).forEach(({id,qty})=>{
+      if (!Number.isInteger(qty) || qty<1 || !PRODUCTS.some(p=>p.id===id)) return;
+      quantities.set(id,Math.min(50,(quantities.get(id)||0)+qty));
+    });
+    cart = [...quantities].map(([id,qty])=>{
+      const p = PRODUCTS.find(p=>p.id===id);
+      return {id:p.id,name:p.name,size:p.size,price:p.price,qty:Math.min(qty,getStock(id))};
+    }).filter(item=>item.qty>0);
+  } catch {}
+}
+function browseCategory(category) {
+  document.getElementById('catalogSearch').value = '';
+  document.getElementById('catalogInStock').checked = false;
+  showPage('shop'); filterProducts(category);
+}
+function setSpotlight(id) {
+  const ids=['PL-012','PL-002','PL-003'];
+  const p=PRODUCTS.find(p=>p.id===id);
+  if (!p || !ids.includes(id)) return;
+  spotlightId=id;
+  document.getElementById('spotlightImage').src=p.img;
+  document.getElementById('spotlightImage').alt=p.name+' '+p.size+' research compound';
+  document.getElementById('spotlightLink').href='/products/'+PRODUCT_SLUGS[id];
+  document.getElementById('spotlightName').textContent=p.name;
+  document.getElementById('spotlightSize').textContent=p.size+' · Research compound';
+  document.getElementById('spotlightPrice').textContent=fmtPrice(p.price);
+  document.getElementById('spotlightIndex').textContent='0'+(ids.indexOf(id)+1)+' / 03';
+  document.querySelectorAll('[data-spotlight]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.spotlight===id)));
+}
+function renderHomeShipping() {
+  const zone=document.getElementById('homeShipZone').value;
+  const raw=document.getElementById('homeShipSubtotal').value;
+  const amount=Number(raw);
+  const el=document.getElementById('homeShipRates');
+  if (raw.trim()==='' || !Number.isFinite(amount) || amount<0) { el.textContent='Enter a valid product subtotal of A$0 or more.'; return; }
+  el.innerHTML=SHIP_ZONES[zone].map(method=>`<div><span>${method.label}</span><strong>${coShipPrice(method,amount)===0?'Free':'A$'+coShipPrice(method,amount).toFixed(2)}</strong><small>${method.eta} after dispatch</small></div>`).join('');
+}
+function toggleCompare(id, input) {
+  if (comparedIds.includes(id)) comparedIds=comparedIds.filter(x=>x!==id);
+  else if (comparedIds.length<3) comparedIds.push(id);
+  else { input.checked=false; showToast('Compare up to 3 compounds at a time'); return; }
+  renderComparison();
+  // Update matching checkboxes without replacing the focused card.
+  document.querySelectorAll('.lab-compare-toggle input').forEach(el=>{ el.checked=comparedIds.some(pid=>el.getAttribute('onchange').includes(pid)); });
+}
+function clearComparison() { comparedIds=[]; renderComparison(); renderFeatured(); renderShop(); }
+function renderComparison() {
+  const list=comparedIds.map(id=>PRODUCTS.find(p=>p.id===id)).filter(Boolean);
+  const rows=[['Supplied quantity',p=>p.size],['Price per vial',p=>fmtPrice(p.price)],['Listed specification',p=>p.purity],['Documentation',()=> 'Confirm applicable batch with supplier']];
+  const content=`<div class="lab-compare__heading"><h2>Compare specifications (${list.length}/3)</h2><button type="button" onclick="clearComparison()">Clear comparison</button></div><p>Compare identity and supplied quantities—not suitability for human use.</p><div class="lab-table-scroll"><table><thead><tr><th scope="col">Specification</th>${list.map(p=>`<th scope="col"><a href="/products/${PRODUCT_SLUGS[p.id]}" onclick="event.preventDefault();viewProduct('${p.id}')">${p.name}</a></th>`).join('')}</tr></thead><tbody>${rows.map(([label,value])=>`<tr><th scope="row">${label}</th>${list.map(p=>`<td>${value(p)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  ['comparePanel','homeComparePanel'].forEach(id=>{const el=document.getElementById(id);el.hidden=!list.length;el.innerHTML=list.length?content:'';});
+}
+function quantityDiscount(qty) { return qty>=5?.10:qty>=3?.05:qty>=2?.03:0; }
+function selectPdpQuantity(qty) { pdpQuantity=qty; renderPdpSelection(); }
+function renderPdpSelection() {
+  if (!currentProduct) return;
+  const p=currentProduct;
+  const available=Math.max(0,Math.min(50,getStock(p.id)-cart.filter(i=>i.id===p.id).reduce((sum,i)=>sum+i.qty,0)));
+  if (pdpQuantity>available && available>0) pdpQuantity=1;
+  document.getElementById('pdpQuantities').innerHTML=[1,2,3,5].map(qty=>`<button type="button" aria-pressed="${pdpQuantity===qty}" ${qty>available?'disabled':''} onclick="selectPdpQuantity(${qty})"><strong>${qty} vial${qty===1?'':'s'}</strong><span>${qty===1?'Single unit':'Save '+Math.round(quantityDiscount(qty)*100)+'%'}</span></button>`).join('');
+  const raw=p.price*pdpQuantity;
+  const discounted=Math.round(raw*(1-quantityDiscount(pdpQuantity))*100)/100;
+  document.getElementById('pdpSelectionPrice').textContent=fmtPrice(discounted)+' for '+pdpQuantity+' · '+fmtPrice(discounted/pdpQuantity)+' per vial';
+  document.getElementById('pdpPriceNote').textContent='Per vial · '+currentCurrency+(currentCurrency==='AUD'?'':' estimate · Charged in AUD');
+  const zone=document.getElementById('pdpShipZone').value;
+  document.getElementById('pdpShippingEstimate').innerHTML=SHIP_ZONES[zone].map(m=>`<p><strong>${m.label}: A$${coShipPrice(m,raw).toFixed(2)}</strong> · ${m.eta} after dispatch</p>`).join('')+`<p class="lab-small-note">This selection: A$${(discounted+coShipPrice(SHIP_ZONES[zone][0],raw)).toFixed(2)} including standard shipping, before any promo, import charges or bank fees. Existing cart items may change discounts.</p>`;
+  const btn=document.getElementById('pdpAddBtn');
+  btn.disabled=available<1;
+  btn.textContent=available<1?'No additional stock available':'Add '+pdpQuantity+' to cart';
+  updateMobilePurchase(activePage);
+}
+function updateMobilePurchase(page) {
+  activePage=page;
+  const btn=document.getElementById('mobilePrimaryBtn');
+  if (!btn) return;
+  btn.disabled=false;
+  if(page==='product' && currentProduct){btn.textContent='Add '+pdpQuantity+' · '+fmtPrice(currentProduct.price*pdpQuantity*(1-quantityDiscount(pdpQuantity)));btn.disabled=document.getElementById('pdpAddBtn').disabled;}
+  else btn.textContent='Browse catalogue';
+}
+function mobilePrimaryAction() { if(activePage==='product')pdpAddToCart();else browseCategory('all'); }
+document.addEventListener('keydown',event=>{
+  const panel=document.getElementById('cartPanel');
+  if(!panel.classList.contains('open'))return;
+  if(event.key==='Escape'){event.preventDefault();closeCart();}
+  if(event.key==='Tab'){
+    const focusable=[...panel.querySelectorAll('button:not([disabled]), a[href], input:not([disabled])')].filter(el=>el.getClientRects().length);
+    const first=focusable[0],last=focusable[focusable.length-1];
+    if(event.shiftKey && document.activeElement===first){event.preventDefault();last?.focus();}
+    else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first?.focus();}
+  }
+});
+
 // INIT
 // ============================================================
+restoreLocalCart();
 routeFromLocation();
+setSpotlight(spotlightId);
+renderHomeShipping();
+updateCountBadges();
 renderFeatured();
 renderShop();
 renderCerts();
