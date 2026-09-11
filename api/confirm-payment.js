@@ -5,7 +5,7 @@
 const crypto = require('crypto');
 
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
-const SECRET       = process.env.CONFIRM_SECRET  || process.env.confirm_secret || 'pl-confirm-2024';
+const SECRET       = process.env.CONFIRM_SECRET  || process.env.confirm_secret;
 const FROM_EMAIL   = 'orders@aupeptidelab.com';
 const SITE_URL     = 'https://www.aupeptidelab.com';
 
@@ -27,6 +27,7 @@ async function sendEmail(to, subject, html) {
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  if (!SECRET) return res.status(500).send(page('Server configuration error.', 'error'));
 
   const { order, email, amt, name, token, reminder_id, items } = req.query;
 

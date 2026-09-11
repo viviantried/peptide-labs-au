@@ -4,7 +4,7 @@
 const crypto = require('crypto');
 
 const RESEND_KEY  = process.env.RESEND_API_KEY || process.env.resend_api_key;
-const SECRET      = process.env.CONFIRM_SECRET || process.env.confirm_secret || 'pl-confirm-2024';
+const SECRET      = process.env.CONFIRM_SECRET || process.env.confirm_secret;
 const OWNER_EMAIL = 'support@aupeptidelab.com';
 const FROM_EMAIL  = 'orders@aupeptidelab.com';
 
@@ -28,6 +28,7 @@ const STAR_COLORS = { 5:'#16a34a', 4:'#65a30d', 3:'#d97706', 2:'#ea580c', 1:'#dc
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  if (!SECRET) return res.status(500).send(page('Server configuration error.', 'error'));
 
   if (req.method === 'GET') {
     const { order, email, token, rating } = req.query;

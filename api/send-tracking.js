@@ -4,7 +4,7 @@
 const crypto = require('crypto');
 
 const RESEND_KEY  = process.env.RESEND_API_KEY || process.env.resend_api_key;
-const SECRET      = process.env.CONFIRM_SECRET || process.env.confirm_secret || 'pl-confirm-2024';
+const SECRET      = process.env.CONFIRM_SECRET || process.env.confirm_secret;
 const FROM_EMAIL  = 'orders@aupeptidelab.com';
 const OWNER_EMAIL = 'support@aupeptidelab.com';
 const SITE_URL    = 'https://www.aupeptidelab.com';
@@ -24,6 +24,7 @@ function makeToken(order, email, action) {
 }
 
 module.exports = async function handler(req, res) {
+  if (!SECRET) return res.status(500).send(page('Server configuration error.', 'error'));
   if (req.method !== 'POST') return res.status(405).send('Method not allowed');
 
   const { order, email, token, tracking, carrier, items } = req.body || {};

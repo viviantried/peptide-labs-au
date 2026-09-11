@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/products/:slug", "destination": "/index.html" },
+    { "source": "/collections/all", "destination": "/index.html" },
+    { "source": "/shop", "destination": "/index.html" },
+    { "source": "/quality-testing", "destination": "/index.html" },
+    { "source": "/about", "destination": "/index.html" },
+    { "source": "/faq", "destination": "/index.html" },
+    { "source": "/contact", "destination": "/index.html" },
+    { "source": "/track-order", "destination": "/index.html" },
+    { "source": "/shipping", "destination": "/index.html" },
+    { "source": "/refunds", "destination": "/index.html" },
+    { "source": "/terms", "destination": "/index.html" },
+    { "source": "/privacy", "destination": "/index.html" }
+  ]
+}

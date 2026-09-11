@@ -5,7 +5,7 @@ const crypto       = require('crypto');
 const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
-const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret || 'pl-confirm-2024';
+const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret;
 const ACCOUNT_NAME   = 'Australian Peptide Labs Store';
 const OWNER_EMAIL    = 'support@aupeptidelab.com';
 const FROM_EMAIL     = 'orders@aupeptidelab.com';
@@ -13,6 +13,23 @@ const SITE_URL       = 'https://www.aupeptidelab.com';
 const AIRTABLE_TOKEN    = process.env.AIRTABLE_TOKEN    || process.env.airtable_token;
 const AIRTABLE_BASE     = 'appwbIeYvWxx7R9Y8';
 const RESEND_AUDIENCE   = process.env.RESEND_AUDIENCE_ID || process.env.resend_audience_id;
+const PRODUCT_CATALOG = {
+  'PL-001': { name:'Retatrutide', size:'10mg', price:135 },
+  'PL-002': { name:'BPC-157', size:'10mg', price:85 },
+  'PL-003': { name:'TB-500', size:'5mg', price:90 },
+  'PL-004': { name:'Tesamorelin', size:'5mg', price:105 },
+  'PL-005': { name:'Semax', size:'10mg', price:75 },
+  'PL-006': { name:'Selank', size:'10mg', price:75 },
+  'PL-007': { name:'Deep Sleep Inducing Peptide', size:'5mg', price:55 },
+  'PL-008': { name:'Melanotan-2', size:'10mg', price:75 },
+  'PL-009': { name:'Melanotan-1', size:'10mg', price:75 },
+  'PL-011': { name:'NAD+', size:'500mg', price:85 },
+  'PL-012': { name:'GHK-Cu', size:'50mg', price:49 },
+  'PL-013': { name:'Glutathione', size:'1500mg', price:95 },
+  'PL-014': { name:'BAC Water', size:'10ml', price:19 },
+};
+const PROMO_CODES = { VIVIAN: { type:'percent', value:10 } };
+const FREE_SHIP_THRESHOLD = 200;
 
 async function addToAudience(email, firstName, lastName) {
   if (!RESEND_KEY || !RESEND_AUDIENCE) return;
@@ -48,8 +65,32 @@ function makeConfirmToken(order, email, amt) {
 }
 
 function generateOrderId() {
-  const n = Math.floor((Date.now() / 1000) % 100000).toString().padStart(5, '0');
-  return `PL-${n}`;
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const random = crypto.randomBytes(4).toString('hex').toUpperCase();
+  return `PL-${date}-${random}`;
+}
+
+function calculateOrder(rawItems, country, shippingMethod, promoCode) {
+  const items = rawItems.map(item => {
+    const product = PRODUCT_CATALOG[item.id];
+    const qty = Number(item.qty);
+    if (!product || !Number.isInteger(qty) || qty < 1 || qty > 50) throw new Error('Invalid cart item');
+    return { id:item.id, ...product, qty };
+  });
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+  const mbRate = totalQty >= 5 ? 0.10 : totalQty >= 3 ? 0.05 : totalQty >= 2 ? 0.03 : 0;
+  const mbDiscount = subtotal * mbRate;
+  const promo = PROMO_CODES[String(promoCode || '').toUpperCase()];
+  const promoDiscount = promo?.type === 'percent' ? (subtotal - mbDiscount) * promo.value / 100 : 0;
+  const isExpress = String(shippingMethod || '').toLowerCase().startsWith('express');
+  const baseShipping = country === 'AU' ? (isExpress ? 15 : 10)
+    : country === 'NZ' ? (isExpress ? 28 : 15)
+    : (isExpress ? 40 : 20);
+  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? (isExpress ? 5 : 0) : baseShipping;
+  const discount = mbDiscount + promoDiscount;
+  const total = Math.max(0, subtotal - discount) + shipping;
+  return { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount };
 }
 
 async function sendEmail(to, subject, html) {
@@ -74,18 +115,25 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (!CONFIRM_SECRET) return res.status(500).json({ error: 'Server configuration error' });
 
   const {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
-    items, subtotal, shipping, discount, total,
-    mbDiscount, promoDiscount,
-    promoCode, paymentMethod, paymentLabel, shippingMethod, marketingConsent,
+    items: rawItems, promoCode, paymentMethod, paymentLabel, shippingMethod, marketingConsent,
   } = req.body;
 
-  if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !items?.length) {
+  if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !rawItems?.length) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
+
+  let calculated;
+  try {
+    calculated = calculateOrder(rawItems, country, shippingMethod, promoCode);
+  } catch {
+    return res.status(400).json({ error: 'Invalid cart' });
+  }
+  const { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount } = calculated;
 
   const orderName = generateOrderId();
 
@@ -113,8 +161,8 @@ module.exports = async function handler(req, res) {
       ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Bundle</span><span style="font-weight:700;color:#7c3aed">${bundleTier} · −A$${mbD.toFixed(2)}</span></div>`
       : null,
     gotFreeShipping
-      ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Free Shipping</span><span style="font-weight:700;color:#16a34a">Yes — order over $200</span></div>`
-      : `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Free Shipping</span><span style="color:#aaa">No (A$${Number(subtotal).toFixed(2)} order)</span></div>`,
+      ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Free Standard Shipping</span><span style="font-weight:700;color:#16a34a">Applied — order of $200+</span></div>`
+      : `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Free Standard Shipping</span><span style="color:#aaa">${Number(subtotal) >= 200 ? 'Eligible; express upgrade selected' : `Not yet (A$${Number(subtotal).toFixed(2)} order)`}</span></div>`,
     promoCode && promoD > 0
       ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Promo Code</span><span style="font-weight:700;color:#dc2626">${promoCode} · −A$${promoD.toFixed(2)}</span></div>`
       : promoCode
@@ -321,7 +369,7 @@ module.exports = async function handler(req, res) {
     'Promo Code':     promoCode || '',
     'Promo Discount': promoD,
     'Discount':       Number(discount) || 0,
-    'Free Shipping':  gotFreeShipping ? 'Yes' : 'No',
+    'Free Standard Shipping': gotFreeShipping ? 'Yes' : 'No',
     'Shipping':       Number(shipping),
     'Total':          Number(total),
     'Subscriptions':  subItems.length > 0 ? subItems.map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty}`).join(', ') : 'None',
@@ -330,5 +378,5 @@ module.exports = async function handler(req, res) {
     'Date':           new Date().toISOString(),
   });
 
-  return res.status(200).json({ orderName, bsb: BSB, acct: ACCOUNT, emailError });
+  return res.status(200).json({ orderName, total, bsb: BSB, acct: ACCOUNT, emailError });
 };
