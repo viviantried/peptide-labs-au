@@ -1428,6 +1428,8 @@ button:disabled { cursor:not-allowed; opacity:.5; }
 .announcement-bar { background:#153756; color:#e9f2fa; font-size:12px; padding:9px 20px; }
 .nav { background:#0b141d; border-bottom:1px solid #33414e; box-shadow:none; }
 .nav__inner { height:76px; }
+.nav__currency { color:#e9f2fa; min-height:44px; padding:8px 10px; }
+.nav__currency option { color:#102131; background:#fff; }
 .nav__link { font-size:14px; }
 .nav__link.active { color:#d1e6ff; background:#1d3246; }
 .nav__logo-name { font-size:22px; }
@@ -1607,6 +1609,16 @@ button:disabled { cursor:not-allowed; opacity:.5; }
 .mobile-cta button { min-height:44px; font-size:14px !important; }
 .co-overlay { background:#0d1823; }
 .co-body { font-size:16px; }
+.co-field label, .co-secure, .co-back, .co-legal, .co-bsb-row span:first-child { color:#afbdcb; }
+.co-input::placeholder { color:#95a4b3; }
+.co-input, .co-select { font-size:16px; border-color:#596a7a; }
+.co-payment-intro { font-size:14px; color:#b7c7d6; line-height:1.6; margin:0 0 12px; }
+.co-pay-intl-note, .co-ship-opt__eta, .co-sum-row, .co-success__step-body, .co-success__intro, .co-success__email { color:#afbdcb; }
+.co-legal a { color:#d1e6ff; text-decoration:underline; }
+.co-ship-opt { display:block; width:100%; text-align:left; }
+.co-ship-opt--on { width:calc(100% + 2px); border-color:#91b9f5; background:#172c40; }
+.co-ship-opt:focus-visible { outline-offset:-4px; }
+.co-place-order { background:#1d4dd8; color:#fff; min-height:50px; }
 .footer { background:#0b141d; }
 .footer__desc { color:#a5b4c2; }
 @media (max-width:1024px) {

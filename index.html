@@ -6,7 +6,7 @@
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Explore PeptideLab research compounds. Australian dispatch, discreet packaging and worldwide shipping to eligible destinations. Free standard shipping at A$200." />
   <base href="/" />
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
   <link rel="icon" type="image/png" href="images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="images/favicon.png?v=3" />
 </head>
@@ -218,7 +218,7 @@
       <!-- Payment -->
       <div class="co-section">
         <div class="co-section-title">Payment</div>
-        <p style="font-size:12px;color:#555;margin:0 0 12px">All transactions are secure and encrypted. Bank transfer only.</p>
+        <p class="co-payment-intro">Pay by bank transfer in AUD. Your order is dispatched after payment clears.</p>
         <div class="co-pay-group" id="coPayGroup">
 
           <!-- AUSTRALIA -->
@@ -1181,16 +1181,16 @@ function coRenderShippingOptions() {
     const priceStr = coShipLabel(m, subtotal);
     const isOn     = m.id === selectedShipping.id;
     return `
-      <div class="co-ship-opt${isOn ? ' co-ship-opt--on' : ''}" id="sopt-${m.id}" onclick="selectShipping('${m.id}')">
-        <div class="co-ship-opt__hdr">
-          <div class="co-radio-dot${isOn ? ' on' : ''}"></div>
-          <div class="co-ship-opt__info">
+      <button type="button" class="co-ship-opt${isOn ? ' co-ship-opt--on' : ''}" id="sopt-${m.id}" aria-pressed="${isOn}" onclick="selectShipping('${m.id}')">
+        <span class="co-ship-opt__hdr">
+          <span aria-hidden="true" class="co-radio-dot${isOn ? ' on' : ''}"></span>
+          <span class="co-ship-opt__info">
             <span class="co-ship-opt__carrier">${m.carrier}</span>
             <span class="co-ship-opt__eta">${m.eta}</span>
-          </div>
+          </span>
           <span class="co-ship-opt__price">${priceStr}</span>
-        </div>
-      </div>`;
+        </span>
+      </button>`;
   }).join('');
 }
 
@@ -1200,6 +1200,7 @@ function selectShipping(id) {
   methods.forEach(m => {
     const opt = document.getElementById(`sopt-${m.id}`);
     const dot = opt?.querySelector('.co-radio-dot');
+    opt?.setAttribute('aria-pressed', String(m.id === id));
     if (m.id === id) {
       opt?.classList.add('co-ship-opt--on');
       dot?.classList.add('on');
@@ -1538,7 +1539,7 @@ function renderCartSuggestions() {
   const next=count<2?{need:2-count,pct:3}:count<3?{need:3-count,pct:5}:count<5?{need:5-count,pct:10}:null;
   const supply=PRODUCTS.find(p=>p.id==='PL-014');
   const eligible=supply && getStock(supply.id)>0 && !cart.some(i=>i.id===supply.id) && cart.some(i=>i.id!=='PL-014');
-  const message=next?`<p>${next.need} more item${next.need===1?'':'s'} qualifies for ${next.pct}% quantity savings. Choose only what your research needs.</p>`:'<p>Your 10% quantity discount is applied.</p>';
+  const message=next?`<p>Add ${next.need} more item${next.need===1?'':'s'} to qualify for ${next.pct}% quantity savings. Choose only what your research needs.</p>`:'<p>Your 10% quantity discount is applied.</p>';
   const accessory=eligible?`<div class="lab-cart-addition__row"><img src="${supply.img}" alt="${supply.name}"><div>${supply.name}<small>${supply.size} · ${fmtPrice(supply.price)} before discounts</small></div><button type="button" onclick="addToCart('${supply.id}')">+ Add</button></div>`:'';
   el.style.display='block';
   el.innerHTML='<div class="lab-cart-addition"><h3>'+(eligible?'Optional laboratory supply':'Quantity savings')+'</h3>'+message+accessory+'</div>';

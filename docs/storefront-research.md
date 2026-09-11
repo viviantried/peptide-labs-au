@@ -52,7 +52,9 @@ Competitor observations suggest useful patterns; they do not establish that an i
 
 Run `node tests/storefront.test.cjs` for dependency-free checks of asset references, HTML IDs, catalogue/API price and size parity, regional shipping, discounts, search/filter/sort, comparisons, stock limits and saved-cart repricing. No real orders, emails or transfers are created by these checks.
 
-The Vercel preview requires authentication. Visual desktop/mobile QA and a real international payment reconciliation have not been completed. Do not treat a successful build or calculation check as proof of bank settlement.
+Desktop browser checks completed on the Vercel preview: product quantity selection, New Zealand delivery estimates, adding products, the optional laboratory supply, checkout entry, international SWIFT messaging and changing between standard and express. Two GHK-Cu vials plus BAC Water total A$111.15 after the existing 5% quantity discount; NZ standard totals A$126.15 and NZ express A$139.15. No order was submitted. The browser review also prompted clearer currency/checkout text contrast and keyboard-operable shipping choices.
+
+The preview is accessible using a temporary Vercel share link. Mobile breakpoints are implemented, but an actual narrow-viewport browser check and real international payment reconciliation have not been completed. Do not treat a successful build or calculation check as proof of bank settlement.
 
 Before production rollout, verify physical packaging, dispatch/transit estimates, carrier availability by destination, accurate bank/beneficiary details and batch-matched reports. Existing broader business/product claims elsewhere on the site still need the owner's documentary substantiation. No new reviews, laboratory credentials or legal compliance claims were invented.
 
