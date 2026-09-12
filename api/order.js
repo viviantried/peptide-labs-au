@@ -86,7 +86,7 @@ function makeConfirmToken(order, email, amt) {
 }
 
 function generateOrderId() {
-  const number = crypto.randomInt(1_000_000, 10_000_000);
+  const number = crypto.randomInt(10_000, 100_000);
   return `PL-${number}`;
 }
 
