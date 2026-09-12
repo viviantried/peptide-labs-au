@@ -1,8 +1,8 @@
 {
   "PL-001": {
-    "stock": 20,
+    "stock": 0,
     "weekly_sold": 1,
-    "restocking": false
+    "restocking": true
   },
   "PL-002": {
     "stock": 35,
