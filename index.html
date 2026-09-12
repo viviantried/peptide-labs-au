@@ -1810,7 +1810,7 @@ function makeCard(p, mini) {
   const oos = stock === 0;
   const low = !oos && stock <= LOW_STOCK_THRESHOLD;
   const isRestocking = !oos && restocking[p.id] === true;
-  const badgeLabel = oos ? 'Out of Stock' : isRestocking ? 'Restocking Soon' : p.badge;
+  const badgeLabel = oos ? 'Restocking Soon' : isRestocking ? 'Restocking Soon' : p.badge;
   const badgeClass = oos ? 'product-card__badge product-card__badge--oos'
     : isRestocking ? 'product-card__badge product-card__badge--restocking'
     : p.badgeHot ? 'product-card__badge product-card__badge--hot'
@@ -1832,7 +1832,7 @@ function makeCard(p, mini) {
       <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
         ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
         ${oos
-          ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Out of Stock`
+          ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Restocking Soon`
           : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Add — ${fmtPrice(p.price)}`}
       </button>
@@ -1874,7 +1874,7 @@ function updatePdpStock(productId) {
       badge.className    = 'pdp-stock-badge pdp-stock-badge--low';
       badge.style.display = '';
     } else if (oos) {
-      badge.textContent  = 'Out of Stock';
+      badge.textContent  = 'Restocking Soon';
       badge.className    = 'pdp-stock-badge pdp-stock-badge--oos';
       badge.style.display = '';
     } else {
