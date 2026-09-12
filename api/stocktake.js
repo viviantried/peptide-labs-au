@@ -5,6 +5,10 @@ const ADMIN_KEY    = process.env.admin_key || process.env.ADMIN_KEY;
 const GITHUB_TOKEN = process.env.github_inventory_token || process.env.GITHUB_TOKEN;
 const REPO         = 'viviantried/peptide-labs-au';
 const FILE_PATH    = 'inventory.json';
+const RESEND_KEY   = process.env.RESEND_API_KEY || process.env.resend_api_key;
+const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN || process.env.airtable_token;
+const AIRTABLE_BASE = 'appwbIeYvWxx7R9Y8';
+const ALERT_TABLE = 'Restock Alerts';
 
 const PRODUCTS = {
   'PL-001': 'Retatrutide 10mg',
@@ -50,6 +54,24 @@ async function saveInventoryToGitHub(newContent, sha) {
   if (!r.ok) throw new Error(await r.text());
 }
 
+async function notifyRestockSubscribers(productId) {
+  if (!AIRTABLE_TOKEN || !RESEND_KEY) return;
+  const product = PRODUCTS[productId];
+  if (!product) return;
+  try {
+    const formula = `AND({Product ID}='${productId}', {Status}='Pending')`;
+    const list = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(ALERT_TABLE)}?filterByFormula=${encodeURIComponent(formula)}`, { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } });
+    if (!list.ok) throw new Error(await list.text());
+    const { records = [] } = await list.json();
+    await Promise.all(records.map(async record => {
+      const email = record.fields.Email;
+      if (!email) return;
+      const sent = await fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type':'application/json' }, body:JSON.stringify({ from:'PeptideLab <orders@aupeptidelab.com>', to:email, subject:`${product} is back in stock`, html:`<p>Good news — <strong>${product}</strong> is back in stock.</p><p><a href="https://www.aupeptidelab.com">Shop now</a></p>` }) });
+      if (sent.ok) await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(ALERT_TABLE)}/${record.id}`, { method:'PATCH', headers:{ Authorization:`Bearer ${AIRTABLE_TOKEN}`, 'Content-Type':'application/json' }, body:JSON.stringify({ fields:{ Status:'Notified', 'Notified At':new Date().toISOString() } }) });
+    }));
+  } catch (err) { console.error('Restock notification error:', err.message); }
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -73,8 +95,11 @@ module.exports = async function handler(req, res) {
     if (!inventory || !sha) return res.status(400).json({ error: 'Missing data' });
 
     try {
+      const previous = await getInventoryFromGitHub();
       await saveInventoryToGitHub(inventory, sha);
-      return res.status(200).json({ ok: true });
+      const restocked = Object.keys(inventory).filter(id => (previous.content[id]?.stock ?? 0) === 0 && (inventory[id]?.stock ?? 0) > 0);
+      await Promise.all(restocked.map(notifyRestockSubscribers));
+      return res.status(200).json({ ok: true, restocked });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
