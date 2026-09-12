@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
 
   const RESEND_KEY = process.env.RESEND_API_KEY || process.env.resend_api_key;
   const FROM_EMAIL = 'orders@aupeptidelab.com';
-  const TO_EMAIL   = 'support@aupeptidelab.com';
+  const TO_EMAIL   = 'shakilarahimy1@gmail.com';
 
   if (!RESEND_KEY) {
     return res.status(200).json({
@@ -26,8 +26,8 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         from: `PeptideLab <${FROM_EMAIL}>`,
         to: TO_EMAIL,
-        subject: 'PeptideLab — Email test',
-        html: '<p>This is a test email from your PeptideLab store. If you received this, email sending is working correctly.</p>',
+        subject: 'Retatrutide is back in stock',
+        html: '<p>Good news — <strong>Retatrutide</strong> is back in stock.</p><p><a href="https://www.aupeptidelab.com">Shop now</a></p>',
       }),
     });
 
