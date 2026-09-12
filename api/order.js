@@ -86,9 +86,8 @@ function makeConfirmToken(order, email, amt) {
 }
 
 function generateOrderId() {
-  const date = new Date().toISOString().slice(2, 10).replace(/-/g, '');
-  const random = crypto.randomBytes(3).toString('base64url').toUpperCase().slice(0, 4);
-  return `PL-${date}-${random}`;
+  const number = crypto.randomInt(1_000_000, 10_000_000);
+  return `PL-${number}`;
 }
 
 function calculateOrder(rawItems, country, shippingMethod, promoCode) {
