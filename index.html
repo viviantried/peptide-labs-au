@@ -11,6 +11,18 @@
 </head>
 <body>
 
+<div id="restockModal" role="dialog" aria-modal="true" aria-labelledby="restockTitle" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.55);padding:20px;align-items:center;justify-content:center">
+  <form id="restockForm" style="width:min(420px,100%);background:#fff;border-radius:14px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)" onsubmit="submitRestockAlert(event)">
+    <button type="button" onclick="closeRestockAlert()" aria-label="Close" style="float:right;border:0;background:none;font-size:25px;cursor:pointer;line-height:1">×</button>
+    <div style="font-size:20px;font-weight:800;color:#111;margin:4px 30px 8px 0" id="restockTitle">Get a restock alert</div>
+    <p style="margin:0 0 18px;color:#555;line-height:1.5">We’ll email you as soon as <strong id="restockProductName"></strong> is available again.</p>
+    <input id="restockEmail" type="email" required autocomplete="email" placeholder="you@email.com" style="width:100%;box-sizing:border-box;padding:13px;border:1px solid #bbb;border-radius:8px;font-size:15px">
+    <input id="restockProductId" type="hidden">
+    <button id="restockSubmit" type="submit" style="width:100%;margin-top:12px;padding:13px;border:0;border-radius:8px;background:#111;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Notify me</button>
+    <p id="restockMessage" style="display:none;margin:12px 0 0;font-size:13px"></p>
+  </form>
+</div>
+
 <!-- CART OVERLAY + PANEL -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cartPanel">
@@ -1570,11 +1582,38 @@ function closeCart() {
 }
 function getStock(productId) { return inventory[productId] ?? 999; }
 
+function openRestockAlert(product) {
+  document.getElementById('restockProductName').textContent = product.name;
+  document.getElementById('restockProductId').value = product.id;
+  document.getElementById('restockMessage').style.display = 'none';
+  document.getElementById('restockEmail').value = '';
+  document.getElementById('restockModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('restockEmail').focus(), 0);
+}
+function closeRestockAlert() { document.getElementById('restockModal').style.display = 'none'; }
+async function submitRestockAlert(event) {
+  event.preventDefault();
+  const submit = document.getElementById('restockSubmit');
+  const message = document.getElementById('restockMessage');
+  submit.disabled = true; submit.textContent = 'Saving…';
+  try {
+    const res = await fetch('/api/restock-alert', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email:document.getElementById('restockEmail').value, productId:document.getElementById('restockProductId').value }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not save your request.');
+    message.textContent = 'You’re on the list. We’ll email you when it is back in stock.';
+    message.style.color = '#15803d'; message.style.display = 'block';
+    submit.style.display = 'none';
+  } catch (error) {
+    message.textContent = error.message; message.style.color = '#dc2626'; message.style.display = 'block';
+    submit.disabled = false; submit.textContent = 'Notify me';
+  }
+}
+
 function addToCart(productId) {
   const p = PRODUCTS.find(x => x.id === productId);
   if (!p) return;
   const stock = getStock(productId);
-  if (stock === 0) { showToast(p.name + ' is out of stock'); return; }
+  if (stock === 0) { openRestockAlert(p); return; }
   const cartQty = cart.filter(x => x.id === productId).reduce((s, x) => s + x.qty, 0);
   if (cartQty >= stock) { showToast('Only ' + stock + ' in stock'); return; }
   const existing = cart.find(x => x.id === productId);
