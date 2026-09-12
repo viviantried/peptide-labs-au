@@ -21,6 +21,18 @@ async function emailOwner(subject, html) {
   });
 }
 
+async function ensureAlertTable() {
+  const r = await fetch(`https://api.airtable.com/v0/meta/bases/${AIRTABLE_BASE}/tables`, {
+    method: 'POST', headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type':'application/json' },
+    body: JSON.stringify({ name: TABLE, fields: [
+      { name:'Email', type:'email' }, { name:'Product ID', type:'singleLineText' }, { name:'Product', type:'singleLineText' },
+      { name:'Status', type:'singleLineText' }, { name:'Subscribed At', type:'dateTime', options:{ dateFormat:{name:'iso'}, timeFormat:{name:'24hour'}, timeZone:'utc' } },
+      { name:'Notified At', type:'dateTime', options:{ dateFormat:{name:'iso'}, timeFormat:{name:'24hour'}, timeZone:'utc' } },
+    ] }),
+  });
+  return r.ok;
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -46,6 +58,13 @@ module.exports = async function handler(req, res) {
         }}] }),
       });
       stored = r.ok;
+      if (!stored && r.status === 404 && await ensureAlertTable()) {
+        const retry = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(TABLE)}`, {
+          method: 'POST', headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ records: [{ fields: { Email: address, 'Product ID': productId, Product: product, Status: 'Pending', 'Subscribed At': new Date().toISOString() } }] }),
+        });
+        stored = retry.ok;
+      }
     } catch (err) {
       console.error('Restock alert storage error:', err.message);
     }
