@@ -1549,3 +1549,16 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     transform: none;
   }
 }
+
+
+/* Bundle savings */
+.bundle-card-note { margin-top: 6px; color: var(--teal-600); font-size: 11px; font-weight: 700; }
+.bundle-savings-banner { margin-top: 28px; padding: 18px 22px; border: 1px solid var(--teal-100); border-radius: var(--radius-lg); background: var(--teal-50); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.bundle-savings-banner strong { display:block; color: var(--navy-800); font-size: 15px; }
+.bundle-savings-banner > div:first-child span { display:block; margin-top: 3px; color: var(--text-muted); font-size: 12px; }
+.bundle-savings-banner__tiers { display:flex; gap: 10px; flex-wrap:wrap; }
+.bundle-savings-banner__tiers span { padding: 7px 10px; border-radius: 7px; background: #fff; color: var(--text-secondary); font-size: 12px; border: 1px solid var(--teal-100); white-space:nowrap; }
+.bundle-savings-banner__tiers b { color: var(--teal-700); }
+.cart-bundle-nudge { margin-bottom:12px; padding:9px 12px; background:#0d1a0d; border:1px solid #1e3a1e; border-radius:8px; font-size:12px; color:#4ade80; font-weight:700; }
+.cart-bundle-nudge--unlocked { color:#bbf7d0; }
+@media (max-width: 700px) { .bundle-savings-banner { align-items:flex-start; flex-direction:column; gap:12px; } }
