@@ -2,6 +2,8 @@
 // CommonJS — no vercel.json or package.json required
 
 const crypto       = require('crypto');
+const fs           = require('fs');
+const path         = require('path');
 const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
@@ -90,6 +92,16 @@ function generateOrderId() {
   return `PL-${number}`;
 }
 
+function validateAvailability(rawItems) {
+  const inventory = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'inventory.json'), 'utf8'));
+  for (const item of rawItems) {
+    const entry = inventory[item.id];
+    const stock = typeof entry === 'number' ? entry : entry?.stock;
+    const restocking = typeof entry === 'object' && entry?.restocking === true;
+    if (stock === 0 || restocking) throw new Error('An item in your cart is currently unavailable');
+  }
+}
+
 function calculateOrder(rawItems, country, shippingMethod, promoCode) {
   const items = rawItems.map(item => {
     const product = PRODUCT_CATALOG[item.id];
@@ -159,6 +171,7 @@ module.exports = async function handler(req, res) {
 
   let calculated;
   try {
+    validateAvailability(rawItems);
     calculated = calculateOrder(rawItems, country, shippingMethod, promoCode);
   } catch {
     return res.status(400).json({ error: 'Invalid cart' });
