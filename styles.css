@@ -810,7 +810,11 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .variant-options { display: flex; gap: 8px; flex-wrap: wrap; }
 .variant-btn { padding: 8px 18px; border: 1.5px solid var(--border); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all var(--transition); background: var(--card-bg); }
 .variant-btn:hover, .variant-btn.selected { border-color: var(--teal-500); background: var(--teal-50); color: var(--teal-700); }
-.product-page-actions { display: flex; gap: 10px; margin-bottom: 28px; }
+.product-page-purchase-panel { position: sticky; top: 84px; z-index: 3; margin: 20px 0 24px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card-bg); box-shadow: 0 10px 28px rgba(0,0,0,0.08); }
+.product-page-actions { display: flex; gap: 10px; margin-bottom: 12px; }
+.pdp-delivery-estimate { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+.pdp-delivery-estimate strong { color: var(--text-primary); }
+@media (max-width: 768px) { .product-page-purchase-panel { position: static; margin: 18px 0; } }
 .tab-buttons { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
 .tab-btn { padding: 12px 20px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all var(--transition); }
 .tab-btn.active { color: var(--teal-600); border-bottom-color: var(--teal-600); }
