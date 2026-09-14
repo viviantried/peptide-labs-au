@@ -1569,7 +1569,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .bundle-savings-banner strong { color: #f8fffd; }
 .bundle-savings-banner > div:first-child span { color: #c5ddd8; }
 .bundle-savings-banner__tiers span { background: #173b36; border-color: #3d9588; color: #e8fffa; }
-.bundle-savings-banner__tiers b { color: #5eead4; }
+.bundle-savings-banner__tiers b { color: #4ade80; }
 .popup-modal { background: #171717; border: 1px solid #363636; }
 .popup-close { color: #d1d5db; }
 .popup-close:hover { background: #303030; color: #fff; }
