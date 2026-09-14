@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
   if (!SECRET || !RESEND_KEY) return res.status(500).send(page('Server configuration error.', 'error'));
   if (req.method !== 'POST') return res.status(405).send('Method not allowed');
 
-  const { order, email, token, tracking, carrier = 'Australia Post' } = req.body || {};
+  const { order, email, token, tracking, carrier = 'Australia Post', items = '' } = req.body || {};
   if (!order || !email || !token || !tracking) {
     return res.status(400).send(page('Missing required fields.', 'error'));
   }
@@ -52,6 +52,12 @@ module.exports = async function handler(req, res) {
   const trackUrl = CARRIER_TRACK_URLS[carrier]
     ? CARRIER_TRACK_URLS[carrier] + encodeURIComponent(tracking)
     : null;
+  let reorderUrl = '';
+  try {
+    if (items && Array.isArray(JSON.parse(Buffer.from(items, 'base64').toString('utf8')))) {
+      reorderUrl = 'https://www.aupeptidelab.com/?reorder=' + encodeURIComponent(items);
+    }
+  } catch {}
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/></head>
   <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif">
@@ -72,6 +78,7 @@ module.exports = async function handler(req, res) {
           <div style="margin-bottom:${trackUrl ? '16px' : '0'}"><span style="font-size:13px;color:#555">Tracking number:</span> <strong style="font-size:16px;color:#1d4ed8">${tracking}</strong></div>
           ${trackUrl ? `<a href="${trackUrl}" style="display:inline-block;background:#1d4ed8;color:#fff;font-size:14px;font-weight:700;padding:10px 24px;border-radius:8px;text-decoration:none">Track My Order →</a>` : ''}
         </div>
+        ${reorderUrl ? `<div style="margin:0 0 20px;padding:18px 20px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px"><div style="font-size:15px;font-weight:700;color:#166534;margin-bottom:6px">Need to order again?</div><div style="font-size:13px;color:#166534;margin-bottom:14px">Your previous items are ready to add back to your cart.</div><a href="${reorderUrl}" style="display:inline-block;background:#16a34a;color:#fff;font-size:14px;font-weight:700;padding:11px 20px;border-radius:8px;text-decoration:none">Reorder these items →</a></div>` : ''}
         <p style="color:#666;font-size:13px;margin:0">Tracking may take a short time to activate after lodgement. Questions? <a href="mailto:${OWNER_EMAIL}" style="color:#111;font-weight:600">${OWNER_EMAIL}</a></p>
       </div>
       <div style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;text-align:center">
