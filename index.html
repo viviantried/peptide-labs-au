@@ -1628,7 +1628,7 @@ function addToCart(productId) {
   const p = PRODUCTS.find(x => x.id === productId);
   if (!p) return;
   const stock = getStock(productId);
-  if (stock === 0) { openRestockAlert(p); return; }
+  if (stock === 0 || restocking[productId] === true) { openRestockAlert(p); return; }
   const cartQty = cart.filter(x => x.id === productId).reduce((s, x) => s + x.qty, 0);
   if (cartQty >= stock) { showToast('Only ' + stock + ' in stock'); return; }
   const existing = cart.find(x => x.id === productId);
@@ -1822,7 +1822,7 @@ function showToast(msg) {
 // ============================================================
 function makeCard(p, mini) {
   const stock = getStock(p.id);
-  const oos = stock === 0;
+  const oos = stock === 0 || restocking[p.id] === true;
   const low = !oos && stock <= LOW_STOCK_THRESHOLD;
   const isRestocking = !oos && restocking[p.id] === true;
   const badgeLabel = oos ? 'Restocking Soon' : isRestocking ? 'Restocking Soon' : p.badge;
@@ -1866,7 +1866,7 @@ function renderShop(filter) {
 
 function updatePdpStock(productId) {
   const stock = getStock(productId);
-  const oos   = stock === 0;
+  const oos   = stock === 0 || restocking[productId] === true;
   const low   = !oos && stock <= LOW_STOCK_THRESHOLD;
   const btn   = document.getElementById('pdpAddBtn');
   const badge = document.getElementById('pdpStockBadge');
