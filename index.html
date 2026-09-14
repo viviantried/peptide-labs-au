@@ -545,6 +545,10 @@
         <button class="btn btn--outline" onclick="showPage('shop')">View All →</button>
       </div>
       <div class="products-grid" id="featuredGrid"></div>
+      <div class="bundle-savings-banner">
+        <div><strong>Mix &amp; Match Bundle Savings</strong><span>Any eligible products count toward your bundle.</span></div>
+        <div class="bundle-savings-banner__tiers"><span>2 items <b>3% off</b></span><span>3+ items <b>5% off</b></span><span>5+ items <b>10% off</b></span></div>
+      </div>
     </div>
   </section>
 
@@ -1716,8 +1720,8 @@ function renderCartSuggestions() {
     : qty < 5 ? { need: 5 - qty, pct: 10 }
     : null;
   const nudge = nextTier
-    ? `<div style="margin-bottom:12px;padding:8px 12px;background:#0d1a0d;border:1px solid #1e3a1e;border-radius:8px;font-size:12px;color:#4ade80;font-weight:700">Add ${nextTier.need} more item${nextTier.need > 1 ? 's' : ''} → unlock ${nextTier.pct}% off your order</div>`
-    : '';
+    ? `<div class="cart-bundle-nudge">Add ${nextTier.need} more item${nextTier.need > 1 ? 's' : ''} → unlock ${nextTier.pct}% off your order</div>`
+    : `<div class="cart-bundle-nudge cart-bundle-nudge--unlocked">✓ 10% bundle discount unlocked</div>`;
 
   const cards = suggestions.map(p => {
     const imgHtml = p.img
@@ -1857,6 +1861,7 @@ function makeCard(p, mini) {
       <div class="product-card__sub">${p.desc.split('.')[0]}.</div>
       <div class="product-card__meta"><span class="product-card__tag">${p.tags[0]}</span></div>
       <div class="product-card__price">${fmtPrice(p.price)}</div>
+      ${p.category !== 'accessories' ? '<div class="bundle-card-note">Bundle & save up to 10%</div>' : ''}
       ${low ? `<div class="product-card__low-stock">Only ${stock} left</div>` : ''}
       <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
         ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
