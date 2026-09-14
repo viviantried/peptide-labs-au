@@ -1466,3 +1466,78 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .track-form-group { grid-template-columns: 1fr; }
   .track-info-grid { grid-template-columns: 1fr; }
 }
+
+/* ═══ DISCREET PACKAGING ═══ */
+.discreet-packaging {
+  padding: 0 0 96px;
+  background: var(--body-bg);
+}
+
+.discreet-packaging__card {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(48px, 7vw, 96px);
+  min-height: 480px;
+  padding: clamp(48px, 6vw, 76px);
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+.discreet-packaging[data-reveal-ready] .discreet-packaging__card {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 560ms cubic-bezier(.22, 1, .36, 1), transform 560ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.discreet-packaging[data-reveal-ready].is-visible .discreet-packaging__card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.discreet-packaging__visual {
+  margin: 0;
+  aspect-ratio: 1450 / 1085;
+}
+
+.discreet-packaging__visual img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1450 / 1085;
+  object-fit: contain;
+}
+
+.discreet-packaging__copy { max-width: 500px; }
+.discreet-packaging__copy .section-title { margin-bottom: 20px; }
+.discreet-packaging__copy .section-sub { max-width: none; }
+
+@media (max-width: 700px) {
+  .discreet-packaging { padding-bottom: 64px; }
+  .discreet-packaging__card {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    min-height: 0;
+    padding: 36px 28px 40px;
+    border-radius: var(--radius-lg);
+  }
+  .discreet-packaging__visual {
+    width: min(100%, 360px);
+    justify-self: center;
+  }
+  .discreet-packaging__copy { max-width: none; }
+  .discreet-packaging__copy .section-title { margin-bottom: 16px; }
+}
+
+@media (max-width: 480px) {
+  .discreet-packaging__card { padding: 28px 22px 32px; }
+  .discreet-packaging__copy .section-title { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discreet-packaging[data-reveal-ready] .discreet-packaging__card {
+    transition: none;
+    transform: none;
+  }
+}

@@ -548,6 +548,21 @@
     </div>
   </section>
 
+  <!-- DISCREET PACKAGING -->
+  <section class="discreet-packaging" data-discreet-packaging aria-labelledby="discreetPackagingTitle">
+    <div class="container">
+      <div class="discreet-packaging__card">
+        <figure class="discreet-packaging__visual">
+          <img src="images/discreet-packaging-mailer.png" width="1450" height="1085" loading="lazy" decoding="async" alt="Plain white bubble mailer with no branding, labels or product details.">
+        </figure>
+        <div class="discreet-packaging__copy">
+          <h2 class="section-title" id="discreetPackagingTitle">DISCREET PACKAGING</h2>
+          <p class="section-sub">Every order is shipped in plain, unbranded packaging with no product names or identifying details on the outside.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- DISCLAIMER -->
   <section class="section--sm" style="background:var(--body-bg)">
     <div class="container--narrow">
@@ -2074,6 +2089,25 @@ renderCart();
 updateMobileCartBtn();
 initPopup();
 loadInventory();
+
+// Reveal the permanent packaging section once as it enters the viewport.
+(function initDiscreetPackaging() {
+  const section = document.querySelector('[data-discreet-packaging]');
+  if (!section) return;
+  section.setAttribute('data-reveal-ready', '');
+  const reveal = () => section.classList.add('is-visible');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+    reveal();
+    return;
+  }
+  const observer = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      reveal();
+      observer.disconnect();
+    }
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+  observer.observe(section);
+})();
 
 (function checkReorder() {
   const param = new URLSearchParams(location.search).get('reorder');
