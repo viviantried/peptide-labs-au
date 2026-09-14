@@ -1645,7 +1645,15 @@ function removeFromCart(idx) {
   updateCountBadges();
 }
 function changeQty(idx, delta) {
-  cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+  const item = cart[idx];
+  if (!item) return;
+  if (delta > 0 && (getStock(item.id) === 0 || restocking[item.id] === true)) {
+    const product = PRODUCTS.find(p => p.id === item.id);
+    if (product) openRestockAlert(product);
+    return;
+  }
+  if (delta > 0 && item.qty >= getStock(item.id)) { showToast('Only ' + getStock(item.id) + ' in stock'); return; }
+  item.qty = Math.max(1, item.qty + delta);
   renderCart();
   updateCountBadges();
 }
@@ -1904,6 +1912,13 @@ async function loadInventory() {
     const data = await res.json();
     inventory = data.stock || {};
     restocking = data.restocking || {};
+    const unavailable = cart.filter(item => getStock(item.id) === 0 || restocking[item.id] === true);
+    if (unavailable.length) {
+      cart = cart.filter(item => getStock(item.id) > 0 && restocking[item.id] !== true);
+      showToast(unavailable.map(item => item.name).join(', ') + ' is restocking and was removed from your cart');
+      renderCart();
+      updateCountBadges();
+    }
     renderFeatured();
     renderShop();
     if (currentProduct) updatePdpStock(currentProduct.id);
