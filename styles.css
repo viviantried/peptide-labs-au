@@ -1578,3 +1578,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .popup-sub { color: #d1d5db; }
 .popup-legal { color: #aeb8b6; }
 .popup-input { background: #fff; color: #111; border-color: #8a9693; }
+
+.why-section .section-label { margin-bottom: 6px; }
+.why-section .section-title { margin-bottom: 10px; }
