@@ -1562,3 +1562,19 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .cart-bundle-nudge { margin-bottom:12px; padding:9px 12px; background:#0d1a0d; border:1px solid #1e3a1e; border-radius:8px; font-size:12px; color:#4ade80; font-weight:700; }
 .cart-bundle-nudge--unlocked { color:#bbf7d0; }
 @media (max-width: 700px) { .bundle-savings-banner { align-items:flex-start; flex-direction:column; gap:12px; } }
+
+
+/* High-contrast promotion panels */
+.bundle-savings-banner { background: #102a27; border-color: #28786d; }
+.bundle-savings-banner strong { color: #f8fffd; }
+.bundle-savings-banner > div:first-child span { color: #c5ddd8; }
+.bundle-savings-banner__tiers span { background: #173b36; border-color: #3d9588; color: #e8fffa; }
+.bundle-savings-banner__tiers b { color: #5eead4; }
+.popup-modal { background: #171717; border: 1px solid #363636; }
+.popup-close { color: #d1d5db; }
+.popup-close:hover { background: #303030; color: #fff; }
+.popup-badge { background: #123a34; border-color: #2d8a7c; color: #77f0db; }
+.popup-title { color: #fff; }
+.popup-sub { color: #d1d5db; }
+.popup-legal { color: #aeb8b6; }
+.popup-input { background: #fff; color: #111; border-color: #8a9693; }
