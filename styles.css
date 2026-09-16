@@ -426,21 +426,20 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* ===== HERO ===== */
 .hero {
-  background: linear-gradient(135deg, #000000 0%, #0A0A0A 50%, #000000 100%);
+  background: #000000;
   padding: 72px 0 48px;
   position: relative; overflow: hidden;
 }
 .hero::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 800px 600px at 70% 50%, rgba(255,255,255,0.05) 0%, transparent 60%);
+  background: transparent;
   pointer-events: none;
 }
 .hero::after {
   content: '';
   position: absolute; inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0);
-  background-size: 40px 40px;
+  background: transparent;
   pointer-events: none;
 }
 .hero__inner {
@@ -499,9 +498,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   height: auto;
   border-radius: 0;
   box-shadow: none;
-  filter: brightness(0.78) contrast(1.08);
-  -webkit-mask-image: radial-gradient(ellipse 70% 92% at 50% 50%, #000 24%, rgba(0, 0, 0, 0.8) 52%, transparent 100%);
-  mask-image: radial-gradient(ellipse 70% 92% at 50% 50%, #000 24%, rgba(0, 0, 0, 0.8) 52%, transparent 100%);
 }
 .hero__card-stack { position: relative; width: 100%; max-width: 420px; margin: 0 auto; }
 .hero__main-card {
