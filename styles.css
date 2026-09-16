@@ -1643,6 +1643,47 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .bundle-savings-banner > div:first-child span { color: #c5ddd8; }
 .bundle-savings-banner__tiers span { background: #173b36; border-color: #3d9588; color: #e8fffa; }
 .bundle-savings-banner__tiers b { color: #4ade80; }
+.bundle-savings-banner__build { padding: 7px 11px; border-radius: 7px; background: #164b39; border: 1px solid #36a778; color: #eafff1; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.bundle-savings-banner__build:hover, .bundle-savings-banner__build:focus-visible { background: #1c674b; }
+.mix-bundle-card { border-color: #36a778; }
+.mix-bundle-card__img { background: #080808; }
+.mix-bundle-card__img .product-card__photo { object-fit: contain; }
+.mix-bundle-card__badge { background: #176b49; }
+.mix-bundle-overlay[hidden] { display: none; }
+.mix-bundle-overlay { position: fixed; inset: 0; z-index: 760; background: rgba(0,0,0,.78); display: grid; place-items: center; padding: 18px; }
+.mix-bundle-dialog { position: relative; display: flex; flex-direction: column; width: min(760px,100%); max-height: min(90vh,900px); padding: 28px; border: 1px solid #39554c; border-radius: 18px; background: #121816; color: #fff; box-shadow: 0 20px 70px rgba(0,0,0,.6); }
+.mix-bundle-close { position: absolute; right: 18px; top: 15px; width: 36px; height: 36px; border-radius: 50%; color: #fff; font-size: 28px; line-height: 1; }
+.mix-bundle-close:hover, .mix-bundle-close:focus-visible { background: #263c33; }
+.mix-bundle-kicker { color: #6ee7a8; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+.mix-bundle-dialog h2 { margin: 7px 40px 4px 0; font-size: clamp(24px,3vw,34px); line-height: 1.2; }
+.mix-bundle-dialog > p { color: #c1d0c8; font-size: 14px; line-height: 1.5; }
+.mix-bundle-progress { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; font-size: 13px; }
+.mix-bundle-progress span { color: #b6c8be; }
+.mix-bundle-track { height: 7px; margin: 8px 0 16px; border-radius: 99px; overflow: hidden; background: #34493e; }
+.mix-bundle-track span { display: block; height: 100%; background: #4ade80; transition: width .2s ease; }
+.mix-bundle-options { min-height: 120px; overflow-y: auto; border: 1px solid #324a3b; border-radius: 10px; }
+.mix-bundle-option { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid #2a3a31; }
+.mix-bundle-option:last-child { border-bottom: 0; }
+.mix-bundle-option--oos { opacity: .55; }
+.mix-bundle-option img { width: 46px; height: 50px; flex: none; object-fit: contain; border-radius: 5px; background: #f5f5f5; }
+.mix-bundle-option__info { min-width: 0; flex: 1; display: grid; gap: 2px; }
+.mix-bundle-option__info strong { font-size: 13px; }
+.mix-bundle-option__info span, .mix-bundle-option__info small { color: #b6c8be; font-size: 11px; }
+.mix-bundle-qty { display: flex; align-items: center; border: 1px solid #506a5c; border-radius: 7px; }
+.mix-bundle-qty button { width: 34px; height: 36px; color: #fff; font-size: 20px; }
+.mix-bundle-qty button:disabled { color: #617a6c; cursor: not-allowed; }
+.mix-bundle-qty output { min-width: 26px; text-align: center; font-size: 13px; font-weight: 700; }
+.mix-bundle-summary { display: grid; gap: 5px; margin: 16px 0 12px; font-size: 13px; }
+.mix-bundle-summary > div { display: flex; justify-content: space-between; gap: 10px; }
+.mix-bundle-summary > div span { color: #b6c8be; }
+.mix-bundle-summary > div strong { color: #6ee7a8; }
+.mix-bundle-summary .mix-bundle-total { border-top: 1px solid #39554c; padding-top: 9px; font-size: 18px; font-weight: 800; }
+.mix-bundle-summary .mix-bundle-total span { color: #fff; }
+.mix-bundle-add { width: 100%; justify-content: center; background: #207b51; color: #fff; }
+.mix-bundle-add:disabled { background: #465b4e; color: #c4d1c8; cursor: not-allowed; }
+.mix-bundle-dialog .mix-bundle-note { margin-top: 10px; font-size: 11px; text-align: center; }
+.mix-bundle-cart-contents { margin-top: 5px; color: #b6c8be; font-size: 11px; line-height: 1.5; }
+@media (max-width: 600px) { .mix-bundle-overlay { padding: 8px; } .mix-bundle-dialog { padding: 22px 16px; max-height: 96vh; } .mix-bundle-option { gap: 8px; } .mix-bundle-option img { width: 40px; height: 44px; } }
 .popup-modal { background: #171717; border: 1px solid #363636; }
 .popup-close { color: #d1d5db; }
 .popup-close:hover { background: #303030; color: #fff; }
