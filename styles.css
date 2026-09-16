@@ -1617,6 +1617,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* Laboratory calculator: shared typography and restrained teal interaction. */
 .recon-section { background: var(--navy-800); scroll-margin-top: 100px; border-block: 1px solid var(--border); }
+.recon-page-hero { padding: 72px 0 60px; }
+.recon-page-hero .section-label { color: var(--teal-400); }
+.recon-guidance { background: var(--body-bg); color: var(--text-secondary); }
+.recon-guidance p { font-size: 16px; line-height: 1.75; }
+.recon-guidance__steps { display: grid; gap: 14px; margin: 24px 0 42px; padding-left: 24px; font-size: 16px; line-height: 1.7; }
+.recon-guidance__steps strong { color: var(--text-primary); }
+.recon-guidance__title { margin-top: 0; font-size: 28px; }
 .recon-intro { max-width: 740px; color: #ccc; font-size: 16px; margin-bottom: 40px; }
 .recon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
 .recon-controls { display: grid; gap: 24px; min-width: 0; }
