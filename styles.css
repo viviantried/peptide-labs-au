@@ -921,6 +921,10 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 @media (max-width: 480px) {
   .container { padding: 0 16px; }
   .products-grid { grid-template-columns: 1fr; }
+  .hero__content { text-align: center; }
+  .hero__sub { margin-inline: auto; }
+  .hero-finder__chips { justify-content: center; }
+  .hero__stats { text-align: center; }
   .hero__actions { flex-direction: column; }
   .hero__actions .btn { width: 100%; justify-content: center; }
   .hero-finder { grid-template-columns: 1fr; gap: 10px; }
