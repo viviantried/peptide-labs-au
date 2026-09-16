@@ -88,6 +88,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 .announcement-bar span { color: var(--teal-400); margin: 0 6px; }
 .announcement-bar strong { color: white; }
+.announcement-bar__mobile { display: none; }
 
 /* ===== NAVIGATION ===== */
 .nav {
@@ -920,11 +921,22 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 @media (max-width: 480px) {
   .container { padding: 0 16px; }
+  .announcement-bar { padding: 8px 12px; }
+  .announcement-bar__desktop { display: none; }
+  .announcement-bar__mobile { display: inline; margin: 0; color: #ccc; }
+  .ship-banner { display: none; }
+  .trust-strip { padding: 12px 0; }
+  .trust-strip__inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+  .trust-badge { justify-content: center; white-space: normal; text-align: center; font-size: 11px; line-height: 1.25; }
+  .trust-badge:last-child { grid-column: 1 / -1; }
+  .trust-divider { display: none; }
   .products-grid { grid-template-columns: 1fr; }
   .hero__content { text-align: center; }
   .hero__sub { margin-inline: auto; }
   .hero-finder__chips { justify-content: center; }
-  .hero__stats { text-align: center; }
+  .hero__visual--product { display: none; }
+  .hero__inner { gap: 0; }
+  .featured-products { padding-top: 28px; }
   .hero__actions { flex-direction: column; }
   .hero__actions .btn { width: 100%; justify-content: center; }
   .hero-finder { grid-template-columns: 1fr; gap: 10px; }
