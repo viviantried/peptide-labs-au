@@ -1622,7 +1622,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 /* Bundle savings */
-.bundle-card-note { margin-top: 6px; color: var(--teal-600); font-size: 11px; font-weight: 700; }
+.bundle-card-note { margin-top: 6px; color: #4ade80; font-size: 11px; font-weight: 700; }
 .bundle-savings-banner { margin-top: 28px; padding: 18px 22px; border: 1px solid var(--teal-100); border-radius: var(--radius-lg); background: var(--teal-50); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .bundle-savings-banner strong { display:block; color: var(--navy-800); font-size: 15px; }
 .bundle-savings-banner > div:first-child span { display:block; margin-top: 3px; color: var(--text-muted); font-size: 12px; }
