@@ -11,6 +11,7 @@ const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret 
 const ACCOUNT_NAME   = 'Australian Peptide Labs Store';
 const BENEFICIARY_ADDRESS = process.env.BENEFICIARY_ADDRESS || process.env.beneficiary_address || '';
 const OWNER_EMAIL    = 'support@aupeptidelab.com';
+const ORDER_ALERT_EMAIL = 'viviantriedk@gmail.com';
 const FROM_EMAIL     = 'orders@aupeptidelab.com';
 const SITE_URL       = 'https://www.aupeptidelab.com';
 const AIRTABLE_TOKEN    = process.env.AIRTABLE_TOKEN    || process.env.airtable_token;
@@ -33,6 +34,19 @@ const PRODUCT_CATALOG = {
 };
 const PROMO_CODES = { VIVIAN: { type:'percent', value:10 } };
 const FREE_SHIP_THRESHOLD = 200;
+const MIX_BUNDLE_ID = 'PL-MIX-10';
+
+function bundleSelection(raw) {
+  if (!Array.isArray(raw) || raw.length < 1 || raw.length > 10) throw new Error('Invalid bundle');
+  const selections = raw.map(selection => {
+    const product = PRODUCT_CATALOG[selection.id];
+    const qty = Number(selection.qty);
+    if (!product || selection.id === 'PL-014' || !Number.isInteger(qty) || qty < 1 || qty > 10) throw new Error('Invalid bundle');
+    return { id:selection.id, name:product.name, size:product.size, price:product.price, qty };
+  });
+  if (selections.reduce((sum, item) => sum + item.qty, 0) !== 10 || new Set(selections.map(item => item.id)).size !== selections.length) throw new Error('Invalid bundle');
+  return selections;
+}
 
 function paymentDetails(method) {
   if (method === 'intl') {
@@ -94,25 +108,38 @@ function generateOrderId() {
 
 function validateAvailability(rawItems) {
   const inventory = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'inventory.json'), 'utf8'));
+  const required = {};
   for (const item of rawItems) {
-    const entry = inventory[item.id];
+    const contents = item.id === MIX_BUNDLE_ID ? bundleSelection(item.selections) : [{ id:item.id, qty:Number(item.qty) }];
+    for (const part of contents) required[part.id] = (required[part.id] || 0) + part.qty;
+  }
+  for (const [id, qty] of Object.entries(required)) {
+    const entry = inventory[id];
     const stock = typeof entry === 'number' ? entry : entry?.stock;
     const restocking = typeof entry === 'object' && entry?.restocking === true;
-    if (stock === 0 || restocking) throw new Error('An item in your cart is currently unavailable');
+    if (!PRODUCT_CATALOG[id] || !Number.isInteger(qty) || qty < 1 || !Number.isInteger(stock) || qty > stock || restocking) throw new Error('An item in your cart is currently unavailable');
   }
 }
 
 function calculateOrder(rawItems, country, shippingMethod, promoCode) {
   const items = rawItems.map(item => {
+    if (item.id === MIX_BUNDLE_ID) {
+      if (Number(item.qty) !== 1) throw new Error('Invalid bundle');
+      const selections = bundleSelection(item.selections);
+      const regularPrice = selections.reduce((sum, selection) => sum + selection.price * selection.qty, 0);
+      return { id:MIX_BUNDLE_ID, name:'Mix & Match 10-Vial Set', size:'10 vials', price:Math.round(regularPrice * 75) / 100, regularPrice, selections, qty:1 };
+    }
     const product = PRODUCT_CATALOG[item.id];
     const qty = Number(item.qty);
     if (!product || !Number.isInteger(qty) || qty < 1 || qty > 50) throw new Error('Invalid cart item');
     return { id:item.id, ...product, qty };
   });
   const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+  const individualItems = items.filter(item => item.id !== MIX_BUNDLE_ID);
+  const totalQty = individualItems.reduce((sum, item) => sum + item.qty, 0);
+  const individualSubtotal = individualItems.reduce((sum, item) => sum + item.price * item.qty, 0);
   const mbRate = totalQty >= 5 ? 0.10 : totalQty >= 3 ? 0.05 : totalQty >= 2 ? 0.03 : 0;
-  const mbDiscount = subtotal * mbRate;
+  const mbDiscount = individualSubtotal * mbRate;
   const promo = PROMO_CODES[String(promoCode || '').toUpperCase()];
   const promoDiscount = promo?.type === 'percent' ? (subtotal - mbDiscount) * promo.value / 100 : 0;
   const isExpress = String(shippingMethod || '').toLowerCase().startsWith('express');
@@ -125,20 +152,37 @@ function calculateOrder(rawItems, country, shippingMethod, promoCode) {
   return { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount };
 }
 
-async function sendEmail(to, subject, html) {
-  const r = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${RESEND_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ from: `PeptideLab <${FROM_EMAIL}>`, reply_to: OWNER_EMAIL, to, subject, html }),
+async function sendEmail(to, subject, html, orderName, role) {
+  if (!RESEND_KEY) throw new Error('Email service is not configured');
+  const payload = JSON.stringify({
+    from: `PeptideLab <${FROM_EMAIL}>`, reply_to: OWNER_EMAIL, to, subject, html,
+    tags: [{ name:'order', value:orderName }, { name:'role', value:role }],
   });
-  if (!r.ok) {
-    const body = await r.text();
-    console.error('Resend error:', r.status, body);
-    throw new Error(`Resend ${r.status}: ${body}`);
+  let lastError;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method:'POST',
+        headers: {
+          Authorization:`Bearer ${RESEND_KEY}`,
+          'Content-Type':'application/json',
+          'Idempotency-Key':`${role}/${orderName}`,
+        },
+        body:payload,
+      });
+      const body = await response.json().catch(() => ({}));
+      if (response.ok && body.id) {
+        console.info('Order email accepted', JSON.stringify({ orderName, role, emailId:body.id }));
+        return body.id;
+      }
+      lastError = new Error(`Resend ${response.status}: ${body.message || body.name || 'No email ID returned'}`);
+      if (response.status < 500 && response.status !== 429) break;
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 400 * (attempt + 1)));
   }
+  throw lastError;
 }
 
 module.exports = async function handler(req, res) {
@@ -147,7 +191,7 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!CONFIRM_SECRET) return res.status(500).json({ error: 'Server configuration error' });
+  if (!CONFIRM_SECRET || !RESEND_KEY) return res.status(500).json({ error: 'Order email service unavailable' });
   if (!BSB || !ACCOUNT) return res.status(500).json({ error: 'Payment details unavailable' });
 
   const {
@@ -188,9 +232,9 @@ module.exports = async function handler(req, res) {
     hour: '2-digit', minute: '2-digit',
   });
 
-  const reorderData = encodeURIComponent(Buffer.from(JSON.stringify(items.map(i => ({ id: i.id, qty: i.qty })))).toString('base64'));
+  const reorderData = encodeURIComponent(Buffer.from(JSON.stringify(items.map(i => ({ id: i.id, qty: i.qty, ...(i.selections ? { selections:i.selections.map(s => ({ id:s.id, qty:s.qty })) } : {}) })))).toString('base64'));
 
-  const totalQty = items.reduce((s, i) => s + i.qty, 0);
+  const totalQty = items.filter(i => i.id !== MIX_BUNDLE_ID).reduce((s, i) => s + i.qty, 0);
   const bundleTier = totalQty >= 5 ? '5+ item bundle — 10% off'
     : totalQty >= 3 ? '3+ item bundle — 5% off'
     : totalQty >= 2 ? '2 item bundle — 3% off'
@@ -200,6 +244,27 @@ module.exports = async function handler(req, res) {
   const gotFreeShipping = Number(shipping) === 0 && Number(subtotal) >= 200;
   const subItems = (items || []).filter(i => i.subscription);
 
+  const orderRecord = {
+    'Name':orderName,
+    'Customer':`${firstName} ${lastName}`,
+    'Email':email,
+    'Phone':phone || '',
+    'Address':`${address1}${address2 ? ', ' + address2 : ''}, ${suburb} ${state || ''} ${postcode}, ${country}`,
+    'Items':items.map(i => `${i.name}${i.size ? ` (${i.size})` : ''}${i.subscription ? ' [MONTHLY SUB]' : ''} x${i.qty} — A$${(i.price * i.qty).toFixed(2)}${i.selections ? ` [${i.selections.map(s => `${s.name} (${s.size}) x${s.qty}`).join(', ')}]` : ''}`).join('\n'),
+    'Subtotal':Number(subtotal),
+    'Bundle Tier':bundleTier || 'None',
+    'Bundle Discount':mbD,
+    'Promo Code':promoCode || '',
+    'Promo Discount':promoD,
+    'Discount':Number(discount) || 0,
+    'Free Standard Shipping':gotFreeShipping ? 'Yes' : 'No',
+    'Shipping':Number(shipping),
+    'Total':Number(total),
+    'Subscriptions':subItems.length > 0 ? subItems.map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty}`).join(', ') : 'None',
+    'Payment Method':paymentLabel || paymentMethod,
+    'Status':'Pending Payment',
+    'Date':new Date().toISOString(),
+  };
   const intelRows = [
     bundleTier && mbD > 0
       ? `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ede9fe;font-size:13px"><span style="color:#555">Bundle</span><span style="font-weight:700;color:#7c3aed">${bundleTier} · −A$${mbD.toFixed(2)}</span></div>`
@@ -225,7 +290,7 @@ module.exports = async function handler(req, res) {
 
   const itemsHtml = items.map(i => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px">${i.name}${i.size ? ` — ${i.size}` : ''}${i.subscription ? ' <span style="display:inline-block;background:#6366f1;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">MONTHLY</span>' : ''}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px">${i.name}${i.size ? ` — ${i.size}` : ''}${i.selections ? `<div style="font-size:12px;color:#555;margin-top:4px">${i.selections.map(s => `${s.name} (${s.size}) × ${s.qty}`).join(', ')}</div>` : ''}${i.subscription ? ' <span style="display:inline-block;background:#6366f1;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">MONTHLY</span>' : ''}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:center;color:#666;font-size:14px">x${i.qty}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px">A$${(i.price * i.qty).toFixed(2)}</td>
     </tr>`).join('');
@@ -390,40 +455,26 @@ module.exports = async function handler(req, res) {
 </div>
 </body></html>`;
 
-  let emailError = null;
-  try {
-    await Promise.all([
-      sendEmail(email, `Order ${orderName} — Complete Your Bank Transfer`, customerHtml),
-      sendEmail(OWNER_EMAIL, `New Order ${orderName} — A$${Number(total).toFixed(2)} (${paymentMethod === 'intl' ? 'SWIFT' : 'bank transfer'} pending)`, ownerHtml),
-    ]);
-  } catch (err) {
-    console.error('Email error:', err);
-    emailError = err.message;
-  }
+  const ownerSubject = `New Order ${orderName} — A$${Number(total).toFixed(2)} (${paymentMethod === 'intl' ? 'SWIFT' : 'bank transfer'} pending)`;
+  const [customerResult, ownerResult] = await Promise.allSettled([
+    sendEmail(email, `Order ${orderName} — Complete Your Bank Transfer`, customerHtml, orderName, 'customer'),
+    (async () => {
+      try {
+        return await sendEmail(ORDER_ALERT_EMAIL, ownerSubject, ownerHtml, orderName, 'owner-direct');
+      } catch (error) {
+        console.error('Direct owner alert failed; trying support inbox', JSON.stringify({ orderName, reason:error.message }));
+        return sendEmail(OWNER_EMAIL, ownerSubject, ownerHtml, orderName, 'owner-forwarding-fallback');
+      }
+    })(),
+  ]);
+  const customerEmailAccepted = customerResult.status === 'fulfilled';
+  const storeAlertAccepted = ownerResult.status === 'fulfilled';
+  if (!customerEmailAccepted) console.error('Customer order email failed', JSON.stringify({ orderName, reason:customerResult.reason?.message }));
+  if (!storeAlertAccepted) console.error('Store order alert failed', JSON.stringify({ orderName, reason:ownerResult.reason?.message }));
 
   if (marketingConsent) addToAudience(email, firstName, lastName);
+  logToAirtable(orderRecord);
 
-  logToAirtable({
-    'Name':           orderName,
-    'Customer':       `${firstName} ${lastName}`,
-    'Email':          email,
-    'Phone':          phone || '',
-    'Address':        `${address1}${address2 ? ', ' + address2 : ''}, ${suburb} ${state || ''} ${postcode}, ${country}`,
-    'Items':          items.map(i => `${i.name}${i.size ? ` (${i.size})` : ''}${i.subscription ? ' [MONTHLY SUB]' : ''} x${i.qty} — A$${(i.price * i.qty).toFixed(2)}`).join('\n'),
-    'Subtotal':       Number(subtotal),
-    'Bundle Tier':    bundleTier || 'None',
-    'Bundle Discount': mbD,
-    'Promo Code':     promoCode || '',
-    'Promo Discount': promoD,
-    'Discount':       Number(discount) || 0,
-    'Free Standard Shipping': gotFreeShipping ? 'Yes' : 'No',
-    'Shipping':       Number(shipping),
-    'Total':          Number(total),
-    'Subscriptions':  subItems.length > 0 ? subItems.map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty}`).join(', ') : 'None',
-    'Payment Method': paymentLabel || paymentMethod,
-    'Status':         'Pending Payment',
-    'Date':           new Date().toISOString(),
-  });
-
-  return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, bsb: BSB, acct: ACCOUNT, emailError });
+  return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, bsb: BSB, acct: ACCOUNT, customerEmailAccepted, storeAlertAccepted });
 };
+if (process.env.NODE_ENV === 'test') module.exports._pricing = { calculateOrder, validateAvailability };

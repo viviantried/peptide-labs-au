@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=20" />
+  <link rel="stylesheet" href="/styles.css?v=21" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
 </head>
@@ -341,7 +341,7 @@
         <span id="coSuccessPaymentHelp">Use the exact account details and order reference shown above.</span>
       </div>
 
-      <p style="font-size:13px;color:#555;margin:0 0 24px">A confirmation email with all details has been sent to you.</p>
+      <p id="coSuccessEmailNotice" style="font-size:13px;color:#ccc;margin:0 0 24px">Your order is saved. Keep this reference and payment information.</p>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
         <button class="co-success__done" onclick="closeCheckout();showPage('track')" style="background:#fff">
@@ -502,7 +502,7 @@
       <div class="products-grid" id="featuredGrid"></div>
       <div class="bundle-savings-banner">
         <div><strong>Mix &amp; Match Bundle Savings</strong><span>Any eligible products count toward your bundle.</span></div>
-        <div class="bundle-savings-banner__tiers"><span>2 items <b>3% off</b></span><span>3+ items <b>5% off</b></span><span>5+ items <b>10% off</b></span></div>
+        <div class="bundle-savings-banner__tiers"><span>2 items <b>3% off</b></span><span>3+ items <b>5% off</b></span><span>5+ items <b>10% off</b></span><button type="button" class="bundle-savings-banner__build" onclick="openMixBundleBuilder()">Build 10 vials · save 25% →</button></div>
       </div>
     </div>
   </section>
@@ -1068,6 +1068,21 @@
   <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · All prices AUD · Australian Operations</div></div>
 </footer>
 
+<div class="mix-bundle-overlay" id="mixBundleDialog" hidden>
+  <section class="mix-bundle-dialog" role="dialog" aria-modal="true" aria-labelledby="mixBundleTitle">
+    <button type="button" class="mix-bundle-close" onclick="closeMixBundleBuilder()" aria-label="Close mix and match builder">×</button>
+    <div class="mix-bundle-kicker">MIX &amp; MATCH · 25% OFF</div>
+    <h2 id="mixBundleTitle">Build your 10-vial set</h2>
+    <p>Choose any 10 available research vials, including repeats. The set is 25% less than buying those vials individually.</p>
+    <div class="mix-bundle-progress"><strong id="mixBundleCount">0 of 10 selected</strong><span id="mixBundleRemaining">Choose 10 vials</span></div>
+    <div class="mix-bundle-track"><span id="mixBundleFill"></span></div>
+    <div class="mix-bundle-options" id="mixBundleOptions"></div>
+    <div class="mix-bundle-summary"><div><span>Individual total</span><s id="mixBundleRegular">A$0.00</s></div><div><span>You save 25%</span><strong id="mixBundleSavings">A$0.00</strong></div><div class="mix-bundle-total"><span>Set price</span><strong id="mixBundlePrice">A$0.00</strong></div></div>
+    <button type="button" class="btn btn--teal mix-bundle-add" id="mixBundleAdd" onclick="addMixBundleToCart()" disabled>Select 10 vials</button>
+    <p class="mix-bundle-note">For laboratory research use only. The 10-vial offer replaces the standard quantity discount for this set.</p>
+  </section>
+</div>
+
 <aside class="research-agreement" id="researchAgreement" aria-label="Research use agreement" hidden>
   <img src="/images/favicon.png?v=3" width="26" height="26" alt="" aria-hidden="true">
   <p><strong>Research use only.</strong> All products are strictly for in-vitro research and laboratory development use only — not for human consumption. <a href="/terms" onclick="showPage('terms'); return false;">Full terms</a></p>
@@ -1349,7 +1364,7 @@ function selectShipping(id) {
 function coRenderSummary() {
   const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const mbRate     = getMultibuyDiscount();
-  const mbDiscount = subtotal * mbRate;
+  const mbDiscount = getEligibleCartSubtotal() * mbRate;
   const afterMb    = subtotal - mbDiscount;
   let   discount   = 0;
   if (appliedPromo) {
@@ -1365,7 +1380,7 @@ function coRenderSummary() {
   // Multi-buy row
   const mbRow = document.getElementById('coMultibuyRow');
   if (mbRate > 0) {
-    document.getElementById('coMultibuyLabel').textContent = `Bundle discount (${getMultibuyLabel(getCartCount())})`;
+    document.getElementById('coMultibuyLabel').textContent = `Bundle discount (${getMultibuyLabel(getEligibleCartCount())})`;
     document.getElementById('coSumMultibuy').textContent   = `−A$${mbDiscount.toFixed(2)}`;
     mbRow.style.display = '';
   } else {
@@ -1377,7 +1392,7 @@ function coRenderSummary() {
     const img = (prod && prod.img) ? `<img src="${prod.img}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />` : '';
     return `<div class="co-sum-item">
       <div class="co-sum-item__img">${img}<div class="co-sum-item__badge">${i.qty}</div></div>
-      <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px">${i.size}</span>` : ''}</div>
+      <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px">${i.size}</span>` : ''}${i.selections ? `<br/><span style="color:#aaa;font-size:11px">${bundleContentsLabel(i.selections)}</span>` : ''}</div>
       <div class="co-sum-item__price">A$${(i.price * i.qty).toFixed(2)}</div>
     </div>`;
   }).join('');
@@ -1454,7 +1469,7 @@ async function placeOrder() {
 
   const subtotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const mbRate     = getMultibuyDiscount();
-  const mbDiscount = subtotal * mbRate;
+  const mbDiscount = getEligibleCartSubtotal() * mbRate;
   const afterMb    = subtotal - mbDiscount;
   let   promoDiscount = 0;
   if (appliedPromo) {
@@ -1472,7 +1487,7 @@ async function placeOrder() {
     address1: coVal('co-address1'), address2: coVal('co-address2'),
     suburb: coVal('co-suburb'), state, postcode: coVal('co-postcode'), country,
     phone: coVal('co-phone'),
-    items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty })),
+    items: cart.map(i => ({ id: i.id, name: i.name, size: i.size || '', price: i.price, qty: i.qty, ...(i.selections ? { selections:i.selections } : {}) })),
     subtotal, shipping: ship, discount, total,
     mbDiscount, promoDiscount,
     promoCode:      appliedPromo ? appliedPromo.code : null,
@@ -1494,6 +1509,12 @@ async function placeOrder() {
     document.getElementById('coBody').style.display = 'none';
     document.getElementById('coSuccessAmt').textContent = `A$${Number(data.total).toFixed(2)}`;
     document.getElementById('coSuccessRef').textContent = data.orderName;
+    const emailNotice = document.getElementById('coSuccessEmailNotice');
+    emailNotice.textContent = !data.customerEmailAccepted
+      ? 'Your confirmation email could not be sent. Please keep this page and contact support with your order reference.'
+      : !data.storeAlertAccepted
+        ? 'Your confirmation email was accepted. Our store alert is delayed; contact support with your reference if you need urgent help.'
+        : 'A confirmation email has been accepted for sending; please keep this order reference as a backup.';
     const isInternationalPayment = data.paymentMethod === 'intl';
     document.getElementById('coSuccessPaymentTitle').textContent = isInternationalPayment
       ? 'Step 1: Complete an International Wire Transfer'
@@ -1522,7 +1543,7 @@ async function placeOrder() {
     renderCart();
   } catch (err) {
     const e = document.getElementById('coError');
-    e.textContent = 'Something went wrong. Please try again or email support@aupeptidelab.com';
+    e.textContent = err.message || 'Something went wrong. Please try again or email support@aupeptidelab.com';
     e.style.display = 'block';
     btn.classList.remove('loading'); btn.disabled = false;
   }
@@ -1592,7 +1613,9 @@ function submitPopup() {
 // ============================================================
 // MULTI-BUY DISCOUNT
 // ============================================================
-function getMultibuyDiscount(qty = getCartCount()) {
+function getEligibleCartCount() { return cart.filter(i => i.id !== 'PL-MIX-10').reduce((sum, i) => sum + i.qty, 0); }
+function getEligibleCartSubtotal() { return cart.filter(i => i.id !== 'PL-MIX-10').reduce((sum, i) => sum + i.price * i.qty, 0); }
+function getMultibuyDiscount(qty = getEligibleCartCount()) {
   if (qty >= 5) return 0.10;
   if (qty >= 3) return 0.05;
   if (qty >= 2) return 0.03;
@@ -1656,12 +1679,81 @@ async function submitRestockAlert(event) {
   }
 }
 
+const MIX_BUNDLE_ID = 'PL-MIX-10';
+let mixBundleSelections = {};
+function getReservedQty(productId) {
+  return cart.reduce((sum, item) => sum + (item.id === productId ? item.qty : 0)
+    + (item.selections || []).filter(selection => selection.id === productId).reduce((n, selection) => n + selection.qty, 0), 0);
+}
+function bundleContentsLabel(selections) {
+  return selections.map(selection => {
+    const product = PRODUCTS.find(p => p.id === selection.id);
+    return `${product?.name || selection.id} × ${selection.qty}`;
+  }).join(' · ');
+}
+function openMixBundleBuilder() {
+  mixBundleSelections = {};
+  document.getElementById('mixBundleDialog').hidden = false;
+  document.body.style.overflow = 'hidden';
+  renderMixBundleBuilder();
+  document.querySelector('.mix-bundle-close').focus();
+}
+function closeMixBundleBuilder() {
+  document.getElementById('mixBundleDialog').hidden = true;
+  document.body.style.overflow = '';
+}
+function changeMixBundleSelection(productId, delta) {
+  const selected = Object.values(mixBundleSelections).reduce((sum, qty) => sum + qty, 0);
+  const current = mixBundleSelections[productId] || 0;
+  if (delta > 0 && (selected >= 10 || current + getReservedQty(productId) >= getStock(productId))) return;
+  if (delta < 0 && current === 0) return;
+  const next = current + delta;
+  if (next) mixBundleSelections[productId] = next;
+  else delete mixBundleSelections[productId];
+  renderMixBundleBuilder();
+}
+function renderMixBundleBuilder() {
+  const selected = Object.values(mixBundleSelections).reduce((sum, qty) => sum + qty, 0);
+  const regular = PRODUCTS.reduce((sum, product) => sum + product.price * (mixBundleSelections[product.id] || 0), 0);
+  const price = Math.round(regular * 75) / 100;
+  document.getElementById('mixBundleCount').textContent = `${selected} of 10 selected`;
+  document.getElementById('mixBundleRemaining').textContent = selected === 10 ? 'Your set is ready' : `${10 - selected} to go`;
+  document.getElementById('mixBundleFill').style.width = `${selected * 10}%`;
+  document.getElementById('mixBundleRegular').textContent = fmtPrice(regular);
+  document.getElementById('mixBundleSavings').textContent = `−${fmtPrice(regular - price)}`;
+  document.getElementById('mixBundlePrice').textContent = fmtPrice(price);
+  const add = document.getElementById('mixBundleAdd');
+  add.disabled = selected !== 10;
+  add.textContent = selected === 10 ? `Add set to cart — ${fmtPrice(price)}` : `Select ${10 - selected} more vial${10 - selected === 1 ? '' : 's'}`;
+  document.getElementById('mixBundleOptions').innerHTML = PRODUCTS.filter(p => p.category !== 'accessories').map(product => {
+    const qty = mixBundleSelections[product.id] || 0;
+    const available = Math.max(0, getStock(product.id) - getReservedQty(product.id));
+    const unavailable = restocking[product.id] === true || available === 0;
+    return `<div class="mix-bundle-option${unavailable ? ' mix-bundle-option--oos' : ''}">
+      <img src="${product.img}" alt="" loading="lazy"><div class="mix-bundle-option__info"><strong>${product.name}</strong><span>${product.size} · ${fmtPrice(product.price)} each</span>${unavailable ? '<small>Restocking soon</small>' : ''}</div>
+      <div class="mix-bundle-qty"><button type="button" onclick="changeMixBundleSelection('${product.id}',-1)" aria-label="Remove one ${product.name}" ${qty === 0 ? 'disabled' : ''}>−</button><output>${qty}</output><button type="button" onclick="changeMixBundleSelection('${product.id}',1)" aria-label="Add one ${product.name}" ${unavailable || selected === 10 || qty >= available ? 'disabled' : ''}>+</button></div>
+    </div>`;
+  }).join('');
+}
+function addMixBundleToCart() {
+  const selections = Object.entries(mixBundleSelections).map(([id, qty]) => ({ id, qty }));
+  if (selections.reduce((sum, selection) => sum + selection.qty, 0) !== 10) return;
+  if (selections.some(selection => getReservedQty(selection.id) + selection.qty > getStock(selection.id) || restocking[selection.id] === true)) {
+    showToast('One of your selected vials is no longer available'); renderMixBundleBuilder(); return;
+  }
+  const regularPrice = selections.reduce((sum, selection) => sum + PRODUCTS.find(p => p.id === selection.id).price * selection.qty, 0);
+  cart.push({ id:MIX_BUNDLE_ID, name:'Mix & Match 10-Vial Set', size:'10 vials', price:Math.round(regularPrice * 75) / 100, qty:1, selections });
+  closeMixBundleBuilder(); renderCart(); updateCountBadges(); showToast('10-vial set added to cart'); openCart();
+}
+document.getElementById('mixBundleDialog').addEventListener('click', event => { if (event.target.id === 'mixBundleDialog') closeMixBundleBuilder(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !document.getElementById('mixBundleDialog').hidden) closeMixBundleBuilder(); });
+
 function addToCart(productId, quantity = 1) {
   const p = PRODUCTS.find(x => x.id === productId);
   if (!p) return;
   const stock = getStock(productId);
   if (stock === 0 || restocking[productId] === true) { openRestockAlert(p); return; }
-  const cartQty = cart.filter(x => x.id === productId).reduce((s, x) => s + x.qty, 0);
+  const cartQty = getReservedQty(productId);
   if (!Number.isInteger(quantity) || quantity < 1) return;
   if (cartQty + quantity > stock) { showToast('Only ' + Math.max(0, stock - cartQty) + ' more available to add'); return; }
   const existing = cart.find(x => x.id === productId);
@@ -1680,12 +1772,13 @@ function removeFromCart(idx) {
 function changeQty(idx, delta) {
   const item = cart[idx];
   if (!item) return;
+  if (item.id === MIX_BUNDLE_ID) return;
   if (delta > 0 && (getStock(item.id) === 0 || restocking[item.id] === true)) {
     const product = PRODUCTS.find(p => p.id === item.id);
     if (product) openRestockAlert(product);
     return;
   }
-  if (delta > 0 && item.qty >= getStock(item.id)) { showToast('Only ' + getStock(item.id) + ' in stock'); return; }
+  if (delta > 0 && getReservedQty(item.id) >= getStock(item.id)) { showToast('Only ' + getStock(item.id) + ' in stock'); return; }
   item.qty = Math.max(1, item.qty + delta);
   renderCart();
   updateCountBadges();
@@ -1737,14 +1830,14 @@ function renderCartSuggestions() {
   if (suggestions.length === 0) { el.style.display = 'none'; return; }
 
   // Bundle tier nudge
-  const qty = getCartCount();
+  const qty = getEligibleCartCount();
   const nextTier = qty < 2 ? { need: 2 - qty, pct: 3 }
     : qty < 3 ? { need: 3 - qty, pct: 5 }
     : qty < 5 ? { need: 5 - qty, pct: 10 }
     : null;
   const nudge = nextTier
-    ? `<div class="cart-bundle-nudge">Add ${nextTier.need} more item${nextTier.need > 1 ? 's' : ''} → unlock ${nextTier.pct}% off your order</div>`
-    : `<div class="cart-bundle-nudge cart-bundle-nudge--unlocked">✓ 10% bundle discount unlocked</div>`;
+    ? `<div class="cart-bundle-nudge">Add ${nextTier.need} more individual item${nextTier.need > 1 ? 's' : ''} → unlock ${nextTier.pct}% off those items</div>`
+    : `<div class="cart-bundle-nudge cart-bundle-nudge--unlocked">✓ 10% discount on individual items unlocked</div>`;
 
   const cards = suggestions.map(p => {
     const imgHtml = p.img
@@ -1774,7 +1867,7 @@ function renderCart() {
   const subtotal     = getCartTotal();
   const qty          = getCartCount();
   const discountRate = getMultibuyDiscount();
-  const discountAmt  = subtotal * discountRate;
+  const discountAmt  = getEligibleCartSubtotal() * discountRate;
   const afterDiscount = subtotal - discountAmt;
   const totalAUD     = afterDiscount;
   const remaining    = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
@@ -1807,11 +1900,11 @@ function renderCart() {
       <div class="cart-item__info">
         <div class="cart-item__name">${item.name}</div>
         <div class="cart-item__size">${item.size} · Research Use Only</div>
-        <div class="cart-item__controls">
+        ${item.selections ? `<div class="mix-bundle-cart-contents">${bundleContentsLabel(item.selections)}</div>` : `<div class="cart-item__controls">
           <div class="cart-qty-btn" onclick="changeQty(${i},-1)">−</div>
           <div class="cart-qty-num">${item.qty}</div>
           <div class="cart-qty-btn" onclick="changeQty(${i},1)">+</div>
-        </div>
+        </div>`}
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;padding-right:20px;">
         <div class="cart-item__price">${fmtPrice(item.price * item.qty)}</div>
@@ -1828,7 +1921,7 @@ function renderCart() {
   const discountRow = document.getElementById('discountRow');
   if (discountRate > 0) {
     discountRow.style.display = 'flex';
-    document.getElementById('discountBadge').textContent = getMultibuyLabel(qty);
+    document.getElementById('discountBadge').textContent = getMultibuyLabel(getEligibleCartCount());
     document.getElementById('discountAmt').textContent = '−' + fmtPrice(discountAmt);
   } else {
     discountRow.style.display = 'none';
@@ -1925,13 +2018,20 @@ function makeCard(p, mini) {
   </div>`;
 }
 
+function makeMixBundleCard() {
+  return `<div class="product-card mix-bundle-card" onclick="openMixBundleBuilder()">
+    <div class="product-card__img mix-bundle-card__img"><span class="product-card__badge mix-bundle-card__badge">SAVE 25%</span><img class="product-card__photo" src="/images/hero-peptide-vials.png" alt="Research vials for a mix and match set" loading="lazy"></div>
+    <div class="product-card__body"><div class="product-card__name">Mix &amp; Match 10-Vial Set</div><div class="product-card__sub">Choose any 10 available research vials. Repeats welcome.</div><div class="product-card__meta"><span class="product-card__tag">Build your own set</span></div><div class="product-card__price">25% off</div><div class="bundle-card-note">Compared with the selected vials' individual prices</div><button type="button" class="product-card__add-full" onclick="event.stopPropagation();openMixBundleBuilder()">Choose your 10 vials →</button></div>
+  </div>`;
+}
+
 function renderFeatured() {
   const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0,8);
   document.getElementById('featuredGrid').innerHTML = featured.map(p=>makeCard(p,false)).join('');
 }
 function renderShop(filter) {
   const list = filter && filter !== 'all' ? PRODUCTS.filter(p=>p.category===filter) : PRODUCTS;
-  document.getElementById('shopGrid').innerHTML = list.map(p=>makeCard(p,false)).join('');
+  document.getElementById('shopGrid').innerHTML = (filter && filter !== 'all' ? '' : makeMixBundleCard()) + list.map(p=>makeCard(p,false)).join('');
 }
 
 function updatePdpStock(productId) {
@@ -1974,10 +2074,12 @@ async function loadInventory() {
     const data = await res.json();
     inventory = data.stock || {};
     restocking = data.restocking || {};
-    const unavailable = cart.filter(item => getStock(item.id) === 0 || restocking[item.id] === true);
+    const unavailable = cart.filter(item => item.selections
+      ? item.selections.some(selection => getStock(selection.id) < selection.qty || restocking[selection.id] === true)
+      : getStock(item.id) < item.qty || restocking[item.id] === true);
     if (unavailable.length) {
-      cart = cart.filter(item => getStock(item.id) > 0 && restocking[item.id] !== true);
-      showToast(unavailable.map(item => item.name).join(', ') + ' is restocking and was removed from your cart');
+      cart = cart.filter(item => !unavailable.includes(item));
+      showToast(unavailable.map(item => item.name).join(', ') + ' became unavailable and was removed from your cart');
       renderCart();
       updateCountBadges();
     }
@@ -2255,7 +2357,15 @@ loadInventory();
   if (!param) return;
   try {
     const items = JSON.parse(atob(param));
-    items.forEach(({ id, qty }) => {
+    items.forEach(({ id, qty, selections }) => {
+      if (id === MIX_BUNDLE_ID) {
+        if (qty !== 1 || !Array.isArray(selections) || selections.length > 10 || new Set(selections.map(s => s.id)).size !== selections.length) return;
+        const valid = selections.every(s => Number.isInteger(s.qty) && s.qty > 0 && PRODUCTS.some(p => p.id === s.id && p.category !== 'accessories'));
+        if (!valid || selections.reduce((sum, s) => sum + s.qty, 0) !== 10) return;
+        const regularPrice = selections.reduce((sum, s) => sum + PRODUCTS.find(p => p.id === s.id).price * s.qty, 0);
+        cart.push({ id:MIX_BUNDLE_ID, name:'Mix & Match 10-Vial Set', size:'10 vials', price:Math.round(regularPrice * 75) / 100, qty:1, selections });
+        return;
+      }
       const p = PRODUCTS.find(x => x.id === id);
       if (!p || !qty) return;
       const existing = cart.find(x => x.id === id);
