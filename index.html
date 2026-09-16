@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=13" />
+  <link rel="stylesheet" href="/styles.css?v=14" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
 </head>
@@ -1072,6 +1072,12 @@
   <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · All prices AUD · Australian Operations</div></div>
 </footer>
 
+<aside class="research-agreement" id="researchAgreement" aria-label="Research use agreement" hidden>
+  <img src="/images/favicon.png?v=3" width="26" height="26" alt="" aria-hidden="true">
+  <p><strong>Research use only.</strong> All products are strictly for in-vitro research and laboratory development use only — not for human consumption. <a href="/terms" onclick="showPage('terms'); return false;">Full terms</a></p>
+  <button type="button" onclick="acceptResearchAgreement()">I agree</button>
+</aside>
+
 <!-- MOBILE STICKY CTA -->
 <div class="mobile-cta" id="mobileCta">
   <button class="btn btn--outline-white btn--sm" style="flex:1;font-size:12px" onclick="openCart()">Cart (<span id="mobileCTACount">0</span>)</button>
@@ -1082,6 +1088,15 @@
 </div>
 
 <script>
+function acceptResearchAgreement() {
+  localStorage.setItem('plResearchAgreementV1', '1');
+  document.getElementById('researchAgreement').hidden = true;
+  document.body.classList.remove('research-agreement-pending');
+}
+if (localStorage.getItem('plResearchAgreementV1') !== '1') {
+  document.getElementById('researchAgreement').hidden = false;
+  document.body.classList.add('research-agreement-pending');
+}
 // ============================================================
 // PRODUCT DATA
 // ============================================================
