@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=14" />
+  <link rel="stylesheet" href="/styles.css?v=15" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
 </head>
@@ -507,6 +507,43 @@
     </div>
   </section>
 
+  <div id="homeReconstitutionMount">
+  <section class="section recon-section" id="reconstitution-calculator" aria-labelledby="reconTitle">
+    <div class="container">
+      <div class="section-label">Research tools</div>
+      <h2 class="section-title" id="reconTitle">Reconstitution Calculator</h2>
+      <p class="recon-intro">Calculate solution concentration and the volume needed for a target research amount. Enter your vial mass and final solution volume to explore the result.</p>
+      <div class="recon-grid">
+        <div class="recon-controls">
+<fieldset class="recon-field"><legend>Syringe volume (mL)</legend><div class="recon-options"><label><input type="radio" name="recon-syringe" value="0.3"  onchange="updateReconstitution()"><span>0.3</span></label><label><input type="radio" name="recon-syringe" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-syringe" value="1" checked onchange="updateReconstitution()"><span>1</span></label></div></fieldset>
+<fieldset class="recon-field"><legend>Peptide vial quantity (mg)</legend><div class="recon-options"><label><input type="radio" name="recon-mass" value="5"  onchange="updateReconstitution()"><span>5</span></label><label><input type="radio" name="recon-mass" value="10" checked onchange="updateReconstitution()"><span>10</span></label><label><input type="radio" name="recon-mass" value="20"  onchange="updateReconstitution()"><span>20</span></label><label><input type="radio" name="recon-mass" value="50"  onchange="updateReconstitution()"><span>50</span></label><label><input type="radio" name="recon-mass" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-mass-custom" hidden><label for="recon-mass-value">Custom peptide vial quantity (mg)</label><input id="recon-mass-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
+<fieldset class="recon-field"><legend>Final solution volume (mL)</legend><div class="recon-options"><label><input type="radio" name="recon-water" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-water" value="1"  onchange="updateReconstitution()"><span>1</span></label><label><input type="radio" name="recon-water" value="2" checked onchange="updateReconstitution()"><span>2</span></label><label><input type="radio" name="recon-water" value="3"  onchange="updateReconstitution()"><span>3</span></label><label><input type="radio" name="recon-water" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-water-custom" hidden><label for="recon-water-value">Custom final solution volume (ml)</label><input id="recon-water-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
+<fieldset class="recon-field"><legend>Target research amount (mg)</legend><div class="recon-options"><label><input type="radio" name="recon-target" value="0.25"  onchange="updateReconstitution()"><span>0.25</span></label><label><input type="radio" name="recon-target" value="0.5" checked onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-target" value="1"  onchange="updateReconstitution()"><span>1</span></label><label><input type="radio" name="recon-target" value="2"  onchange="updateReconstitution()"><span>2</span></label><label><input type="radio" name="recon-target" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-target-custom" hidden><label for="recon-target-value">Custom target research amount (mg)</label><input id="recon-target-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
+        </div>
+        <div class="recon-results">
+          <div class="recon-scale-heading"><span>U-100 syringe scale</span><span id="reconCapacity">1 mL · 100 units</span></div>
+          <svg class="recon-syringe" viewBox="0 0 620 160" role="img" aria-labelledby="reconSyringeTitle">
+            <title id="reconSyringeTitle">Syringe volume illustration</title>
+            <path d="M18 80h42" stroke="#b8c2c0" stroke-width="3"/><path d="M60 70h24v20H60z" fill="#888"/>
+            <rect x="84" y="50" width="450" height="60" rx="5" fill="#181e1d" stroke="#8a9996" stroke-width="2"/>
+            <rect id="reconFill" x="85" y="51" width="45" height="58" fill="#5eead4" fill-opacity=".45"/>
+            <g id="reconTicks"></g><path id="reconPlunger" d="M130 52v56" stroke="#5eead4" stroke-width="5"/>
+            <path d="M538 80h50M537 38v84M590 52v56" stroke="#8a9996" stroke-width="9" stroke-linecap="round"/>
+          </svg>
+          <div class="recon-output" role="status" aria-live="polite" aria-atomic="true">
+            <p class="recon-output-label">Volume for your target amount</p>
+            <div class="recon-value"><strong id="reconUnits">10</strong><span>units</span><small id="reconMl">0.100 mL</small></div>
+            <dl class="recon-stats"><div><dt>Concentration</dt><dd id="reconConcentration">5.00 mg/mL</dd></div><div><dt>Full research aliquots per vial</dt><dd id="reconAliquots">20</dd></div></dl>
+            <p id="reconError" class="recon-error" hidden></p>
+          </div>
+          <p class="recon-note">U-100 scale: 100 units = 1 mL. Assumes the entered volume is the final solution volume. For laboratory calculations only; this tool does not establish a dose, diluent suitability, or a preparation protocol.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+  <div class="recon-more"><div class="container"><a href="/reconstitution" onclick="showPage('reconstitution'); return false;">Read how the calculator works <span aria-hidden="true">→</span></a></div></div>
+
   <!-- DISCREET PACKAGING -->
   <section class="discreet-packaging" data-discreet-packaging aria-labelledby="discreetPackagingTitle">
     <div class="container">
@@ -554,40 +591,6 @@
     </div>
   </section>
 
-
-  <section class="section recon-section" id="reconstitution-calculator" aria-labelledby="reconTitle">
-    <div class="container">
-      <div class="section-label">Research tools</div>
-      <h2 class="section-title" id="reconTitle">Reconstitution Calculator</h2>
-      <p class="recon-intro">Calculate solution concentration and the volume needed for a target research amount. Enter your vial mass and final solution volume to explore the result.</p>
-      <div class="recon-grid">
-        <div class="recon-controls">
-<fieldset class="recon-field"><legend>Syringe volume (mL)</legend><div class="recon-options"><label><input type="radio" name="recon-syringe" value="0.3"  onchange="updateReconstitution()"><span>0.3</span></label><label><input type="radio" name="recon-syringe" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-syringe" value="1" checked onchange="updateReconstitution()"><span>1</span></label></div></fieldset>
-<fieldset class="recon-field"><legend>Peptide vial quantity (mg)</legend><div class="recon-options"><label><input type="radio" name="recon-mass" value="5"  onchange="updateReconstitution()"><span>5</span></label><label><input type="radio" name="recon-mass" value="10" checked onchange="updateReconstitution()"><span>10</span></label><label><input type="radio" name="recon-mass" value="20"  onchange="updateReconstitution()"><span>20</span></label><label><input type="radio" name="recon-mass" value="50"  onchange="updateReconstitution()"><span>50</span></label><label><input type="radio" name="recon-mass" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-mass-custom" hidden><label for="recon-mass-value">Custom peptide vial quantity (mg)</label><input id="recon-mass-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
-<fieldset class="recon-field"><legend>Final solution volume (mL)</legend><div class="recon-options"><label><input type="radio" name="recon-water" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-water" value="1"  onchange="updateReconstitution()"><span>1</span></label><label><input type="radio" name="recon-water" value="2" checked onchange="updateReconstitution()"><span>2</span></label><label><input type="radio" name="recon-water" value="3"  onchange="updateReconstitution()"><span>3</span></label><label><input type="radio" name="recon-water" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-water-custom" hidden><label for="recon-water-value">Custom final solution volume (ml)</label><input id="recon-water-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
-<fieldset class="recon-field"><legend>Target research amount (mg)</legend><div class="recon-options"><label><input type="radio" name="recon-target" value="0.25"  onchange="updateReconstitution()"><span>0.25</span></label><label><input type="radio" name="recon-target" value="0.5" checked onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-target" value="1"  onchange="updateReconstitution()"><span>1</span></label><label><input type="radio" name="recon-target" value="2"  onchange="updateReconstitution()"><span>2</span></label><label><input type="radio" name="recon-target" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-target-custom" hidden><label for="recon-target-value">Custom target research amount (mg)</label><input id="recon-target-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
-        </div>
-        <div class="recon-results">
-          <div class="recon-scale-heading"><span>U-100 syringe scale</span><span id="reconCapacity">1 mL · 100 units</span></div>
-          <svg class="recon-syringe" viewBox="0 0 620 160" role="img" aria-labelledby="reconSyringeTitle">
-            <title id="reconSyringeTitle">Syringe volume illustration</title>
-            <path d="M18 80h42" stroke="#b8c2c0" stroke-width="3"/><path d="M60 70h24v20H60z" fill="#888"/>
-            <rect x="84" y="50" width="450" height="60" rx="5" fill="#181e1d" stroke="#8a9996" stroke-width="2"/>
-            <rect id="reconFill" x="85" y="51" width="45" height="58" fill="#5eead4" fill-opacity=".45"/>
-            <g id="reconTicks"></g><path id="reconPlunger" d="M130 52v56" stroke="#5eead4" stroke-width="5"/>
-            <path d="M538 80h50M537 38v84M590 52v56" stroke="#8a9996" stroke-width="9" stroke-linecap="round"/>
-          </svg>
-          <div class="recon-output" role="status" aria-live="polite" aria-atomic="true">
-            <p class="recon-output-label">Volume for your target amount</p>
-            <div class="recon-value"><strong id="reconUnits">10</strong><span>units</span><small id="reconMl">0.100 mL</small></div>
-            <dl class="recon-stats"><div><dt>Concentration</dt><dd id="reconConcentration">5.00 mg/mL</dd></div><div><dt>Full research aliquots per vial</dt><dd id="reconAliquots">20</dd></div></dl>
-            <p id="reconError" class="recon-error" hidden></p>
-          </div>
-          <p class="recon-note">U-100 scale: 100 units = 1 mL. Assumes the entered volume is the final solution volume. For laboratory calculations only; this tool does not establish a dose, diluent suitability, or a preparation protocol.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- FAQ PREVIEW -->
   <section class="section" style="background:white">
@@ -2102,6 +2105,9 @@ function filterCerts(q) { renderCerts(q); }
 const PAGE_PATHS = { home:'/', shop:'/shop', reconstitution:'/reconstitution', quality:'/quality-testing', about:'/about', faq:'/faq', contact:'/contact', track:'/track-order', shipping:'/shipping', refund:'/refunds', terms:'/terms', privacy:'/privacy' };
 
 function showPage(id, updateHistory = true) {
+  const calculator = document.getElementById('reconstitution-calculator');
+  const mount = document.getElementById(id === 'reconstitution' ? 'reconstitutionCalculatorMount' : 'homeReconstitutionMount');
+  if (calculator && mount && calculator.parentElement !== mount) mount.appendChild(calculator);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const page = document.getElementById('page-'+id);
   if (page) { page.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
@@ -2210,7 +2216,6 @@ function updateReconstitution() {
     return `<path d="M${x} 51v${i % 5 === 0 ? 19 : 9}" stroke="#b8c2c0"/>${i % 5 === 0 ? `<text x="${x}" y="99" text-anchor="middle" fill="#f5f5f5" font-size="11">${format(i / 50 * syringe * 100)}</text>` : ''}`;
   }).join('');
 }
-document.getElementById('reconstitutionCalculatorMount').appendChild(document.getElementById('reconstitution-calculator'));
 updateReconstitution();
 
 // ============================================================

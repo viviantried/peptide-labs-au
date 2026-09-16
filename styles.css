@@ -469,12 +469,12 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .hero__title em { color: var(--teal-400); font-style: normal; }
 .hero__sub { font-size: 17px; line-height: 1.55; color: var(--slate-400); margin-bottom: 20px; max-width: 620px; }
 .hero-finder { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; margin-bottom: 16px; }
-.hero-finder__search { position: relative; display: flex; align-items: center; min-height: 62px; padding: 0 18px; border: 1.5px solid #4b5563; border-radius: var(--radius-md); background: rgba(255,255,255,.06); transition: border-color var(--transition), background var(--transition); }
+.hero-finder__search { position: relative; display: flex; align-items: center; min-height: 54px; padding: 0 16px; border: 1.5px solid #4b5563; border-radius: var(--radius-md); background: rgba(255,255,255,.06); transition: border-color var(--transition), background var(--transition); }
 .hero-finder__search:focus-within { border-color: var(--teal-400); background: rgba(255,255,255,.09); }
-.hero-finder__search > svg { width: 23px; height: 23px; margin-right: 13px; flex: 0 0 auto; color: #b8c2c0; }
-.hero-finder__search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: white; font: inherit; font-size: 17px; }
+.hero-finder__search > svg { width: 20px; height: 20px; margin-right: 11px; flex: 0 0 auto; color: #b8c2c0; }
+.hero-finder__search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: white; font: inherit; font-size: 15px; }
 .hero-finder__search input::placeholder { color: #98a4b3; opacity: 1; }
-.hero-finder__button { min-width: 176px; font-size: 16px; font-weight: 800; }
+.hero-finder__button { min-width: 160px; padding: 10px 20px; font-size: 15px; font-weight: 800; }
 .hero-finder__results { position: absolute; z-index: 10; top: calc(100% + 8px); left: 0; right: 0; overflow: hidden; border: 1px solid #4a4a4a; border-radius: var(--radius-md); background: #111; box-shadow: var(--shadow-lg); }
 .hero-finder__result { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 13px 18px; color: white; text-align: left; font-size: 14px; }
 .hero-finder__result:hover, .hero-finder__result:focus-visible { background: #173a35; outline: none; }
@@ -549,7 +549,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .coa-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; }
 
 /* ===== TRUST STRIP ===== */
-.trust-strip { background: #1c1c1c; border-bottom: 1px solid var(--border); padding: 10px 0; }
+.trust-strip { background: #1c1c1c; border-bottom: 1px solid var(--border); padding: 14px 0; }
 .trust-strip__inner { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
 .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
 .trust-badge svg { width: 18px; height: 18px; color: var(--teal-600); flex-shrink: 0; }
@@ -943,7 +943,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .announcement-bar { padding: 8px 12px; }
   .announcement-bar__desktop { display: none; }
   .announcement-bar__mobile { display: inline; margin: 0; }
-  .trust-strip { padding: 8px 0; }
+  .trust-strip { padding: 10px 0; }
   .trust-strip__inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
   .trust-badge { justify-content: center; white-space: normal; text-align: center; font-size: 11px; line-height: 1.25; }
   .trust-badge:last-child { grid-column: 1 / -1; }
@@ -960,8 +960,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .hero__actions { flex-direction: column; }
   .hero__actions .btn { width: 100%; justify-content: center; }
   .hero-finder { grid-template-columns: 1fr; gap: 10px; }
-  .hero-finder__button { min-height: 52px; }
-  .hero-finder__search { min-height: 56px; padding: 0 14px; }
+  .hero-finder__button { min-height: 48px; }
+  .hero-finder__search { min-height: 50px; padding: 0 14px; }
   .hero-finder__search input { font-size: 15px; }
   .hero-finder__chips { gap: 7px; }
   .hero-finder__chips button { padding: 8px 12px; font-size: 13px; }
@@ -1673,6 +1673,10 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* Laboratory calculator: shared typography and restrained teal interaction. */
 .recon-section { background: var(--navy-800); scroll-margin-top: 100px; border-block: 1px solid var(--border); }
+#homeReconstitutionMount .recon-section { padding-bottom: 32px; border-bottom: 0; }
+.recon-more { background: var(--navy-800); padding: 0 0 48px; text-align: center; }
+.recon-more a { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.recon-more a:hover, .recon-more a:focus-visible { color: #5eead4; }
 .recon-page-hero { padding: 72px 0 60px; }
 .recon-page-hero .section-label { color: var(--teal-400); }
 .recon-guidance { background: var(--body-bg); color: var(--text-secondary); }
