@@ -549,7 +549,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .coa-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; }
 
 /* ===== TRUST STRIP ===== */
-.trust-strip { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 20px 0; }
+.trust-strip { background: #1c1c1c; border-bottom: 1px solid var(--border); padding: 20px 0; }
 .trust-strip__inner { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
 .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
 .trust-badge svg { width: 18px; height: 18px; color: var(--teal-600); flex-shrink: 0; }
