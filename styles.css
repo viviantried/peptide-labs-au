@@ -1548,7 +1548,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* ═══ DISCREET PACKAGING ═══ */
 .discreet-packaging {
-  padding: 72px 0 96px;
+  padding: 72px 0 32px;
   background: var(--body-bg);
 }
 
@@ -1593,7 +1593,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .discreet-packaging__copy .section-sub { max-width: none; }
 
 @media (max-width: 700px) {
-  .discreet-packaging { padding: 48px 0 64px; }
+  .discreet-packaging { padding: 48px 0 36px; }
   .discreet-packaging__card {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -1677,6 +1677,14 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .recon-more { background: var(--navy-800); padding: 0 0 48px; text-align: center; }
 .recon-more a { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .recon-more a:hover, .recon-more a:focus-visible { color: #5eead4; }
+.section--sm.research-notice-section { padding: 24px 0 32px; }
+.section.why-section { padding-top: 64px; padding-bottom: 40px; }
+.section.home-faq-preview { padding-top: 48px; }
+@media (max-width: 700px) {
+  .section--sm.research-notice-section { padding: 16px 0 24px; }
+  .section.why-section { padding-top: 48px; padding-bottom: 32px; }
+  .section.home-faq-preview { padding-top: 32px; }
+}
 .recon-page-hero { padding: 72px 0 60px; }
 .recon-page-hero .section-label { color: var(--teal-400); }
 .recon-guidance { background: var(--body-bg); color: var(--text-secondary); }
