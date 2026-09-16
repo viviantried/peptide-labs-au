@@ -76,8 +76,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* ===== ANNOUNCEMENT BAR ===== */
 .announcement-bar {
-  background: var(--navy-900);
-  color: #CCCCCC;
+  background: linear-gradient(135deg, var(--teal-600), var(--teal-700));
+  color: #111;
   text-align: center;
   padding: 10px 24px;
   font-size: 13px;
@@ -86,8 +86,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   position: relative;
   z-index: 90;
 }
-.announcement-bar span { color: var(--teal-400); margin: 0 6px; }
-.announcement-bar strong { color: white; }
+.announcement-bar span { color: inherit; margin: 0 6px; }
+.announcement-bar strong { color: #111; }
 .announcement-bar__mobile { display: none; }
 
 /* ===== NAVIGATION ===== */
@@ -876,16 +876,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .filter-btn { padding: 8px 18px; border: 1.5px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all var(--transition); background: var(--card-bg); }
 .filter-btn:hover, .filter-btn.active { border-color: var(--teal-500); background: var(--teal-50); color: var(--teal-700); }
 
-/* ===== SHIPPING BANNER ===== */
-.ship-banner {
-  background: linear-gradient(135deg, var(--teal-600), var(--teal-700));
-  padding: 14px 24px; text-align: center;
-  display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap;
-}
-.ship-banner__item { display: flex; align-items: center; gap: 8px; color: white; font-size: 13px; font-weight: 600; }
-.ship-banner__item svg { width: 16px; height: 16px; opacity: 0.9; }
-.ship-divider { width: 1px; height: 18px; background: rgba(255,255,255,0.3); }
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .hero__inner { grid-template-columns: 1fr; gap: 20px; }
@@ -901,7 +891,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 @media (max-width: 768px) {
   .section { padding: 64px 0; }
-  .ship-banner, .hero__visual--product { display: none; }
+  .hero__visual--product { display: none; }
   .nav__links, .nav__actions .nav__badge { display: none; }
   .nav__mobile-toggle { display: flex; }
   .hero { padding: 24px 0 20px; }
@@ -924,15 +914,12 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .cert-grid { grid-template-columns: 1fr; }
   .values-grid { grid-template-columns: 1fr; }
   :root { --cart-width: 100vw; }
-  .ship-banner { gap: 12px; }
-  .ship-divider { display: none; }
 }
 @media (max-width: 480px) {
   .container { padding: 0 16px; }
   .announcement-bar { padding: 8px 12px; }
   .announcement-bar__desktop { display: none; }
-  .announcement-bar__mobile { display: inline; margin: 0; color: #ccc; }
-  .ship-banner { display: none; }
+  .announcement-bar__mobile { display: inline; margin: 0; }
   .trust-strip { padding: 12px 0; }
   .trust-strip__inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
   .trust-badge { justify-content: center; white-space: normal; text-align: center; font-size: 11px; line-height: 1.25; }
