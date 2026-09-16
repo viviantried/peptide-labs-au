@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=10" />
+  <link rel="stylesheet" href="/styles.css?v=11" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
 </head>
@@ -518,13 +518,9 @@
   <!-- FEATURED PRODUCTS -->
   <section class="section featured-products" style="background:var(--body-bg)">
     <div class="container">
-      <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;">
-        <div>
-          <div class="section-label">Featured Products</div>
-          <h2 class="section-title" style="margin-bottom:8px">Research Compound Catalog</h2>
-          <p class="section-sub" style="max-width:520px">Third-party batch-certified compounds for laboratory research. All prices in AUD. Free standard shipping on orders of $200 or more.</p>
-        </div>
-        <button class="btn btn--outline" onclick="showPage('shop')">View All →</button>
+      <div class="featured-products__heading">
+        <h2>Shop all compounds</h2>
+        <button onclick="showPage('shop')">View all <span aria-hidden="true">→</span></button>
       </div>
       <div class="products-grid" id="featuredGrid"></div>
       <div class="bundle-savings-banner">

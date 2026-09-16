@@ -562,6 +562,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .section-header { margin-bottom: 56px; }
 .section-header--center { text-align: center; }
 .section-header--center .section-sub { margin: 0 auto; }
+.featured-products { padding-top: 32px; }
+.featured-products__heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.featured-products__heading h2 { font-size: 16px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-primary); }
+.featured-products__heading button { color: var(--text-primary); font-size: 14px; font-weight: 700; white-space: nowrap; }
+.featured-products__heading button:hover, .featured-products__heading button:focus-visible { color: var(--teal-400); text-decoration: underline; }
+.featured-products__heading button span { font-size: 20px; vertical-align: -1px; }
+@media (min-width: 1200px) { .featured-products .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* ===== PRODUCT CARDS ===== */
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 20px; }
@@ -894,6 +901,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 @media (max-width: 768px) {
   .section { padding: 64px 0; }
+  .ship-banner, .hero__visual--product { display: none; }
   .nav__links, .nav__actions .nav__badge { display: none; }
   .nav__mobile-toggle { display: flex; }
   .hero { padding: 24px 0 20px; }
@@ -937,6 +945,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .hero__visual--product { display: none; }
   .hero__inner { gap: 0; }
   .featured-products { padding-top: 28px; }
+  .featured-products__heading { margin-bottom: 18px; }
+  .featured-products__heading h2 { font-size: 13px; }
   .hero__actions { flex-direction: column; }
   .hero__actions .btn { width: 100%; justify-content: center; }
   .hero-finder { grid-template-columns: 1fr; gap: 10px; }
@@ -948,6 +958,11 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .final-cta__actions { flex-direction: column; align-items: center; }
   .product-page-actions { flex-direction: column; }
   .product-page-actions .btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 360px) {
+  .hero { padding: 16px 0 12px; }
+  .hero__eyebrow { margin-bottom: 10px; }
+  .featured-products__heading { margin-bottom: 12px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
