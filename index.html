@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=19" />
+  <link rel="stylesheet" href="/styles.css?v=20" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
 </head>
@@ -573,7 +573,7 @@
   </section>
 
   <!-- WHY CHOOSE US -->
-  <section class="section why-section" style="background:white">
+  <section class="section why-section" style="background:var(--body-bg)">
     <div class="container">
       <div class="section-header section-header--center">
         <div class="section-label">Why PeptideLab</div>
@@ -593,7 +593,7 @@
 
 
   <!-- FAQ PREVIEW -->
-  <section class="section home-faq-preview" style="background:white">
+  <section class="section home-faq-preview" style="background:var(--body-bg)">
     <div class="container--narrow">
       <div class="section-header section-header--center"><div class="section-label">FAQ</div><h2 class="section-title">Common Questions</h2><p class="section-sub">Quick answers for Australian and international research customers.</p></div>
       <div class="faq-list">
@@ -623,13 +623,6 @@
 <!--  PAGE: SHOP                                                   -->
 <!-- ============================================================ -->
 <div class="page" id="page-reconstitution">
-  <section class="policy-hero recon-page-hero">
-    <div class="container--narrow">
-      <div class="section-label">Research tools</div>
-      <h1 class="policy-hero__title">Reconstitution Calculator</h1>
-      <p class="policy-hero__sub">A reference tool for calculating concentration and solution volume from research inputs.</p>
-    </div>
-  </section>
   <div id="reconstitutionCalculatorMount"></div>
   <section class="section recon-guidance" aria-labelledby="reconGuideTitle">
     <div class="container--narrow">
@@ -658,9 +651,9 @@
       <p class="collection-hero__sub">All compounds independently batch-certified. Prices in AUD. Free standard shipping on orders of $200 AUD or more.</p>
     </div>
   </div>
-  <section class="section" style="background:var(--body-bg)">
+  <section class="section shop-products-section" style="background:var(--body-bg)">
     <div class="container">
-      <div style="margin-bottom:24px;padding:14px 20px;background:white;border:1px solid var(--border);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div style="margin-bottom:24px;padding:14px 20px;background:var(--navy-700);border:1px solid var(--border);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
         <div style="font-size:14px;color:var(--text-secondary);font-weight:500;">Showing <strong>14 products</strong> · All categories · Prices in AUD</div>
         <div class="collection-filters">
           <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
@@ -787,7 +780,7 @@
         <div class="cert-grid" id="certGrid"></div>
         <div style="margin-top:32px;padding:20px 24px;background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
           <div>
-            <div style="font-size:15px;font-weight:700;color:var(--navy-800);margin-bottom:4px;">View Full Certificate Archive</div>
+            <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">View Full Certificate Archive</div>
             <div style="font-size:13px;color:var(--text-muted);">All certificates issued by independent accredited laboratories. Click below to access the full archive.</div>
           </div>
           <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--teal">
@@ -856,7 +849,7 @@
       </div>
     </div>
     <div style="background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;">
-      <div style="font-size:16px;font-weight:700;color:var(--navy-800);margin-bottom:8px;">Still have a question?</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Still have a question?</div>
       <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">Our team handles order, documentation, and account queries. Response within 1–2 business days.</p>
       <button class="btn btn--teal" onclick="showPage('contact')">Contact Support →</button>
     </div>
@@ -1108,10 +1101,10 @@ const PRODUCTS = [
   { id:'PL-001', name:'Retatrutide', size:'10mg', price:135, category:'metabolic', img:'/images/retatrutide.jpg', purity:'≥99% Purity', badge:'Best Seller', badgeHot:true, desc:'Retatrutide is a tri-agonist research compound supplied for laboratory study. Each batch independently tested for purity and molecular identity.', tags:['≥99% Purity','HPLC Tested','MS Verified'], specs:[['CAS Number','2382367-33-9'],['Molecular Weight','~4814 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-002', name:'BPC-157', size:'10mg', price:85, category:'recovery', img:'/images/bpc-157.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'BPC-157 (Body Protection Compound 157) is a synthetic pentadecapeptide supplied for laboratory research. Independently tested per batch.', tags:['≥99% Purity','HPLC Tested','COA Available'], specs:[['CAS Number','137525-51-0'],['Molecular Formula','C₆₂H₉₈N₁₆O₂₂'],['Molecular Weight','1419.55 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-003', name:'TB-500', size:'5mg', price:79, category:'recovery', img:'/images/tb-500.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'TB-500 (Thymosin β4) is an analytical reference compound for laboratory research. Supplied with full batch documentation.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','77591-33-4'],['Molecular Weight','~4964 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
-  { id:'PL-004', name:'Tesamorelin', size:'5mg', price:105, category:'gh', img:'/images/tesamorelin.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Tesamorelin is a synthetic GHRH analogue research compound. Independently batch-certified and supplied for laboratory use.', tags:['≥99% Purity','MS Verified','Batch Certified'], specs:[['CAS Number','218949-48-5'],['Molecular Weight','~5135 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-004', name:'Tesamorelin', size:'5mg', price:95, category:'gh', img:'/images/tesamorelin.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Tesamorelin is a synthetic GHRH analogue research compound. Independently batch-certified and supplied for laboratory use.', tags:['≥99% Purity','MS Verified','Batch Certified'], specs:[['CAS Number','218949-48-5'],['Molecular Weight','~5135 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-005', name:'Semax', size:'10mg', price:69, category:'cognitive', img:'/images/semax.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Semax is a synthetic heptapeptide research compound for laboratory analysis. Each batch independently verified for purity and identity.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','80714-61-0'],['Molecular Formula','C₃₇H₅₁N₉O₁₀S'],['Molecular Weight','813.93 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
-  { id:'PL-006', name:'Selank', size:'10mg', price:69, category:'cognitive', img:'/images/selank.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Selank is a synthetic heptapeptide research compound. Analytical-grade, independently certified per batch for laboratory research.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','129954-34-3'],['Molecular Formula','C₃₃H₅₇N₁₁O₉'],['Molecular Weight','751.88 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
-  { id:'PL-007', name:'Deep Sleep Inducing Peptide', size:'5mg', price:55, category:'cognitive', img:'/images/dsip.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'DSIP (Delta Sleep-Inducing Peptide) is a nonapeptide research compound supplied for laboratory study. Batch tested and certified.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['Common Name','DSIP'],['CAS Number','62568-57-4'],['Molecular Formula','C₃₅H₄₈N₁₀O₁₅'],['Molecular Weight','848.82 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥98%'],['Quantity','5mg per vial'],['Third-Party Certified','Yes']] },
+  { id:'PL-006', name:'Selank', size:'10mg', price:59, category:'cognitive', img:'/images/selank.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Selank is a synthetic heptapeptide research compound. Analytical-grade, independently certified per batch for laboratory research.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','129954-34-3'],['Molecular Formula','C₃₃H₅₇N₁₁O₉'],['Molecular Weight','751.88 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
+  { id:'PL-007', name:'Deep Sleep Inducing Peptide', size:'5mg', price:49, category:'cognitive', img:'/images/dsip.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'DSIP (Delta Sleep-Inducing Peptide) is a nonapeptide research compound supplied for laboratory study. Batch tested and certified.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['Common Name','DSIP'],['CAS Number','62568-57-4'],['Molecular Formula','C₃₅H₄₈N₁₀O₁₅'],['Molecular Weight','848.82 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥98%'],['Quantity','5mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-008', name:'Melanotan-2', size:'10mg', price:69, category:'cognitive', img:'/images/melanotan-2.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-2 (MT-2) is a synthetic melanocortin analogue research compound. Each batch independently tested per laboratory standards.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','121062-08-6'],['Molecular Formula','C₅₀H₆₉N₁₅O₉'],['Molecular Weight','1024.19 g/mol'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-009', name:'Melanotan-1', size:'10mg', price:69, category:'cognitive', img:'/images/melanotan-1.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-1 (MT-1 / Afamelanotide) is a synthetic melanocortin research compound supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','75921-69-6'],['Molecular Weight','~1646 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-011', name:'NAD+', size:'500mg', price:75, category:'cellular', img:'/images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','100mg per vial'],['Third-Party Certified','Yes']] },
@@ -1589,7 +1582,7 @@ function submitPopup() {
   document.getElementById('popupModal').innerHTML = `
     <div class="popup-success">
       <div style="font-size:52px;margin-bottom:16px">🎉</div>
-      <div style="font-family:var(--font-display);font-size:24px;color:var(--navy-900);margin-bottom:8px">You're in the draw!</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--text-primary);margin-bottom:8px">You're in the draw!</div>
       <p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:24px">We'll notify <strong>${email}</strong> if you win the $250 store credit. Good luck!</p>
       <button class="btn btn--teal" onclick="closePopup()">Continue Shopping</button>
     </div>`;
@@ -2108,6 +2101,14 @@ function showPage(id, updateHistory = true) {
   const calculator = document.getElementById('reconstitution-calculator');
   const mount = document.getElementById(id === 'reconstitution' ? 'reconstitutionCalculatorMount' : 'homeReconstitutionMount');
   if (calculator && mount && calculator.parentElement !== mount) mount.appendChild(calculator);
+  const calculatorTitle = document.getElementById('reconTitle');
+  if (calculatorTitle && calculatorTitle.tagName !== (id === 'reconstitution' ? 'H1' : 'H2')) {
+    const heading = document.createElement(id === 'reconstitution' ? 'h1' : 'h2');
+    heading.id = calculatorTitle.id;
+    heading.className = calculatorTitle.className;
+    heading.textContent = calculatorTitle.textContent;
+    calculatorTitle.replaceWith(heading);
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const page = document.getElementById('page-'+id);
   if (page) { page.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
