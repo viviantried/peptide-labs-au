@@ -2044,8 +2044,10 @@ function updatePdpStock(productId) {
   if (!btn) return;
   btn.disabled = false;
   if (oos) {
-    btn.innerHTML = 'Notify me when available';
-    btn.onclick = () => { const product = PRODUCTS.find(p => p.id === productId); if (product) openRestockAlert(product); };
+    const isUnconfirmedKit = productId === 'PL-015';
+    btn.innerHTML = isUnconfirmedKit ? 'Available soon' : 'Notify me when available';
+    btn.disabled = isUnconfirmedKit;
+    btn.onclick = isUnconfirmedKit ? null : () => { const product = PRODUCTS.find(p => p.id === productId); if (product) openRestockAlert(product); };
     btn.style.opacity = '';
     btn.style.cursor  = 'pointer';
   } else {
