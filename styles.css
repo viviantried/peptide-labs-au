@@ -1105,6 +1105,15 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .product-card:hover .product-card__photo{transform:translateY(-4px) scale(1.03)}
 .pdp-product-photo{width:260px;height:340px;object-fit:contain;filter:drop-shadow(0 12px 32px rgba(0,0,0,.5));transition:transform .3s ease;border-radius:8px}
 .pdp-product-photo:hover{transform:scale(1.02)}
+.kit-visual{width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:20px 12px 8px;background:linear-gradient(145deg,#111d2c,#183549);color:#fff;overflow:hidden}
+.kit-visual img{width:44%;height:88%;object-fit:contain;border-radius:8px}
+.kit-visual__contents{display:flex;flex-direction:column;gap:7px;width:53%;font-size:11px;font-weight:700;line-height:1.3}
+.kit-visual__contents span{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.09);padding:8px;border-radius:8px}
+.kit-visual--large{width:min(100%,510px);height:340px;padding:26px;gap:18px;background:none}
+.kit-visual--large img{height:100%;width:48%;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.kit-visual--large .kit-visual__contents{width:48%;gap:12px;font-size:13px}
+.kit-visual--large .kit-visual__contents span{padding:13px}
+@media(max-width:480px){.kit-visual--large{height:235px;padding:12px;gap:8px}.kit-visual--large .kit-visual__contents{font-size:10px;gap:6px}.kit-visual--large .kit-visual__contents span{padding:7px}}
 
 /* ═══════════════════════════════════════════════════════════════
    CHECKOUT OVERLAY

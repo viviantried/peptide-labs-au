@@ -63,5 +63,10 @@
     "stock": 70,
     "weekly_sold": 6,
     "restocking": false
+  },
+  "PL-015": {
+    "stock": 0,
+    "weekly_sold": 0,
+    "restocking": false
   }
 }

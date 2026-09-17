@@ -691,7 +691,7 @@
             <div class="product-page-vial"><div class="vial-cap"></div><div class="vial-body" style="height:80px;width:36px;"></div></div>
           </div>
           <div class="product-page-img__label" id="pdpImgLabel">Product · Research Grade</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 24px;">
+          <div id="pdpImageBadges" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 24px;">
             <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:var(--teal-400);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">HPLC Tested</span>
             <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:var(--teal-400);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">Batch Certified</span>
           </div>
@@ -725,7 +725,7 @@
               <span><strong>Ships from Australia</strong><br>Express delivery: 1–2 business days · Standard: 3–7 business days</span>
             </div>
           </div>
-          <div class="product-cert-box">
+          <div class="product-cert-box" id="pdpCertBox">
             <div><div class="product-cert-box__title">Batch Certification Available</div><div class="product-cert-box__sub">Independent laboratory tested · HPLC + MS verified · All batches documented</div></div>
             <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--outline-teal btn--sm">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -739,9 +739,9 @@
               <div class="tab-btn" onclick="switchTab(this,'storage')">Storage</div>
               <div class="tab-btn" onclick="switchTab(this,'shipping-info')">Shipping</div>
             </div>
-            <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Each batch is independently tested and documented.</p></div>
+            <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><div id="pdpDescDetail"><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Each batch is independently tested and documented.</p></div></div>
             <div class="tab-content" id="tab-specs"><table class="spec-table" id="pdpSpecTable"></table></div>
-            <div class="tab-content" id="tab-storage"><p><strong>Lyophilised Storage</strong></p><p>Store at <strong>-20°C or below</strong> in a dry, dark environment. Avoid repeated freeze-thaw cycles. Properly stored lyophilised compound is stable for up to 24 months from manufacture date.</p><p><strong>After Reconstitution</strong></p><p>Store at <strong>2–8°C</strong> (refrigerated). Use within the timeframe required by your laboratory protocol. Do not freeze reconstituted solution unless required by research conditions.</p><p><strong>Handling</strong></p><p>Handle with appropriate laboratory PPE. Reconstitute in a sterile environment using appropriate laboratory-grade solvent per research protocol.</p></div>
+            <div class="tab-content" id="tab-storage"><div id="pdpStorageContent"><p><strong>Lyophilised Storage</strong></p><p>Store at <strong>-20°C or below</strong> in a dry, dark environment. Avoid repeated freeze-thaw cycles. Properly stored lyophilised compound is stable for up to 24 months from manufacture date.</p><p><strong>After Reconstitution</strong></p><p>Store at <strong>2–8°C</strong> (refrigerated). Use within the timeframe required by your laboratory protocol. Do not freeze reconstituted solution unless required by research conditions.</p><p><strong>Handling</strong></p><p>Handle with appropriate laboratory PPE. Reconstitute in a sterile environment using appropriate laboratory-grade solvent per research protocol.</p></div></div>
             <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. Orders of $200 AUD or more receive <strong>free standard shipping</strong>, with express available as a $5 AUD upgrade.</p><p>Standard and express shipping options are also available to eligible international destinations. Customers are responsible for local import compliance. All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
           </div>
           <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
@@ -1124,7 +1124,8 @@ const PRODUCTS = [
   { id:'PL-009', name:'Melanotan-1', size:'10mg', price:69, category:'cognitive', img:'/images/melanotan-1.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Melanotan-1 (MT-1 / Afamelanotide) is a synthetic melanocortin research compound supplied for laboratory analysis.', tags:['≥99% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','75921-69-6'],['Molecular Weight','~1646 Da'],['Appearance','White lyophilised powder'],['Purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Testing','HPLC / Mass Spectrometry'],['Third-Party Certified','Yes']] },
   { id:'PL-011', name:'NAD+', size:'500mg', price:75, category:'cellular', img:'/images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','100mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-013', name:'Glutathione', size:'1500mg', price:85, category:'cellular', img:'/images/glutathione.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'Glutathione (GSH) is a tripeptide antioxidant research compound for laboratory cellular biology study. Independently batch-tested.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','70-18-8'],['Molecular Formula','C₁₀H₁₇N₃O₆S'],['Molecular Weight','307.32 g/mol'],['Appearance','White powder'],['Purity (HPLC)','≥98%'],['Quantity','1500mg per vial'],['Third-Party Certified','Yes']] },
-  { id:'PL-014', name:'BAC Water', size:'10ml', price:19, category:'accessories', img:'/images/bac-water.jpg', purity:'Pharmaceutical Grade', badge:'Accessory', badgeHot:false, desc:'Bacteriostatic Water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research compounds.', tags:['0.9% Benzyl Alcohol','10ml vial','Lab Grade'], specs:[['Type','Bacteriostatic Water'],['Benzyl Alcohol','0.9%'],['Volume','10ml'],['Container','Multi-dose vial'],['Use','Laboratory reconstitution only']] }
+  { id:'PL-014', name:'BAC Water', size:'10ml', price:19, category:'accessories', img:'/images/bac-water.jpg', purity:'Pharmaceutical Grade', badge:'Accessory', badgeHot:false, desc:'Bacteriostatic Water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research compounds.', tags:['0.9% Benzyl Alcohol','10ml vial','Lab Grade'], specs:[['Type','Bacteriostatic Water'],['Benzyl Alcohol','0.9%'],['Volume','10ml'],['Container','Multi-dose vial'],['Use','Laboratory reconstitution only']] },
+  { id:'PL-015', name:'Research Starter Kit', size:'1 kit', price:29, category:'accessories', img:'/images/bac-water.jpg', kind:'kit', purity:'Laboratory preparation kit', badge:'Starter Kit', badgeHot:false, desc:'A practical laboratory preparation kit with one 10ml BAC Water vial, four syringes, and four alcohol prep wipes.', tags:['1 BAC Water vial','4 syringes','4 prep wipes'], specs:[['Quantity','1 kit'],['BAC Water','1 × 10ml vial'],['Syringes','4'],['Alcohol prep wipes','4'],['Storage','Cool, dry place away from direct sunlight'],['Use','Laboratory research only']] }
 ];
 
 // ============================================================
@@ -1996,7 +1997,7 @@ function makeCard(p, mini) {
   return `<div class="product-card${oos ? ' product-card--oos' : ''}" onclick="viewProduct('${p.id}')">
     <div class="product-card__img">
       <span class="${badgeClass}">${badgeLabel}</span>
-      ${p.img
+      ${p.kind === 'kit' ? kitVisual(p, false) : p.img
         ? `<img class="product-card__photo" src="${p.img}" alt="${p.name}" loading="lazy">`
         : `<div class="product-vial-svg">${makeVialSVG(p)}</div>`}
     </div>
@@ -2005,7 +2006,7 @@ function makeCard(p, mini) {
       <div class="product-card__sub">${p.desc.split('.')[0]}.</div>
       <div class="product-card__meta"><span class="product-card__tag">${p.tags[0]}</span></div>
       <div class="product-card__price">${fmtPrice(p.price)}</div>
-      ${p.category !== 'accessories' ? '<div class="bundle-card-note">Bundle & save up to 10%</div>' : ''}
+      ${p.category !== 'accessories' || p.kind === 'kit' ? '<div class="bundle-card-note">Bundle & save up to 10%</div>' : ''}
       ${low ? `<div class="product-card__low-stock">Only ${stock} left</div>` : ''}
       <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
         ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
@@ -2104,8 +2105,18 @@ const PRODUCT_SLUGS = {
   'PL-004':'tesamorelin', 'PL-005':'semax', 'PL-006':'selank',
   'PL-007':'deep-sleep-inducing-peptide', 'PL-008':'melanotan-2',
   'PL-009':'melanotan-1', 'PL-011':'nad-plus', 'PL-012':'ghk-cu',
-  'PL-013':'glutathione', 'PL-014':'bac-water'
+  'PL-013':'glutathione', 'PL-014':'bac-water', 'PL-015':'research-starter-kit'
 };
+
+const DEFAULT_PDP_DETAIL = document.getElementById('pdpDescDetail').innerHTML;
+const DEFAULT_PDP_STORAGE = document.getElementById('pdpStorageContent').innerHTML;
+const DEFAULT_PDP_IMAGE_BADGES = document.getElementById('pdpImageBadges').innerHTML;
+function kitVisual(p, large) {
+  return `<div class="kit-visual${large ? ' kit-visual--large' : ''}">
+    <img src="${p.img}" alt="PeptideLab 10ml BAC Water vial included in the kit" loading="lazy">
+    <div class="kit-visual__contents" aria-label="Kit contents"><span>1 × 10ml BAC Water</span><span>4 × Syringes</span><span>4 × Alcohol prep wipes</span></div>
+  </div>`;
+}
 
 function viewProduct(id, updateHistory = true) {
   const p = PRODUCTS.find(x=>x.id===id);
@@ -2116,19 +2127,27 @@ function viewProduct(id, updateHistory = true) {
   document.getElementById('pdpBreadcrumb').textContent = p.name;
   document.getElementById('pdpSku').textContent = p.id.replace('PL-','');
   document.getElementById('pdpName').textContent = p.name;
-  document.getElementById('pdpId').textContent = p.size + ' · Research Compound · For Laboratory Use Only';
-  document.getElementById('pdpPurity').textContent = p.purity + ' · Third-Party Certified';
+  document.getElementById('pdpId').textContent = p.size + (p.kind === 'kit' ? ' · Laboratory Accessories · For Research Use Only' : ' · Research Compound · For Laboratory Use Only');
+  document.getElementById('pdpPurity').textContent = p.kind === 'kit' ? '1 vial + 4 syringes + 4 prep wipes' : p.purity + ' · Third-Party Certified';
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
-  document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currentCurrency + ' · Research use only';
-  document.getElementById('pdpImgLabel').textContent = p.name + ' · ' + p.size + ' · Research Grade';
+  document.getElementById('pdpPriceNote').textContent = (p.kind === 'kit' ? 'Per kit' : 'Per vial') + ' · ' + currentCurrency + ' · Research use only';
+  document.getElementById('pdpImgLabel').textContent = p.kind === 'kit' ? 'BAC Water photo · Kit contents listed' : p.name + ' · ' + p.size + ' · Research Grade';
   document.getElementById('pdpDesc').textContent = p.desc;
+  document.getElementById('pdpCertBox').style.display = p.kind === 'kit' ? 'none' : '';
+  document.getElementById('pdpImageBadges').innerHTML = p.kind === 'kit' ? '' : DEFAULT_PDP_IMAGE_BADGES;
+  document.getElementById('pdpDescDetail').innerHTML = p.kind === 'kit'
+    ? '<p>Each kit contains one 10ml BAC Water vial, four syringes, and four alcohol prep wipes for laboratory preparation. The product image shows the BAC Water vial; the remaining components are listed alongside it.</p><p>Supplied for in-vitro laboratory research use only. Not for human or veterinary consumption.</p>'
+    : DEFAULT_PDP_DETAIL;
+  document.getElementById('pdpStorageContent').innerHTML = p.kind === 'kit'
+    ? '<p>Store the kit in a cool, dry place away from direct sunlight. Follow the instructions on each component’s packaging.</p>'
+    : DEFAULT_PDP_STORAGE;
   document.getElementById('pdpSpecTable').innerHTML = p.specs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
   document.getElementById('pdpAddBtn').onclick = () => pdpAddToCart();
   updatePdpStock(id);
   // Render label vials on product page
   const pdpVials = document.getElementById('pdpVials');
   if (pdpVials) {
-    pdpVials.innerHTML = p.img
+    pdpVials.innerHTML = p.kind === 'kit' ? kitVisual(p, true) : p.img
       ? `<img class="pdp-product-photo" src="${p.img}" alt="${p.name}">`
       : `<div class="pdp-vials-wrap">
           <div style="width:105px">${makeVialSVG(p)}</div>
