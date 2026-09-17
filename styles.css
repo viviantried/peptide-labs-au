@@ -1743,11 +1743,9 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .recon-controls { display: grid; gap: 24px; min-width: 0; }
 .recon-field { min-width: 0; padding: 0; border: 0; }
 .recon-field legend { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-.recon-field--syringe { position: relative; }
-.recon-starter-link { position: absolute; right: 0; top: 0; color: #5eead4; font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-.recon-starter-link:hover, .recon-starter-link:focus-visible { color: #fff; }
+.recon-starter-link { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; max-width: 100%; margin: 0 0 14px; padding: 9px 12px; border: 1px solid #5eead4; border-radius: var(--radius-sm); background: #0b3029; color: #5eead4; font-size: 13px; font-weight: 700; line-height: 1.4; }
+.recon-starter-link:hover, .recon-starter-link:focus-visible { background: #145044; color: #fff; }
 .recon-starter-link:focus-visible { outline: 2px solid #5eead4; outline-offset: 4px; }
-@media (max-width: 560px) { .recon-starter-link { position: static; display: inline-block; margin: 0 0 12px; } }
 .recon-options { display: flex; gap: 8px; }
 .recon-options label { position: relative; flex: 1; cursor: pointer; }
 .recon-options input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
