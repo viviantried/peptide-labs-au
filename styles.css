@@ -1747,6 +1747,11 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .recon-controls { display: grid; gap: 24px; min-width: 0; }
 .recon-field { min-width: 0; padding: 0; border: 0; }
 .recon-field legend { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.recon-field--syringe { position: relative; }
+.recon-starter-link { position: absolute; right: 0; top: 0; color: #5eead4; font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.recon-starter-link:hover, .recon-starter-link:focus-visible { color: #fff; }
+.recon-starter-link:focus-visible { outline: 2px solid #5eead4; outline-offset: 4px; }
+@media (max-width: 560px) { .recon-starter-link { position: static; display: inline-block; margin: 0 0 12px; } }
 .recon-options { display: flex; gap: 8px; }
 .recon-options label { position: relative; flex: 1; cursor: pointer; }
 .recon-options input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -1773,6 +1778,20 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .recon-stats dd { font-weight: 700; overflow-wrap: anywhere; }
 .recon-note { font-size: 12px; color: #b8c2c0; margin-top: 20px; line-height: 1.7; }
 .recon-error { color: #fda4af; font-size: 13px; margin-top: 16px; }
+.recon-supplies { padding: 48px 0 56px; background: var(--body-bg); }
+.recon-supplies .section-title { font-size: clamp(24px, 2.5vw, 32px); margin-bottom: 22px; }
+.recon-supplies__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.recon-supply-card { display: flex; align-items: center; gap: 18px; min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card-bg); transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition); }
+.recon-supply-card:hover, .recon-supply-card:focus-visible { border-color: var(--teal-500); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.recon-supply-card:focus-visible { outline: 2px solid var(--teal-400); outline-offset: 3px; }
+.recon-supply-card img { width: 104px; height: 104px; flex: none; object-fit: contain; border-radius: var(--radius-sm); background: #f7f7f7; }
+.recon-supply-card__copy { display: grid; gap: 7px; min-width: 0; }
+.recon-supply-card__copy strong { color: var(--text-primary); font-size: 16px; line-height: 1.35; }
+.recon-supply-card__copy > span { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.recon-supply-card__price { display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; margin-left: auto; white-space: nowrap; color: var(--text-primary); font-size: 16px; font-weight: 800; }
+.recon-supply-card__price span { color: var(--teal-400); }
+@media (max-width: 850px) { .recon-supplies__grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .recon-supplies { padding: 36px 0 44px; } .recon-supply-card { gap: 12px; padding: 12px; } .recon-supply-card img { width: 76px; height: 76px; } .recon-supply-card__copy strong, .recon-supply-card__price { font-size: 14px; } .recon-supply-card__copy > span { font-size: 12px; } }
 .nav__calculator { font-size: 13px; color: #ccc; padding: 8px; }
 .nav__calculator:hover { color: #5eead4; }
 @media (max-width: 900px) { .recon-grid { grid-template-columns: 1fr; gap: 28px; } }
