@@ -5,10 +5,7 @@ const ADMIN_KEY    = process.env.admin_key || process.env.ADMIN_KEY;
 const GITHUB_TOKEN = process.env.github_inventory_token || process.env.GITHUB_TOKEN;
 const REPO         = 'viviantried/peptide-labs-au';
 const FILE_PATH    = 'inventory.json';
-const RESEND_KEY   = process.env.RESEND_API_KEY || process.env.resend_api_key;
-const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN || process.env.airtable_token;
-const AIRTABLE_BASE = 'appwbIeYvWxx7R9Y8';
-const ALERT_TABLE = 'Restock Alerts';
+const { sendRestockBroadcast } = require('../lib/restock-resend');
 
 const PRODUCTS = {
   'PL-001': 'Retatrutide 10mg',
@@ -24,6 +21,13 @@ const PRODUCTS = {
   'PL-012': 'GHK-Cu 50mg',
   'PL-013': 'Glutathione 1500mg',
   'PL-014': 'BAC Water 10ml',
+};
+const PRODUCT_SLUGS = {
+  'PL-001':'retatrutide', 'PL-002':'bpc-157', 'PL-003':'tb-500',
+  'PL-004':'tesamorelin', 'PL-005':'semax', 'PL-006':'selank',
+  'PL-007':'deep-sleep-inducing-peptide', 'PL-008':'melanotan-2',
+  'PL-009':'melanotan-1', 'PL-011':'nad-plus', 'PL-012':'ghk-cu',
+  'PL-013':'glutathione', 'PL-014':'bac-water',
 };
 
 async function getInventoryFromGitHub() {
@@ -54,22 +58,21 @@ async function saveInventoryToGitHub(newContent, sha) {
   if (!r.ok) throw new Error(await r.text());
 }
 
+function isAvailable(entry) {
+  const stock = typeof entry === 'number' ? entry : entry?.stock ?? 0;
+  const restocking = typeof entry === 'number' ? false : entry?.restocking === true;
+  return stock > 0 && !restocking;
+}
+
 async function notifyRestockSubscribers(productId) {
-  if (!AIRTABLE_TOKEN || !RESEND_KEY) return;
-  const product = PRODUCTS[productId];
-  if (!product) return;
   try {
-    const formula = `AND({Product ID}='${productId}', {Status}='Pending')`;
-    const list = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(ALERT_TABLE)}?filterByFormula=${encodeURIComponent(formula)}`, { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } });
-    if (!list.ok) throw new Error(await list.text());
-    const { records = [] } = await list.json();
-    await Promise.all(records.map(async record => {
-      const email = record.fields.Email;
-      if (!email) return;
-      const sent = await fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type':'application/json' }, body:JSON.stringify({ from:'PeptideLab <orders@aupeptidelab.com>', to:email, subject:`${product} is back in stock`, html:`<p>Good news — <strong>${product}</strong> is back in stock.</p><p><a href="https://www.aupeptidelab.com">Shop now</a></p>` }) });
-      if (sent.ok) await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(ALERT_TABLE)}/${record.id}`, { method:'PATCH', headers:{ Authorization:`Bearer ${AIRTABLE_TOKEN}`, 'Content-Type':'application/json' }, body:JSON.stringify({ fields:{ Status:'Notified', 'Notified At':new Date().toISOString() } }) });
-    }));
-  } catch (err) { console.error('Restock notification error:', err.message); }
+    const product = PRODUCTS[productId];
+    const slug = PRODUCT_SLUGS[productId];
+    return { productId, ...await sendRestockBroadcast(productId, product, slug) };
+  } catch (error) {
+    console.error('Restock notification error:', productId, error.message);
+    return { productId, status: 'failed', error: error.message };
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -97,9 +100,9 @@ module.exports = async function handler(req, res) {
     try {
       const previous = await getInventoryFromGitHub();
       await saveInventoryToGitHub(inventory, sha);
-      const restocked = Object.keys(inventory).filter(id => (previous.content[id]?.stock ?? 0) === 0 && (inventory[id]?.stock ?? 0) > 0);
-      await Promise.all(restocked.map(notifyRestockSubscribers));
-      return res.status(200).json({ ok: true, restocked });
+      const restocked = Object.keys(inventory).filter(id => !isAvailable(previous.content[id]) && isAvailable(inventory[id]));
+      const alerts = await Promise.all(restocked.map(notifyRestockSubscribers));
+      return res.status(200).json({ ok: true, restocked, alerts });
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -228,7 +231,12 @@ async function save() {
     });
     const j = await r.json();
     if (!r.ok) throw new Error(j.error);
+    const failed = (j.alerts || []).filter(alert => alert.status === 'failed');
+    const sent = (j.alerts || []).filter(alert => alert.status === 'submitted');
     const toast = document.getElementById('toast');
+    toast.textContent = failed.length
+      ? 'Inventory saved, but restock email failed for ' + failed.map(alert => alert.productId).join(', ')
+      : 'Inventory saved — ' + sent.length + ' restock broadcast(s) submitted';
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3500);
   } catch (err) {
