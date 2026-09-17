@@ -2013,7 +2013,7 @@ function makeCard(p, mini) {
       <div class="product-card__sub">${p.desc.split('.')[0]}.</div>
       <div class="product-card__meta"><span class="product-card__tag">${p.tags[0]}</span></div>
       <div class="product-card__price">${fmtPrice(p.price)}</div>
-      ${p.category !== 'accessories' || p.kind === 'kit' ? '<div class="bundle-card-note">Bundle & save up to 10%</div>' : ''}
+      <div class="bundle-card-note">Bundle & save up to 10%</div>
       ${low ? `<div class="product-card__low-stock">Only ${stock} left</div>` : ''}
       <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
         ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
