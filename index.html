@@ -1125,7 +1125,7 @@ const PRODUCTS = [
   { id:'PL-011', name:'NAD+', size:'500mg', price:75, category:'cellular', img:'/images/nad-plus.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'NAD+ (Nicotinamide Adenine Dinucleotide) is a coenzyme research compound for cellular biology laboratory study.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','53-84-9'],['Molecular Formula','C₂₁H₂₇N₇O₁₄P₂'],['Molecular Weight','663.43 g/mol'],['Appearance','White to off-white powder'],['Purity (HPLC)','≥98%'],['Quantity','100mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-013', name:'Glutathione', size:'1500mg', price:85, category:'cellular', img:'/images/glutathione.jpg', purity:'≥98% Purity', badge:'In Stock', badgeHot:false, desc:'Glutathione (GSH) is a tripeptide antioxidant research compound for laboratory cellular biology study. Independently batch-tested.', tags:['≥98% Purity','HPLC Tested','Batch Certified'], specs:[['CAS Number','70-18-8'],['Molecular Formula','C₁₀H₁₇N₃O₆S'],['Molecular Weight','307.32 g/mol'],['Appearance','White powder'],['Purity (HPLC)','≥98%'],['Quantity','1500mg per vial'],['Third-Party Certified','Yes']] },
   { id:'PL-014', name:'BAC Water', size:'10ml', price:19, category:'accessories', img:'/images/bac-water.jpg', purity:'Pharmaceutical Grade', badge:'Accessory', badgeHot:false, desc:'Bacteriostatic Water (0.9% benzyl alcohol) for laboratory reconstitution of lyophilised research compounds.', tags:['0.9% Benzyl Alcohol','10ml vial','Lab Grade'], specs:[['Type','Bacteriostatic Water'],['Benzyl Alcohol','0.9%'],['Volume','10ml'],['Container','Multi-dose vial'],['Use','Laboratory reconstitution only']] },
-  { id:'PL-015', name:'Research Starter Kit', size:'1 kit', price:29, category:'accessories', img:'/images/bac-water.jpg', kind:'kit', purity:'Laboratory preparation kit', badge:'Starter Kit', badgeHot:false, desc:'A practical laboratory preparation kit with one 10ml BAC Water vial, four syringes, and four alcohol prep wipes.', tags:['1 BAC Water vial','4 syringes','4 prep wipes'], specs:[['Quantity','1 kit'],['BAC Water','1 × 10ml vial'],['Syringes','4'],['Alcohol prep wipes','4'],['Storage','Cool, dry place away from direct sunlight'],['Use','Laboratory research only']] }
+  { id:'PL-015', name:'Research Starter Kit', size:'1 kit', price:29, category:'accessories', img:'/images/research-starter-kit.png', kind:'kit', purity:'Laboratory preparation kit', badge:'Starter Kit', badgeHot:false, desc:'A practical laboratory preparation kit with one 10ml BAC Water vial, four syringes, and four alcohol prep wipes.', tags:['1 BAC Water vial','4 syringes','4 prep wipes'], specs:[['Quantity','1 kit'],['BAC Water','1 × 10ml vial'],['Syringes','4'],['Alcohol prep wipes','4'],['Storage','Cool, dry place away from direct sunlight'],['Use','Laboratory research only']] }
 ];
 
 // ============================================================
@@ -1997,7 +1997,7 @@ function makeCard(p, mini) {
   return `<div class="product-card${oos ? ' product-card--oos' : ''}" onclick="viewProduct('${p.id}')">
     <div class="product-card__img">
       <span class="${badgeClass}">${badgeLabel}</span>
-      ${p.kind === 'kit' ? kitVisual(p, false) : p.img
+      ${p.img
         ? `<img class="product-card__photo" src="${p.img}" alt="${p.name}" loading="lazy">`
         : `<div class="product-vial-svg">${makeVialSVG(p)}</div>`}
     </div>
@@ -2113,13 +2113,6 @@ const PRODUCT_SLUGS = {
 const DEFAULT_PDP_DETAIL = document.getElementById('pdpDescDetail').innerHTML;
 const DEFAULT_PDP_STORAGE = document.getElementById('pdpStorageContent').innerHTML;
 const DEFAULT_PDP_IMAGE_BADGES = document.getElementById('pdpImageBadges').innerHTML;
-function kitVisual(p, large) {
-  return `<div class="kit-visual${large ? ' kit-visual--large' : ''}">
-    <img src="${p.img}" alt="PeptideLab 10ml BAC Water vial included in the kit" loading="lazy">
-    <div class="kit-visual__contents" aria-label="Kit contents"><span>1 × 10ml BAC Water</span><span>4 × Syringes</span><span>4 × Alcohol prep wipes</span></div>
-  </div>`;
-}
-
 function viewProduct(id, updateHistory = true) {
   const p = PRODUCTS.find(x=>x.id===id);
   if (!p) return;
@@ -2133,12 +2126,12 @@ function viewProduct(id, updateHistory = true) {
   document.getElementById('pdpPurity').textContent = p.kind === 'kit' ? '1 vial + 4 syringes + 4 prep wipes' : p.purity + ' · Third-Party Certified';
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
   document.getElementById('pdpPriceNote').textContent = (p.kind === 'kit' ? 'Per kit' : 'Per vial') + ' · ' + currentCurrency + ' · Research use only';
-  document.getElementById('pdpImgLabel').textContent = p.kind === 'kit' ? 'BAC Water photo · Kit contents listed' : p.name + ' · ' + p.size + ' · Research Grade';
+  document.getElementById('pdpImgLabel').textContent = p.kind === 'kit' ? 'Illustrative photo · Kit includes 4 syringes and 4 wipes' : p.name + ' · ' + p.size + ' · Research Grade';
   document.getElementById('pdpDesc').textContent = p.desc;
   document.getElementById('pdpCertBox').style.display = p.kind === 'kit' ? 'none' : '';
   document.getElementById('pdpImageBadges').innerHTML = p.kind === 'kit' ? '' : DEFAULT_PDP_IMAGE_BADGES;
   document.getElementById('pdpDescDetail').innerHTML = p.kind === 'kit'
-    ? '<p>Each kit contains one 10ml BAC Water vial, four syringes, and four alcohol prep wipes for laboratory preparation. The product image shows the BAC Water vial; the remaining components are listed alongside it.</p><p>Supplied for in-vitro laboratory research use only. Not for human or veterinary consumption.</p>'
+    ? '<p>Each kit contains one 10ml BAC Water vial, four syringes, and four alcohol prep wipes for laboratory preparation. The product photo shows two syringes and one wipe for illustration; each delivered kit contains four of each.</p><p>Supplied for in-vitro laboratory research use only. Not for human or veterinary consumption.</p>'
     : DEFAULT_PDP_DETAIL;
   document.getElementById('pdpStorageContent').innerHTML = p.kind === 'kit'
     ? '<p>Store the kit in a cool, dry place away from direct sunlight. Follow the instructions on each component’s packaging.</p>'
@@ -2149,8 +2142,8 @@ function viewProduct(id, updateHistory = true) {
   // Render label vials on product page
   const pdpVials = document.getElementById('pdpVials');
   if (pdpVials) {
-    pdpVials.innerHTML = p.kind === 'kit' ? kitVisual(p, true) : p.img
-      ? `<img class="pdp-product-photo" src="${p.img}" alt="${p.name}">`
+    pdpVials.innerHTML = p.img
+      ? `<img class="pdp-product-photo${p.kind === 'kit' ? ' pdp-product-photo--kit' : ''}" src="${p.img}" alt="${p.kind === 'kit' ? 'PeptideLab BAC Water with two syringes and one alcohol wipe shown for illustration' : p.name}">`
       : `<div class="pdp-vials-wrap">
           <div style="width:105px">${makeVialSVG(p)}</div>
           <div style="width:78px;opacity:.72;transform:translateY(10px)">${makeVialSVG(p)}</div>
