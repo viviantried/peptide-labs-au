@@ -515,7 +515,7 @@
       <p class="recon-intro">Calculate solution concentration and the volume needed for a target research amount. Enter your vial mass and final solution volume to explore the result.</p>
       <div class="recon-grid">
         <div class="recon-controls">
-<fieldset class="recon-field"><legend>Syringe volume (mL)</legend><div class="recon-options"><label><input type="radio" name="recon-syringe" value="0.3"  onchange="updateReconstitution()"><span>0.3</span></label><label><input type="radio" name="recon-syringe" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-syringe" value="1" checked onchange="updateReconstitution()"><span>1</span></label></div></fieldset>
+<fieldset class="recon-field recon-field--syringe"><legend>Syringe volume (mL)</legend><a class="recon-starter-link" href="/products/research-starter-kit" onclick="viewProduct('PL-015'); return false;">Need syringes? Starter Kit <span id="reconStarterPrice">A$29.00</span> <span aria-hidden="true">→</span></a><div class="recon-options"><label><input type="radio" name="recon-syringe" value="0.3"  onchange="updateReconstitution()"><span>0.3</span></label><label><input type="radio" name="recon-syringe" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-syringe" value="1" checked onchange="updateReconstitution()"><span>1</span></label></div></fieldset>
 <fieldset class="recon-field"><legend>Peptide vial quantity (mg)</legend><div class="recon-options"><label><input type="radio" name="recon-mass" value="5"  onchange="updateReconstitution()"><span>5</span></label><label><input type="radio" name="recon-mass" value="10" checked onchange="updateReconstitution()"><span>10</span></label><label><input type="radio" name="recon-mass" value="20"  onchange="updateReconstitution()"><span>20</span></label><label><input type="radio" name="recon-mass" value="50"  onchange="updateReconstitution()"><span>50</span></label><label><input type="radio" name="recon-mass" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-mass-custom" hidden><label for="recon-mass-value">Custom peptide vial quantity (mg)</label><input id="recon-mass-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
 <fieldset class="recon-field"><legend>Final solution volume (mL)</legend><div class="recon-options"><label><input type="radio" name="recon-water" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-water" value="1"  onchange="updateReconstitution()"><span>1</span></label><label><input type="radio" name="recon-water" value="2" checked onchange="updateReconstitution()"><span>2</span></label><label><input type="radio" name="recon-water" value="3"  onchange="updateReconstitution()"><span>3</span></label><label><input type="radio" name="recon-water" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-water-custom" hidden><label for="recon-water-value">Custom final solution volume (ml)</label><input id="recon-water-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
 <fieldset class="recon-field"><legend>Target research amount (mg)</legend><div class="recon-options"><label><input type="radio" name="recon-target" value="0.25"  onchange="updateReconstitution()"><span>0.25</span></label><label><input type="radio" name="recon-target" value="0.5" checked onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-target" value="1"  onchange="updateReconstitution()"><span>1</span></label><label><input type="radio" name="recon-target" value="2"  onchange="updateReconstitution()"><span>2</span></label><label><input type="radio" name="recon-target" value="custom" onchange="updateReconstitution()"><span>Custom</span></label></div><div class="recon-custom" id="recon-target-custom" hidden><label for="recon-target-value">Custom target research amount (mg)</label><input id="recon-target-value" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter a value" oninput="updateReconstitution()"></div></fieldset>
@@ -624,6 +624,12 @@
 <!-- ============================================================ -->
 <div class="page" id="page-reconstitution">
   <div id="reconstitutionCalculatorMount"></div>
+  <section class="recon-supplies" aria-labelledby="reconSuppliesTitle">
+    <div class="container">
+      <h2 class="section-title" id="reconSuppliesTitle">Supplies for Reconstitution</h2>
+      <div class="recon-supplies__grid" id="reconSuppliesGrid"></div>
+    </div>
+  </section>
   <section class="section recon-guidance" aria-labelledby="reconGuideTitle">
     <div class="container--narrow">
       <h2 class="section-title" id="reconGuideTitle">How the calculator works</h2>
@@ -1564,6 +1570,7 @@ function setCurrency(val) {
   const note = document.getElementById('cartCurrencyNote');
   if (note) note.textContent = val;
   renderFeatured(); renderShop();
+  renderReconSupplies();
   updatePdpPrices();
   renderCart();
 }
@@ -2034,6 +2041,23 @@ function renderShop(filter) {
   const list = filter && filter !== 'all' ? PRODUCTS.filter(p=>p.category===filter) : PRODUCTS;
   document.getElementById('shopGrid').innerHTML = (filter && filter !== 'all' ? '' : makeMixBundleCard()) + list.map(p=>makeCard(p,false)).join('');
 }
+function renderReconSupplies() {
+  const grid = document.getElementById('reconSuppliesGrid');
+  if (!grid) return;
+  const descriptions = {
+    'PL-014': '10 mL bacteriostatic water for laboratory preparation.',
+    'PL-015': 'One 10 mL BAC Water vial, four syringes and four alcohol prep wipes.'
+  };
+  grid.innerHTML = ['PL-014', 'PL-015'].map(id => {
+    const p = PRODUCTS.find(product => product.id === id);
+    return `<a class="recon-supply-card" href="/products/${PRODUCT_SLUGS[id]}" onclick="viewProduct('${id}'); return false;" aria-label="View ${p.name}, ${fmtPrice(p.price)}">
+      <img src="${p.img}" alt="${p.name}" loading="lazy">
+      <span class="recon-supply-card__copy"><strong>${p.name}</strong><span>${descriptions[id]}</span></span>
+      <span class="recon-supply-card__price">${fmtPrice(p.price)} <span aria-hidden="true">→</span></span>
+    </a>`;
+  }).join('');
+  document.getElementById('reconStarterPrice').textContent = fmtPrice(PRODUCTS.find(p => p.id === 'PL-015').price);
+}
 
 function updatePdpStock(productId) {
   const stock = getStock(productId);
@@ -2341,6 +2365,7 @@ updateReconstitution();
 routeFromLocation();
 renderFeatured();
 renderShop();
+renderReconSupplies();
 renderCerts();
 renderCart();
 updateMobileCartBtn();
