@@ -24,6 +24,7 @@ const PRODUCTS = {
   'PL-012': 'GHK-Cu 50mg',
   'PL-013': 'Glutathione 1500mg',
   'PL-014': 'BAC Water 10ml',
+  'PL-015': 'Research Starter Kit',
 };
 
 async function getInventoryFromGitHub() {

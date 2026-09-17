@@ -31,6 +31,7 @@ const PRODUCT_CATALOG = {
   'PL-012': { name:'GHK-Cu', size:'50mg', price:49 },
   'PL-013': { name:'Glutathione', size:'1500mg', price:85 },
   'PL-014': { name:'BAC Water', size:'10ml', price:19 },
+  'PL-015': { name:'Research Starter Kit', size:'1 kit', price:29 },
 };
 const PROMO_CODES = { VIVIAN: { type:'percent', value:10 } };
 const FREE_SHIP_THRESHOLD = 200;
@@ -41,7 +42,7 @@ function bundleSelection(raw) {
   const selections = raw.map(selection => {
     const product = PRODUCT_CATALOG[selection.id];
     const qty = Number(selection.qty);
-    if (!product || selection.id === 'PL-014' || !Number.isInteger(qty) || qty < 1 || qty > 10) throw new Error('Invalid bundle');
+    if (!product || ['PL-014', 'PL-015'].includes(selection.id) || !Number.isInteger(qty) || qty < 1 || qty > 10) throw new Error('Invalid bundle');
     return { id:selection.id, name:product.name, size:product.size, price:product.price, qty };
   });
   if (selections.reduce((sum, item) => sum + item.qty, 0) !== 10 || new Set(selections.map(item => item.id)).size !== selections.length) throw new Error('Invalid bundle');

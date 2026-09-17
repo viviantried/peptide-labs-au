@@ -9,7 +9,7 @@ const PRODUCTS = {
   'PL-004': 'Tesamorelin', 'PL-005': 'Semax', 'PL-006': 'Selank',
   'PL-007': 'Deep Sleep Inducing Peptide', 'PL-008': 'Melanotan-2',
   'PL-009': 'Melanotan-1', 'PL-011': 'NAD+', 'PL-012': 'GHK-Cu',
-  'PL-013': 'Glutathione', 'PL-014': 'BAC Water',
+  'PL-013': 'Glutathione', 'PL-014': 'BAC Water', 'PL-015': 'Research Starter Kit',
 };
 
 async function emailOwner(subject, html) {
