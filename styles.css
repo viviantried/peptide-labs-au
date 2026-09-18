@@ -2228,3 +2228,51 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   #page-cart .cart-item__img { width: 68px; height: 68px; }
   #page-cart .cart-item__name { font-size: 16px; }
 }
+
+/* Show only add-ons that complete the free-shipping threshold. */
+.cart-free-ship-suggestions[hidden] { display: none; }
+.cart-free-ship-suggestions { margin: -6px 0 16px; padding: 12px; border: 1px solid #CDE6D7; border-radius: 9px; background: #F2FBF5; }
+.cart-free-ship-suggestions h4 { margin: 0 0 7px; color: #09663F; font-size: 12px; font-weight: 800; }
+.cart-free-ship-suggestion { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; }
+.cart-free-ship-suggestion + .cart-free-ship-suggestion { border-top: 1px solid #D9ECE0; }
+.cart-free-ship-suggestion span { display: grid; gap: 2px; min-width: 0; }
+.cart-free-ship-suggestion strong { color: #1B273C; font-size: 12px; line-height: 1.25; }
+.cart-free-ship-suggestion small { color: #4D5C70; font-size: 11px; }
+.cart-free-ship-suggestion button { flex: none; min-width: 52px; min-height: 44px; padding: 0 10px; border: 1px solid #008354; border-radius: 7px; background: #fff; color: #076B45; font-size: 12px; font-weight: 800; cursor: pointer; }
+.cart-free-ship-suggestion button:hover { background: #E2F5E8; }
+
+/* Keep the selected product and quantity purchasable on mobile. */
+.pdp-mobile-cta { display: none; }
+@media (max-width: 768px) {
+  .product-page-active #page-product { padding-bottom: 84px; }
+  .product-page-active .mobile-cta { display: none; }
+  .product-page-active .pdp-mobile-cta { display: block; position: fixed; z-index: 200; inset: auto 0 0; padding: 10px 16px max(10px, env(safe-area-inset-bottom)); background: #171F33; box-shadow: 0 -4px 24px rgba(0,0,0,.22); }
+  .pdp-mobile-cta button { width: 100%; min-height: 48px; border: 0; border-radius: 8px; background: #008354; color: #fff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; }
+  .pdp-mobile-cta button:disabled { background: #586981; cursor: default; }
+  .pdp-mobile-cta button:focus-visible { outline: 3px solid #39A9ED; outline-offset: 2px; }
+  .research-agreement-pending .pdp-mobile-cta { display: none; }
+}
+
+/* Bring the catalog and products into view sooner on iPhone. */
+@media (max-width: 480px) {
+  #page-shop .collection-hero { padding: 18px 0 0; }
+  #page-shop .collection-hero__title { font-size: 24px; line-height: 1.15; margin-bottom: 6px; }
+  #page-shop .collection-hero__sub { font-size: 13px; line-height: 1.4; }
+  #page-shop .shop-products-section { padding-top: 16px; }
+  #page-home .hero { padding: 18px 0 18px; }
+  #page-home .hero__inner { grid-template-columns: minmax(0, 1fr); }
+  #page-home .hero__content, #page-home .hero-finder, #page-home .hero-finder__chips { min-width: 0; max-width: 100%; }
+  #page-home .hero__eyebrow { margin-bottom: 8px; font-size: 10px; }
+  #page-home .hero__title { font-size: 25px; line-height: 1.08; margin-bottom: 8px; }
+  #page-home .hero__sub { font-size: 13px; line-height: 1.4; margin-bottom: 12px; }
+  #page-home .hero-finder { gap: 8px; margin-bottom: 8px; }
+  #page-home .hero-finder__search, #page-home .hero-finder__button { min-height: 44px; }
+  #page-home .hero-finder__chips { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 2px; scrollbar-width: none; }
+  #page-home .hero-finder__chips::-webkit-scrollbar { display: none; }
+  #page-home .hero-finder__chips button { flex: none; min-height: 40px; padding: 7px 10px; font-size: 11px; }
+  #page-home .trust-strip { padding: 8px 0; }
+  #page-home .trust-strip__inner { display: flex; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 18px; scrollbar-width: none; }
+  #page-home .trust-strip__inner::-webkit-scrollbar { display: none; }
+  #page-home .trust-badge, #page-home .trust-badge:last-child { flex: none; font-size: 10px; grid-column: auto; white-space: nowrap; }
+  #page-home .featured-products { padding-top: 18px; }
+}

@@ -46,6 +46,13 @@ module.exports = async function handler(req, res) {
 
   const firstName = (name || 'there').split(' ')[0];
   const amtDisplay = amt ? `A$${Number(amt).toFixed(2)}` : 'the full amount';
+  let reorderUrl = '';
+  try {
+    const previousItems = JSON.parse(Buffer.from(items || '', 'base64').toString('utf8'));
+    if (Array.isArray(previousItems) && previousItems.length > 0) {
+      reorderUrl = `${SITE_URL}/?reorder=${encodeURIComponent(items)}`;
+    }
+  } catch {}
 
   const confirmHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"/></head>
 <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif">
@@ -74,6 +81,8 @@ module.exports = async function handler(req, res) {
       <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Order Reference</div>
       <div style="font-size:24px;font-weight:800;color:#111;letter-spacing:-0.5px">${order}</div>
     </div>
+
+    ${reorderUrl ? `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:16px;margin:0 0 24px"><div style="font-size:14px;font-weight:700;color:#166534;margin-bottom:5px">Order these items again later</div><p style="font-size:13px;line-height:1.5;color:#166534;margin:0 0 12px">Your items will be added to a cart at current prices, subject to availability.</p><a href="${reorderUrl}" style="display:inline-block;background:#008354;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;border-radius:7px;text-decoration:none">Reorder these items</a></div>` : ''}
 
     <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
   </div>

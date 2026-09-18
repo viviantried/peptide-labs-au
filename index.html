@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="Australia's premium research peptide supplier. Third-party tested, batch-verified compounds. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=24" />
+  <link rel="stylesheet" href="/styles.css?v=25" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
 </head>
@@ -429,6 +429,7 @@
         </div>
         <div class="free-ship-track"><div class="free-ship-fill" id="freeShipFill" style="width:0%"></div></div>
       </div>
+      <div id="cartFreeShipSuggestions" class="cart-free-ship-suggestions" hidden></div>
       <div class="cart-checkout">
         <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
         <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
@@ -1085,6 +1086,9 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
     Shop Peptides
   </button>
+</div>
+<div class="pdp-mobile-cta" id="pdpMobileCta">
+  <button type="button" id="pdpMobileAddBtn" onclick="pdpMobileAddToCart()">Add to Cart</button>
 </div>
 
 <script>
@@ -1981,6 +1985,23 @@ function renderCartSuggestions() {
   </section>` : ''}`;
 }
 
+function renderFreeShippingSuggestions(remaining) {
+  const el = document.getElementById('cartFreeShipSuggestions');
+  if (remaining <= 0 || remaining > 100 || !cart.length) { el.hidden = true; el.innerHTML = ''; return; }
+  const inCart = new Set(cart.map(item => item.id));
+  const preferred = new Set(cart.flatMap(item => PAIRINGS[item.id] || []));
+  const choices = PRODUCTS.filter(product =>
+    product.category !== 'accessories' && !inCart.has(product.id) &&
+    product.price >= remaining && getStock(product.id) > 0 && restocking[product.id] !== true
+  ).sort((a, b) => Number(preferred.has(b.id)) - Number(preferred.has(a.id)) || a.price - b.price).slice(0, 2);
+  if (!choices.length) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  el.innerHTML = `<h4>Reach free shipping</h4>${choices.map(product => `<div class="cart-free-ship-suggestion">
+    <span><strong>${product.name}</strong><small>${product.size} · ${fmtPrice(product.price)}</small></span>
+    <button type="button" onclick="addToCart('${product.id}')" aria-label="Add ${product.name} and unlock free standard shipping">Add</button>
+  </div>`).join('')}`;
+}
+
 function renderCart() {
   const el     = document.getElementById('cartItemsEl');
   const footer = document.getElementById('cartFooter');
@@ -2007,6 +2028,7 @@ function renderCart() {
   if (cart.length === 0) {
     empty.style.display = 'flex'; el.style.display = 'none'; footer.style.display = 'none';
     document.getElementById('cartSuggestionsEl').style.display = 'none';
+    document.getElementById('cartFreeShipSuggestions').hidden = true;
     el.innerHTML = ''; return;
   }
   empty.style.display = 'none'; el.style.display = 'grid'; footer.style.display = 'block';
@@ -2056,6 +2078,7 @@ function renderCart() {
   }
 
   document.getElementById('cartTotal').textContent = fmtPrice(totalAUD);
+  renderFreeShippingSuggestions(remaining);
   renderCartSuggestions();
 }
 
@@ -2217,6 +2240,7 @@ function updatePdpStock(productId) {
       badge.style.display = 'none';
     }
   }
+  updatePdpMobileCta();
 }
 
 async function loadInventory() {
@@ -2231,9 +2255,9 @@ async function loadInventory() {
     if (unavailable.length) {
       cart = cart.filter(item => !unavailable.includes(item));
       showToast(unavailable.map(item => item.name).join(', ') + ' became unavailable and was removed from your cart');
-      renderCart();
       updateCountBadges();
     }
+    renderCart();
     renderFeatured();
     renderShop();
     if (currentProduct) updatePdpStock(currentProduct.id);
@@ -2306,7 +2330,7 @@ function renderPdpBundles() {
     const rate = getMultibuyDiscount(qty);
     const original = currentProduct.price * qty;
     return `<label class="pdp-bundle-option">
-      <input type="radio" name="pdpBundle" value="${qty}" ${qty === pdpBundleQuantity ? 'checked' : ''} onchange="pdpBundleQuantity = Number(this.value)">
+      <input type="radio" name="pdpBundle" value="${qty}" ${qty === pdpBundleQuantity ? 'checked' : ''} onchange="pdpBundleQuantity = Number(this.value); updatePdpMobileCta()">
       <span class="pdp-bundle-option__body">
         <span class="pdp-bundle-option__radio" aria-hidden="true"></span>
         <span class="pdp-bundle-option__details"><span class="pdp-bundle-option__qty">Buy ${qty}</span><span class="pdp-bundle-option__badge ${rate ? '' : 'pdp-bundle-option__badge--standard'}">${rate ? Math.round(rate * 100) + '% OFF' : 'Standard Price'}</span></span>
@@ -2314,8 +2338,31 @@ function renderPdpBundles() {
       </span>
     </label>`;
   }).join('');
+  updatePdpMobileCta();
 }
 function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id, pdpBundleQuantity); }
+function updatePdpMobileCta() {
+  const button = document.getElementById('pdpMobileAddBtn');
+  if (!button || !currentProduct) return;
+  const unavailable = getStock(currentProduct.id) === 0 || restocking[currentProduct.id] === true;
+  if (unavailable) {
+    button.disabled = currentProduct.id === 'PL-015';
+    button.textContent = button.disabled ? 'Available soon' : 'Notify me when available';
+    return;
+  }
+  button.disabled = false;
+  const quantity = pdpBundleQuantity;
+  const price = currentProduct.price * quantity * (1 - getMultibuyDiscount(quantity));
+  button.textContent = `Add ${quantity} to Cart · ${fmtPrice(price)}`;
+}
+function pdpMobileAddToCart() {
+  if (!currentProduct) return;
+  if (getStock(currentProduct.id) === 0 || restocking[currentProduct.id] === true) {
+    if (currentProduct.id !== 'PL-015') openRestockAlert(currentProduct);
+    return;
+  }
+  pdpAddToCart();
+}
 
 // ============================================================
 // CERTIFICATIONS DATA
@@ -2376,6 +2423,7 @@ function showPage(id, updateHistory = true) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const page = document.getElementById('page-'+id);
   if (page) { page.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  document.body.classList.toggle('product-page-active', id === 'product');
   document.querySelectorAll('.nav__link').forEach(l=>l.classList.remove('active'));
   const map = {shop:0,quality:1,faq:2,contact:3};
   const links = document.querySelectorAll('.nav__link');
