@@ -26,6 +26,19 @@
 <!-- CART OVERLAY + PANEL -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cartPanel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <nav class="cart-site-nav" aria-label="Cart navigation">
+    <div class="cart-site-nav__inner">
+      <a class="cart-site-nav__brand" href="/" onclick="closeCart();showPage('home');return false;">PeptideLab</a>
+      <div class="cart-site-nav__links">
+        <a href="/shop" onclick="closeCart();showPage('shop');return false;">Shop</a>
+        <a href="/reconstitution" onclick="closeCart();showPage('reconstitution');return false;">Reconstitution</a>
+        <a href="/quality-testing" onclick="closeCart();showPage('quality');return false;">Quality &amp; Testing</a>
+        <a href="/faq" onclick="closeCart();showPage('faq');return false;">FAQ</a>
+        <a href="/contact" onclick="closeCart();showPage('contact');return false;">Contact</a>
+        <a href="/track-order" onclick="closeCart();showPage('track');return false;">Track Order</a>
+      </div>
+    </div>
+  </nav>
   <div class="cart-header">
     <h2 class="cart-header__title" id="cartTitle">Shopping Cart</h2>
     <button class="cart-close" type="button" onclick="closeCart()" aria-label="Close shopping cart">
