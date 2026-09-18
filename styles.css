@@ -2144,17 +2144,22 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 #page-cart .cart-empty { min-height: 320px; }
 #page-quality > .section { padding-top: 48px; }
 @media (min-width: 901px) {
-  #reconstitutionCalculatorMount .recon-section { padding: 28px 0 30px; }
-  #reconstitutionCalculatorMount .recon-section .section-title { font-size: 36px; margin-bottom: 10px; }
-  #reconstitutionCalculatorMount .recon-intro { margin-bottom: 24px; font-size: 15px; }
-  #reconstitutionCalculatorMount .recon-controls { gap: 16px; }
-  #reconstitutionCalculatorMount .recon-field legend { margin-bottom: 7px; }
-  #reconstitutionCalculatorMount .recon-starter-link { margin-bottom: 7px; }
-  #reconstitutionCalculatorMount .recon-options span { min-height: 42px; }
-  #reconstitutionCalculatorMount .recon-syringe { margin: 10px 0; }
-  #reconstitutionCalculatorMount .recon-output { padding-top: 12px; }
-  #reconstitutionCalculatorMount .recon-stats { margin-top: 12px; }
-  #reconstitutionCalculatorMount .recon-note { margin-top: 12px; }
+  #homeReconstitutionMount .recon-section,
+  #reconstitutionCalculatorMount .recon-section { padding: 20px 0 24px; }
+  .recon-section .container { max-width: 1120px; }
+  .recon-section .section-title { font-size: 32px; margin-bottom: 8px; }
+  .recon-intro { margin-bottom: 16px; font-size: 14px; }
+  .recon-grid { gap: 32px; }
+  .recon-controls { gap: 12px; }
+  .recon-field legend { margin-bottom: 5px; font-size: 13px; }
+  .recon-starter-link { margin-bottom: 5px; font-size: 12px; }
+  .recon-options span { min-height: 38px; font-size: 13px; }
+  .recon-syringe { max-height: 110px; margin: 8px 0; }
+  .recon-output { padding-top: 10px; }
+  .recon-output-label { font-size: 13px; }
+  .recon-value strong { font-size: 44px; }
+  .recon-stats { margin-top: 10px; gap: 5px; }
+  .recon-note { margin-top: 10px; font-size: 11px; }
 }
 @media (min-width: 1001px) {
   #page-cart .cart-header, #page-cart .cart-layout { max-width: 1180px; }
