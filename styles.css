@@ -429,7 +429,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 /* ===== HERO ===== */
 .hero {
   background: #091423;
-  padding: 32px 0 24px;
+  padding: 32px 0 44px;
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -464,7 +464,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .hero__title {
   font-family: var(--font-display);
-  font-size: clamp(28px, 3vw, 40px); line-height: 1.1;
+  font-size: clamp(27px, 2.8vw, 37px); line-height: 1.1;
   color: white; margin-bottom: 14px; letter-spacing: -0.02em;
 }
 .hero__title em { color: var(--teal-400); font-style: normal; }
@@ -917,7 +917,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .hero__visual--product { display: none; }
   .nav__links, .nav__actions .nav__badge { display: none; }
   .nav__mobile-toggle { display: flex; }
-  .hero { padding: 24px 0 20px; }
+  .hero { padding: 24px 0 38px; }
   .hero__product-image { max-height: 110px; }
   .hero__stats { gap: 12px; padding-top: 20px; }
   .hero__stat-value { font-size: 24px; }
