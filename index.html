@@ -189,6 +189,12 @@
             <input class="co-input" type="text" id="co-last" autocomplete="shipping family-name" />
           </div>
         </div>
+        <div class="co-field co-locality-search" id="coLocalitySearchWrap">
+          <label for="coLocalitySearch">Search suburb or postcode (optional)</label>
+          <input class="co-input" type="search" id="coLocalitySearch" placeholder="Start typing a suburb or postcode" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="coLocalityResults" aria-expanded="false" oninput="coSearchLocalities()" onkeydown="coLocalityKeydown(event)" />
+          <div class="co-locality-results" id="coLocalityResults" role="listbox" hidden></div>
+          <small class="co-locality-help">Select a location, then enter your street address below.</small>
+        </div>
         <div class="co-field">
           <label for="co-address1">Address</label>
           <input class="co-input" type="text" id="co-address1" autocomplete="shipping address-line1" />
@@ -1015,7 +1021,7 @@
   <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: June 2024 · We respect your privacy.</p></div>
   <div class="policy-body"><div class="container--narrow"><div class="policy-content">
     <h2>Information We Collect</h2><p>Order data (name, email, shipping address and selected payment method), communication data from enquiries, and anonymised usage analytics. We do not collect or store online-banking credentials.</p>
-    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p><p>Australian postcode suggestions use data hosted on this website, sourced from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. The postcode lookup does not send your entered address to an outside service.</p>
+    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p><p>Australian suburb and postcode suggestions use data hosted on this website, sourced from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. This lookup does not send your entered address to an outside service.</p>
     <h2>Data Security</h2><p>SSL/TLS encrypted transmission. Appropriate technical and organisational security measures. Order data retained for 7 years for Australian legal/accounting compliance.</p>
     <h2>Your Rights</h2><p>Subject to applicable Australian law, you may request access, correction, deletion, or portability of your data. Contact: <strong>support@aupeptidelab.com</strong></p>
   </div></div></div>
@@ -1451,6 +1457,8 @@ function applyPromo() {
 function coCountryChange() {
   const country = document.getElementById('co-country').value;
   const isAU = country === 'AU';
+  document.getElementById('coLocalitySearchWrap').hidden = !isAU;
+  coHideLocalityResults();
   document.getElementById('co-state-select').style.display = isAU ? '' : 'none';
   document.getElementById('co-state-text').style.display   = isAU ? 'none' : '';
   if (!isAU && document.getElementById('co-suburb').value.trim() === coAutoSuburb) {
@@ -1471,6 +1479,7 @@ let coAutoSuburb = '';
 let coAutoPostcode = '';
 let coPostcodeDataPromise;
 let coSuburbMatches = [];
+let coLocalityIndex;
 
 function coGetPostcodeData() {
   if (!coPostcodeDataPromise) {
@@ -1482,6 +1491,67 @@ function coGetPostcodeData() {
       .catch(error => { coPostcodeDataPromise = null; throw error; });
   }
   return coPostcodeDataPromise;
+}
+
+function coHideLocalityResults() {
+  document.getElementById('coLocalityResults').hidden = true;
+  document.getElementById('coLocalitySearch').setAttribute('aria-expanded', 'false');
+}
+
+async function coSearchLocalities() {
+  const input = document.getElementById('coLocalitySearch');
+  const results = document.getElementById('coLocalityResults');
+  const query = input.value.trim().toLowerCase();
+  coHideLocalityResults();
+  if (query.length < 2 || document.getElementById('co-country').value !== 'AU') return;
+  try {
+    if (!coLocalityIndex) {
+      const data = await coGetPostcodeData();
+      coLocalityIndex = Object.entries(data).flatMap(([postcode, places]) =>
+        places.map(([suburb, state]) => ({ postcode, suburb, state, name: suburb.toLowerCase() })));
+    }
+    if (input.value.trim().toLowerCase() !== query) return;
+    const matches = coLocalityIndex
+      .filter(place => place.postcode.startsWith(query) || place.name.includes(query))
+      .sort((a, b) => {
+        const rank = place => place.postcode === query || place.name === query ? 0
+          : place.postcode.startsWith(query) || place.name.startsWith(query) ? 1 : 2;
+        return rank(a) - rank(b) || a.name.localeCompare(b.name) || a.postcode.localeCompare(b.postcode);
+      })
+      .slice(0, 8);
+    results.replaceChildren();
+    matches.forEach(place => {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.setAttribute('role', 'option');
+      option.textContent = `${place.suburb}, ${place.state} ${place.postcode}`;
+      option.addEventListener('click', () => coSelectLocality(place));
+      results.appendChild(option);
+    });
+    results.hidden = !matches.length;
+    input.setAttribute('aria-expanded', String(Boolean(matches.length)));
+  } catch {
+    coHideLocalityResults();
+  }
+}
+
+function coLocalityKeydown(event) {
+  if (event.key === 'Escape') coHideLocalityResults();
+  if (event.key === 'ArrowDown') {
+    const first = document.querySelector('#coLocalityResults button');
+    if (first) { event.preventDefault(); first.focus(); }
+  }
+}
+
+function coSelectLocality(place) {
+  document.getElementById('coLocalitySearch').value = `${place.suburb}, ${place.state} ${place.postcode}`;
+  document.getElementById('co-postcode').value = place.postcode;
+  document.getElementById('co-suburb').value = place.suburb;
+  document.getElementById('co-state-select').value = place.state;
+  coAutoSuburb = place.suburb;
+  coAutoPostcode = place.postcode;
+  coHideLocalityResults();
+  document.getElementById('co-address1').focus();
 }
 
 function coPostcodeInput() {

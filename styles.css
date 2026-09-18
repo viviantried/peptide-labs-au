@@ -2148,6 +2148,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .cart-panel .cart-site-nav__links { gap: 16px; overflow-x: auto; padding: 8px 0 2px; scrollbar-width: thin; }
 }
 
+.co-locality-search[hidden] { display: none; }
+.co-locality-help { display: block; margin-top: 6px; color: #66768B; font-size: 11px; }
+.co-locality-results { position: absolute; z-index: 15; top: calc(100% - 14px); left: 0; right: 0; max-height: 240px; overflow-y: auto; background: #fff; border: 1px solid #C9D4E1; border-radius: 8px; box-shadow: 0 12px 28px rgba(27,39,60,.14); }
+.co-locality-results[hidden] { display: none; }
+.co-locality-results button { display: block; width: 100%; padding: 10px 12px; border: 0; background: #fff; color: #1B273C; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.co-locality-results button:hover, .co-locality-results button:focus-visible { background: #EDF7FD; outline: none; }
+
 /* Keep catalog categories, without a surrounding panel. */
 #page-shop .collection-filter-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
 #page-shop .collection-filter-count { color: var(--text-secondary); font-size: 14px; font-weight: 500; }
