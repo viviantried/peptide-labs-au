@@ -1189,7 +1189,10 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .co-row--3 { grid-template-columns: 1fr 140px 100px; }
 .co-row--address { grid-template-columns: 110px minmax(0, 1fr) 140px; }
 .co-postcode-status { margin: -4px 0 14px; color: #aaa; font-size: 12px; line-height: 1.5; }
+.co-postcode-credit { margin: -8px 0 14px; color: #777; font-size: 11px; line-height: 1.4; }
+.co-postcode-credit a { color: #aaa; text-decoration: underline; }
 .co-postcode-choice { margin-top: -4px; }
+.co-success__transfer-tip { margin: 16px 0 0; color: #ccc; font-size: 13px; line-height: 1.6; }
 
 /* Payment box */
 .co-bank-box {

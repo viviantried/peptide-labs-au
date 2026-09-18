@@ -147,7 +147,8 @@ function calculateOrder(rawItems, country, shippingMethod, promoCode) {
   const baseShipping = country === 'AU' ? (isExpress ? 15 : 10)
     : country === 'NZ' ? (isExpress ? 28 : 15)
     : (isExpress ? 40 : 20);
-  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? (isExpress ? 5 : 0) : baseShipping;
+  const standardShipping = country === 'AU' ? 10 : country === 'NZ' ? 15 : 20;
+  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? (isExpress ? baseShipping - standardShipping : 0) : baseShipping;
   const discount = mbDiscount + promoDiscount;
   const total = Math.max(0, subtotal - discount) + shipping;
   return { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount };
@@ -316,7 +317,7 @@ module.exports = async function handler(req, res) {
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Amount</td><td style="padding:6px 0;font-weight:800;font-size:18px;color:#16a34a">A$${Number(total).toFixed(2)}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>
-      ${paymentMethod === 'intl' ? `<div style="margin-top:10px;font-size:12px;line-height:1.6;color:#555">Send in AUD and choose a fee option that ensures the full total reaches us. International transfers may take 1–3 business days.</div>` : ''}
+      ${paymentMethod === 'intl' ? `<div style="margin-top:10px;font-size:12px;line-height:1.6;color:#555">Sending from overseas? Wise or Revolut may let you send AUD to this Australian account. Use the details above, include ${orderName} as the reference, and check fees so the full amount arrives. International transfers may take 1–3 business days.</div>` : ''}
     </div>
     <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
   </div>
@@ -398,7 +399,7 @@ module.exports = async function handler(req, res) {
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>
       <div style="margin-top:14px;padding:10px 12px;background:#dcfce7;border-radius:6px;font-size:13px;color:#166534">Always use <strong>${orderName}</strong> as your payment reference.</div>
-      ${paymentMethod === 'intl' ? `<div style="margin-top:10px;font-size:12px;line-height:1.6;color:#555">Send in AUD. Choose a fee option that ensures the full total reaches the recipient. Australia does not use IBAN; if your bank requires one, enter the 14-digit BSB + account number without spaces. If your bank requires a beneficiary address and none is shown, contact support before sending.</div>` : ''}
+      ${paymentMethod === 'intl' ? `<div style="margin-top:10px;font-size:12px;line-height:1.6;color:#555">Sending from overseas? Wise or Revolut may let you send AUD to this Australian account. Use the details above, include ${orderName} as the reference, and check fees so the full amount arrives. Australia does not use IBAN; if your provider requires one or needs a beneficiary address that is not shown, contact support before sending.</div>` : ''}
     </div>
 
     <p style="color:#666;font-size:13px;margin:0 0 8px">Once your payment clears, your order will be dispatched within 1-2 business days. A <strong>dispatch confirmation email</strong> with your tracking number will be sent when your order ships.</p>
