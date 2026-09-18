@@ -332,6 +332,7 @@
           Your order reference: <strong id="coSuccessRef" style="color:#fff;font-size:17px"></strong>
         </div>
         <p class="co-success__transfer-tip" id="coSuccessIntlTransferTip" hidden>Sending from overseas? Wise or Revolut may let you send AUD to the Australian bank account above. Enter the account details exactly as shown, include your order reference, and check the final AUD amount and fees before confirming the transfer.</p>
+        <p class="co-success__transfer-tip" id="coSuccessIntlTimingTip" hidden>Your transfer may take time to appear as received in our account. We’ll fulfil your order as soon as the full payment has cleared.</p>
       </div>
 
       <div class="co-success__notice co-success__notice--green">
@@ -1325,7 +1326,7 @@ function coUpdatePaymentForCountry() {
   const note = document.getElementById('coPaymentNote');
   if (note) note.textContent = isDomestic
     ? 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.'
-    : 'Send the payment in AUD and use your order reference. Select a fee option that ensures the full order total reaches us. International transfers may take 1–3 business days to clear.';
+    : 'Send the payment in AUD and use your order reference. Select a fee option that ensures the full order total reaches us. Your transfer may take time to appear as received in our account. We’ll fulfil your order as soon as the full payment has cleared.';
 }
 
 function coGetShipMethods() {
@@ -1625,6 +1626,7 @@ async function placeOrder() {
         : 'A confirmation email has been accepted for sending; please keep this order reference as a backup.';
     const isInternationalPayment = data.paymentMethod === 'intl';
     document.getElementById('coSuccessIntlTransferTip').hidden = !isInternationalPayment;
+    document.getElementById('coSuccessIntlTimingTip').hidden = !isInternationalPayment;
     document.getElementById('coSuccessPaymentTitle').textContent = isInternationalPayment
       ? 'Step 1: Complete an International Wire Transfer'
       : 'Step 1: Complete an Australian Bank Transfer';
