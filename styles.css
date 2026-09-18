@@ -30,7 +30,7 @@
   --border:         #263A52;
   --card-bg:        #122238;
   --body-bg:        #091423;
-  --success: #22C55E;
+  --success: #2FE875;
   --success-bg: #173752;
   --success-border: #426A8B;
   --warning-bg: #1c0a00;
@@ -281,7 +281,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .free-ship-bar.unlocked .free-ship-bar__label { color: var(--success); }
-.free-ship-bar.unlocked .free-ship-fill { background: linear-gradient(90deg, var(--success), #22C55E); }
+.free-ship-bar.unlocked .free-ship-fill { background: linear-gradient(90deg, var(--success), #2FE875); }
 .free-ship-bar.unlocked .free-ship-bar__label span { color: var(--success); }
 
 /* Cart items */
@@ -547,7 +547,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   box-shadow: var(--shadow-lg);
   display: flex; align-items: center; gap: 8px;
 }
-.coa-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; }
+.coa-dot { width: 8px; height: 8px; border-radius: 50%; background: #2FE875; }
 
 /* ===== TRUST STRIP ===== */
 .trust-strip { background: #14253B; border-bottom: 1px solid var(--border); padding: 14px 0; }
@@ -1058,7 +1058,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .pdp-bundle-option__qty { font-size: 15px; font-weight: 700; white-space: nowrap; }
 .pdp-bundle-option__badge {
   padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 800;
-  line-height: 1.6; color: #86efac; background: #123322; white-space: nowrap;
+  line-height: 1.6; color: #60F7A4; background: #123322; white-space: nowrap;
 }
 .pdp-bundle-option__badge--standard { color: #fda4af; background: #381820; }
 .pdp-bundle-option__prices { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -1227,7 +1227,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   margin: 12px 16px 16px;
   background: #162E47; border: 1px solid #365673;
   border-radius: 6px; padding: 10px 12px;
-  font-size: 12px; color: #86efac; line-height: 1.5;
+  font-size: 12px; color: #60F7A4; line-height: 1.5;
 }
 
 /* Place order button */
@@ -1318,7 +1318,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .co-success.visible { display: block; }
 .co-success__check {
   width: 72px; height: 72px; border-radius: 50%;
-  background: #173752; border: 2px solid #16a34a;
+  background: #173752; border: 2px solid #0CBA69;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 24px;
 }
@@ -1494,7 +1494,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;
   font-size: 14px; line-height: 1.6;
 }
-.co-success__notice--green { background: #173752; border: 1px solid #426A8B; color: #86efac; }
+.co-success__notice--green { background: #173752; border: 1px solid #426A8B; color: #60F7A4; }
 .co-success__notice--yellow { background: #1c0a00; border: 1px solid #7c2d12; color: #FED7AA; }
 .co-success__notice--blue { background: #142A43; border: 1px solid #426689; color: #B9D5E9; }
 
@@ -1873,22 +1873,22 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .popup-prize-hero { background:#202B43; }
 
 /* Restore green offer, stock, discount and payment highlights. */
-.product-card__badge,.mix-bundle-card__badge { background:#176B49; }
-.bundle-card-note,.recon-supply-card__price span { color:#147D4F; }
-.pdp-bundle-box { --bundle-accent:#168354; }
+.product-card__badge,.mix-bundle-card__badge { background:#008354; }
+.bundle-card-note,.recon-supply-card__price span { color:#07804D; }
+.pdp-bundle-box { --bundle-accent:#00A86B; }
 .pdp-bundle-option input:checked + .pdp-bundle-option__body { background:#EDF9F1; }
-.pdp-bundle-option__badge { background:#E2F5E8; color:#176B49; }
-.cart-row--discount span,.cart-row--discount strong { color:#4ADE80; }
-.multibuy-badge { background:#DCF7E5; color:#176B49; }
-.cart-bundle-nudge { background:#143025; border-color:#2C6847; color:#4ADE80; }
+.pdp-bundle-option__badge { background:#E2F5E8; color:#008354; }
+.cart-row--discount span,.cart-row--discount strong { color:#60F7A4; }
+.multibuy-badge { background:#DCF7E5; color:#008354; }
+.cart-bundle-nudge { background:#143025; border-color:#178B5A; color:#60F7A4; }
 .bundle-savings-banner { background:#EAF5FC; border-color:#B8D9ED; }
 .bundle-savings-banner strong { color:#1B273C; }
 .bundle-savings-banner__tiers span { background:#ECEFF1; border-color:#CDD4D9; color:#26354B; }
-.bundle-savings-banner__tiers b { color:#147D4F; }
-.mix-bundle-kicker,.mix-bundle-summary > div strong { color:#4ADE80; }
-.bundle-savings-banner__build,.mix-bundle-add { background:#176B49; border-color:#2A9A62; color:#FFFFFF; }
-.mix-bundle-card { border-color:#2A9A62; }
-.mix-bundle-track span { background:#4ADE80; }
+.bundle-savings-banner__tiers b { color:#07804D; }
+.mix-bundle-kicker,.mix-bundle-summary > div strong { color:#60F7A4; }
+.bundle-savings-banner__build,.mix-bundle-add { background:#008354; border-color:#13B876; color:#FFFFFF; }
+.mix-bundle-card { border-color:#13B876; }
+.mix-bundle-track span { background:#60F7A4; }
 .mix-bundle-card__img { background:#171F33; }
 .mix-bundle-card__img .product-card__photo { padding:0; }
 .mix-bundle-dialog { background:#30363C; border-color:#737C84; }
@@ -1907,8 +1907,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .discreet-packaging__visual { height:auto; }
   .discreet-packaging__visual img { display:block; height:auto; max-height:100%; }
 }
-.co-success__check svg,.co-success__card h2,.co-success__card-row.highlight span:last-child { color:#4ADE80; }
-.co-success__notice--green { background:#123426; border-color:#287A51; color:#B5F4CB; }
+.co-success__check svg,.co-success__card h2,.co-success__card-row.highlight span:last-child { color:#60F7A4; }
+.co-success__notice--green { background:#123426; border-color:#15945E; color:#D2FFE4; }
 
 /* Light calculator palette from the supplied reference. */
 .recon-section {
@@ -1949,7 +1949,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .product-page-img__vials { display:block; max-width:100%; }
 .pdp-product-photo,.pdp-product-photo--kit { display:block; width:min(100%,360px); height:auto; max-height:none; background:transparent; filter:none; border-radius:8px; }
 .product-page-img__label,#pdpImageBadges { display:none !important; }
-.product-page-purity { background:transparent; border-color:transparent; color:#147D4F; padding-inline:0; }
+.product-page-purity { background:transparent; border-color:transparent; color:#07804D; padding-inline:0; }
 @media (max-width:768px) { .product-page-img { position:static; height:auto; } }
 .product-page-grid { width:min(100%,1080px); margin-inline:auto; grid-template-columns:310px minmax(0,1fr); gap:36px; justify-content:center; }
 .pdp-product-photo,.pdp-product-photo--kit { width:min(100%,310px); }
@@ -1964,5 +1964,5 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 @media (max-width:768px) { .product-page-grid { grid-template-columns:1fr; gap:24px; } .pdp-product-photo,.pdp-product-photo--kit { width:min(100%,280px); } }
 .cart-panel { background:#30363C; --card-bg:#363D43; --border:#59636C; --slate-100:#49525A; --slate-200:#606A72; }
 .cart-footer { background:#363D43; }
-.cart-suggestion-add { flex-shrink:0; background:#176B49; border:1.5px solid #2A9A62; color:#FFFFFF; border-radius:6px; padding:5px 10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
-.cart-suggestion-add:hover,.cart-suggestion-add:focus-visible { background:#21845A; }
+.cart-suggestion-add { flex-shrink:0; background:#008354; border:1.5px solid #13B876; color:#FFFFFF; border-radius:6px; padding:5px 10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.cart-suggestion-add:hover,.cart-suggestion-add:focus-visible { background:#008859; }
