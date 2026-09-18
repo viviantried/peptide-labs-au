@@ -660,13 +660,13 @@
     <div class="container">
       <div class="section-label" style="color:var(--teal-400)">Research Catalog</div>
       <h1 class="collection-hero__title">Research Compound Catalog</h1>
-      <p class="collection-hero__sub">All compounds independently batch-certified. Prices in AUD. Free standard shipping on orders of $200 AUD or more.</p>
+      <p class="collection-hero__sub">All compounds independently batch-certified. Free standard shipping on orders of $200 AUD or more.</p>
     </div>
   </div>
   <section class="section shop-products-section" style="background:var(--body-bg)">
     <div class="container">
       <div style="margin-bottom:24px;padding:14px 20px;background:var(--navy-700);border:1px solid var(--border);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-        <div style="font-size:14px;color:var(--text-secondary);font-weight:500;">Showing <strong>14 products</strong> · All categories · Prices in AUD</div>
+        <div style="font-size:14px;color:var(--text-secondary);font-weight:500;">Showing <strong>14 products</strong> · All categories</div>
         <div class="collection-filters">
           <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
           <button class="filter-btn" onclick="filterProducts('metabolic',this)">Metabolic</button>
@@ -2122,7 +2122,7 @@ function makeCard(p, mini) {
         ${oos
           ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Restocking Soon`
           : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Add — ${fmtPrice(p.price)}`}
+        Add to Cart`}
       </button>
     </div>
   </div>`;
