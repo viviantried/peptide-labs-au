@@ -2143,6 +2143,26 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 #page-cart .cart-page-back:focus-visible { outline: 3px solid #258FCB; outline-offset: 4px; }
 #page-cart .cart-empty { min-height: 320px; }
 #page-quality > .section { padding-top: 48px; }
+#page-faq .policy-body, #page-contact .policy-body, #page-track .policy-body { padding-top: 40px; }
+.plain-page-intro { margin-bottom: 30px; }
+.plain-page-intro h1 { margin: 0 0 8px; color: #1B273C; font-family: var(--font-display); font-size: clamp(28px, 3vw, 36px); line-height: 1.2; letter-spacing: -.02em; }
+.plain-page-intro p { max-width: 740px; margin: 0; color: #4D5C70; font-size: 15px; line-height: 1.6; }
+#page-reconstitution .recon-supplies { padding: 30px 0 22px; }
+#page-reconstitution .recon-supplies .section-title { font-size: 26px; margin-bottom: 16px; }
+#page-reconstitution .recon-supply-card { gap: 14px; padding: 12px; }
+#page-reconstitution .recon-supply-card img { width: 80px; height: 80px; }
+#page-reconstitution .recon-supply-card__copy strong, #page-reconstitution .recon-supply-card__price { font-size: 14px; }
+#page-reconstitution .recon-supply-card__copy > span { font-size: 12px; }
+#page-reconstitution .recon-guidance { padding: 20px 0 48px; }
+#page-reconstitution .recon-guidance > .container--narrow { max-width: 850px; }
+#page-reconstitution .recon-guidance .section-title { font-size: 30px; margin-bottom: 12px; }
+#page-reconstitution .recon-guidance__steps { margin: 16px 0 28px; gap: 10px; font-size: 15px; }
+#page-reconstitution .recon-guidance .section-title.recon-guidance__title { font-size: 24px; }
+@media (max-width: 650px) {
+  #page-reconstitution .recon-supplies { padding: 24px 0 16px; }
+  #page-reconstitution .recon-guidance { padding: 18px 0 36px; }
+  #page-reconstitution .recon-guidance .section-title { font-size: 26px; }
+}
 @media (min-width: 901px) {
   #homeReconstitutionMount .recon-section,
   #reconstitutionCalculatorMount .recon-section { padding: 20px 0 24px; }
