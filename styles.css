@@ -552,7 +552,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 /* ===== TRUST STRIP ===== */
 .trust-strip { background: #14253B; border-bottom: 1px solid var(--border); padding: 14px 0; }
 .trust-strip__inner { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
-.trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+.trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); white-space: nowrap; }
 .trust-badge svg { width: 18px; height: 18px; color: var(--teal-600); flex-shrink: 0; }
 .trust-divider { width: 1px; height: 20px; background: var(--border); }
 
