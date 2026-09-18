@@ -2154,8 +2154,10 @@ function makeMixBundleCard() {
 }
 
 function renderFeatured() {
-  const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0,8);
-  document.getElementById('featuredGrid').innerHTML = featured.map(p=>makeCard(p,false)).join('');
+  const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0, 7);
+  document.getElementById('featuredGrid').innerHTML = featured
+    .map((product, index) => (index === 3 ? makeMixBundleCard() : '') + makeCard(product, false))
+    .join('');
 }
 function renderShop(filter) {
   const list = filter && filter !== 'all' ? PRODUCTS.filter(p=>p.category===filter) : PRODUCTS;
