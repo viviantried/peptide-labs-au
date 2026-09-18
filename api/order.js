@@ -479,4 +479,4 @@ module.exports = async function handler(req, res) {
 
   return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, bsb: BSB, acct: ACCOUNT, customerEmailAccepted, storeAlertAccepted });
 };
-if (process.env.NODE_ENV === 'test') module.exports._pricing = { calculateOrder, validateAvailability };
+module.exports._pricing = { calculateOrder, validateAvailability };

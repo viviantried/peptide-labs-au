@@ -235,8 +235,12 @@
       <!-- Payment -->
       <div class="co-section">
         <div class="co-section-title">Payment</div>
-        <p style="font-size:12px;color:#555;margin:0 0 12px">All transactions are secure and encrypted. Bank transfer only.</p>
+        <p style="font-size:12px;color:#555;margin:0 0 12px">Choose your payment method. Card payments open Stripe's secure checkout.</p>
         <div class="co-pay-group" id="coPayGroup">
+          <div class="co-pay-opt" id="popt-stripe" onclick="selectPayMethod('stripe')" style="display:none">
+            <div class="co-pay-opt__hdr"><div class="co-radio-dot"></div><span>Credit or debit card (Stripe)</span></div>
+            <div class="co-pay-opt__details" id="pdet-stripe" style="display:none">Pay securely in AUD. You'll return here after checkout.</div>
+          </div>
 
           <!-- AUSTRALIA -->
           <div class="co-pay-opt co-pay-opt--on" id="popt-aud" onclick="selectPayMethod('aud')">
@@ -849,7 +853,7 @@
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How fast is Australian delivery?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Standard Australian delivery is estimated at 3–7 business days and express at 1–2 business days. Orders are processed within 1–2 business days, and rural delivery times may vary. Tracking is provided by email.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you ship internationally?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. New Zealand shipping is $15 standard or $28 express. Other eligible international destinations are $20 standard or $40 express. Orders of $200 AUD or more receive free standard shipping, or express for a $13 upgrade to New Zealand and a $20 upgrade to other international destinations. Buyers are responsible for compliance with local import laws.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Can I return opened products?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Opened products cannot be returned. Unopened sealed products may be eligible for return within 30 days. If you receive a damaged or incorrect product, contact us within 7 days of delivery with photos and your order number.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Payment is accepted by bank transfer. Australian and New Zealand customers receive local transfer instructions; eligible international customers receive the available transfer details at checkout. Orders are processed after funds clear.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Bank transfer is available. Card payment through Stripe appears at checkout when enabled. Orders are processed after payment is confirmed.</div></div>
       </div>
     </div>
     <div style="background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;">
@@ -1221,6 +1225,7 @@ let coPayApiData    = {};
 const PAY_METHOD_LABELS = {
   aud:  'Australian Bank Transfer',
   intl: 'International Wire Transfer (SWIFT)',
+  stripe: 'Credit or debit card (Stripe)',
 };
 
 const SHIP_ZONES = {
@@ -1238,6 +1243,7 @@ const SHIP_ZONES = {
   ],
 };
 let selectedShipping = null;
+let stripeAvailable = false;
 
 function coShipPrice(method, subtotal) {
   // Express upgrade when standard shipping is free
@@ -1266,6 +1272,17 @@ function openCheckout() {
   coRenderShippingOptions();
   coRenderSummary();
   coLoadPayMethods();
+  coLoadStripeAvailability();
+}
+
+async function coLoadStripeAvailability() {
+  try {
+    const response = await fetch('/api/payment-config', { cache: 'no-store' });
+    const config = await response.json();
+    stripeAvailable = response.ok && config.stripeAvailable === true;
+  } catch { stripeAvailable = false; }
+  document.getElementById('popt-stripe').style.display = stripeAvailable ? '' : 'none';
+  if (!stripeAvailable && coSelectedPayId === 'stripe') coUpdatePaymentForCountry();
 }
 
 function closeCheckout() {
@@ -1289,7 +1306,14 @@ async function coLoadPayMethods() {
 
 function selectPayMethod(id) {
   coSelectedPayId = id;
-  ['aud', 'intl'].forEach(mid => {
+  const paymentNote = document.getElementById('coPaymentNote');
+  if (paymentNote) paymentNote.textContent = id === 'stripe'
+    ? 'You will pay securely with Stripe. Your order is confirmed only after payment succeeds.'
+    : id === 'intl' ? 'Send the payment in AUD and use your order reference. Orders are dispatched after payment clears.'
+    : 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.';
+  const buttonText = document.querySelector('#coPlaceBtn .co-btn-text');
+  if (buttonText) buttonText.textContent = id === 'stripe' ? 'Continue to Stripe' : 'Place Order';
+  ['aud', 'intl', 'stripe'].forEach(mid => {
     const opt = document.getElementById(`popt-${mid}`);
     const det = document.getElementById(`pdet-${mid}`);
     const dot = opt?.querySelector('.co-radio-dot');
@@ -1312,9 +1336,9 @@ function coUpdatePaymentForCountry() {
   const intlOpt = document.getElementById('popt-intl');
   if (audOpt) audOpt.style.display = isDomestic ? '' : 'none';
   if (intlOpt) intlOpt.style.display = isDomestic ? 'none' : '';
-  selectPayMethod(isDomestic ? 'aud' : 'intl');
+  selectPayMethod(coSelectedPayId === 'stripe' && stripeAvailable ? 'stripe' : (isDomestic ? 'aud' : 'intl'));
   const note = document.getElementById('coPaymentNote');
-  if (note) note.textContent = isDomestic
+  if (note) note.textContent = coSelectedPayId === 'stripe' ? 'You will pay securely with Stripe. Your order is confirmed only after payment succeeds.' : isDomestic
     ? 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.'
     : 'Send the payment in AUD and use your order reference. Select a fee option that ensures the full order total reaches us. Your transfer may take time to appear as received in our account. We’ll fulfil your order as soon as the full payment has cleared.';
 }
@@ -1600,9 +1624,16 @@ async function placeOrder() {
   btn.classList.add('loading'); btn.disabled = true;
 
   try {
-    const res  = await fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const endpoint = coSelectedPayId === 'stripe' ? '/api/create-checkout-session' : '/api/order';
+    const res  = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Order failed');
+    if (coSelectedPayId === 'stripe') {
+      if (!/^https:\/\/checkout\.stripe\.com\//.test(data.url || '')) throw new Error('Stripe checkout is unavailable');
+      sessionStorage.setItem('plStripePendingCart', JSON.stringify(cart));
+      window.location.assign(data.url);
+      return;
+    }
 
     // Populate success screen
     document.getElementById('coBody').style.display = 'none';
@@ -2510,6 +2541,23 @@ loadInventory();
     history.replaceState({}, '', location.pathname);
     setTimeout(openCart, 600);
   } catch {}
+})();
+
+(function showStripeReturnNotice() {
+  const result = new URLSearchParams(location.search).get('stripe_return');
+  if (!['success', 'cancel'].includes(result)) return;
+  const notice = document.createElement('div');
+  notice.setAttribute('role', 'status');
+  notice.style.cssText = 'position:fixed;z-index:99999;left:16px;right:16px;top:16px;max-width:560px;margin:auto;padding:16px 20px;border-radius:10px;background:#142B42;border:1px solid #60f7a4;color:white;box-shadow:0 8px 28px #0008';
+  notice.textContent = result === 'success'
+    ? 'You returned from Stripe. We will email your order confirmation after payment is verified. Please contact support if it does not arrive.'
+    : 'Card checkout was cancelled. You have not been charged here; you can try again or choose bank transfer.';
+  document.body.appendChild(notice);
+  if (result === 'cancel') {
+    try { cart = JSON.parse(sessionStorage.getItem('plStripePendingCart') || '[]'); renderCart(); } catch {}
+  }
+  sessionStorage.removeItem('plStripePendingCart');
+  history.replaceState({}, '', location.pathname);
 })();
 </script>
 
