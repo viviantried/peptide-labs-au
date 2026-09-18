@@ -113,7 +113,7 @@
         <div class="co-section-title">Delivery</div>
         <div class="co-field">
           <label for="co-country">Country / Region</label>
-          <select class="co-select" id="co-country" onchange="coCountryChange()" autocomplete="country">
+          <select class="co-select" id="co-country" onchange="coCountryChange()" autocomplete="shipping country">
             <option value="AU">Australia</option>
             <option value="NZ">New Zealand</option>
             <option value="US">United States</option>
@@ -173,29 +173,33 @@
         <div class="co-row">
           <div class="co-field">
             <label for="co-first">First name</label>
-            <input class="co-input" type="text" id="co-first" autocomplete="given-name" />
+            <input class="co-input" type="text" id="co-first" autocomplete="shipping given-name" />
           </div>
           <div class="co-field">
             <label for="co-last">Last name</label>
-            <input class="co-input" type="text" id="co-last" autocomplete="family-name" />
+            <input class="co-input" type="text" id="co-last" autocomplete="shipping family-name" />
           </div>
         </div>
         <div class="co-field">
           <label for="co-address1">Address</label>
-          <input class="co-input" type="text" id="co-address1" autocomplete="address-line1" />
+          <input class="co-input" type="text" id="co-address1" autocomplete="shipping address-line1" />
         </div>
         <div class="co-field">
           <label for="co-address2">Apartment, suite, etc. (optional)</label>
-          <input class="co-input" type="text" id="co-address2" autocomplete="address-line2" />
+          <input class="co-input" type="text" id="co-address2" autocomplete="shipping address-line2" />
         </div>
-        <div class="co-row co-row--3">
+        <div class="co-row co-row--3 co-row--address">
+          <div class="co-field">
+            <label for="co-postcode">Postcode</label>
+            <input class="co-input" type="text" id="co-postcode" autocomplete="shipping postal-code" inputmode="numeric" oninput="coPostcodeInput()" onchange="coPostcodeInput()" />
+          </div>
           <div class="co-field">
             <label for="co-suburb">Suburb / City</label>
-            <input class="co-input" type="text" id="co-suburb" autocomplete="address-level2" />
+            <input class="co-input" type="text" id="co-suburb" autocomplete="shipping address-level2" />
           </div>
           <div class="co-field" id="co-state-wrap">
             <label for="co-state">State</label>
-            <select class="co-select" id="co-state-select" autocomplete="address-level1">
+            <select class="co-select" id="co-state-select" autocomplete="shipping address-level1">
               <option value="ACT">ACT</option>
               <option value="NSW">NSW</option>
               <option value="NT">NT</option>
@@ -205,16 +209,17 @@
               <option value="VIC" selected>VIC</option>
               <option value="WA">WA</option>
             </select>
-            <input class="co-input" type="text" id="co-state-text" placeholder="State / Province" autocomplete="address-level1" style="display:none" />
+            <input class="co-input" type="text" id="co-state-text" placeholder="State / Province" autocomplete="shipping address-level1" style="display:none" />
           </div>
-          <div class="co-field">
-            <label for="co-postcode">Postcode</label>
-            <input class="co-input" type="text" id="co-postcode" autocomplete="postal-code" />
-          </div>
+        </div>
+        <p class="co-postcode-status" id="coPostcodeStatus" role="status" aria-live="polite" hidden></p>
+        <div class="co-field co-postcode-choice" id="coSuburbChoice" hidden>
+          <label for="coSuburbSuggestions">Choose your suburb</label>
+          <select class="co-select" id="coSuburbSuggestions" onchange="coSelectSuburbSuggestion()"></select>
         </div>
         <div class="co-field">
           <label for="co-phone">Phone (optional)</label>
-          <input class="co-input" type="tel" id="co-phone" autocomplete="tel" />
+          <input class="co-input" type="tel" id="co-phone" autocomplete="shipping tel" />
         </div>
       </div>
 
@@ -1009,7 +1014,7 @@
   <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: June 2024 · We respect your privacy.</p></div>
   <div class="policy-body"><div class="container--narrow"><div class="policy-content">
     <h2>Information We Collect</h2><p>Order data (name, email, shipping address and selected payment method), communication data from enquiries, and anonymised usage analytics. We do not collect or store online-banking credentials.</p>
-    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p>
+    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p><p>For optional Australian postcode suggestions, your browser sends the postcode to <a href="https://zippopotam.us/" target="_blank" rel="noopener">Zippopotam.us</a>. Your name, street address and email are not included in that lookup.</p>
     <h2>Data Security</h2><p>SSL/TLS encrypted transmission. Appropriate technical and organisational security measures. Order data retained for 7 years for Australian legal/accounting compliance.</p>
     <h2>Your Rights</h2><p>Subject to applicable Australian law, you may request access, correction, deletion, or portability of your data. Contact: <strong>support@aupeptidelab.com</strong></p>
   </div></div></div>
@@ -1444,9 +1449,87 @@ function coCountryChange() {
   const isAU = country === 'AU';
   document.getElementById('co-state-select').style.display = isAU ? '' : 'none';
   document.getElementById('co-state-text').style.display   = isAU ? 'none' : '';
+  if (!isAU && document.getElementById('co-suburb').value.trim() === coAutoSuburb) {
+    document.getElementById('co-suburb').value = '';
+    coAutoSuburb = '';
+    coAutoPostcode = '';
+  }
+  document.getElementById('co-postcode').inputMode = isAU ? 'numeric' : 'text';
+  coPostcodeInput();
   coUpdatePaymentForCountry();
   coRenderShippingOptions();
   coRenderSummary();
+}
+
+let coPostcodeTimer;
+let coPostcodeLookupToken = 0;
+let coAutoSuburb = '';
+let coAutoPostcode = '';
+const coPostcodeCache = new Map();
+
+function coPostcodeInput() {
+  clearTimeout(coPostcodeTimer);
+  const token = ++coPostcodeLookupToken;
+  const postcode = document.getElementById('co-postcode').value.trim();
+  const suburb = document.getElementById('co-suburb');
+  const status = document.getElementById('coPostcodeStatus');
+  const choice = document.getElementById('coSuburbChoice');
+  choice.hidden = true;
+  status.hidden = true;
+  if (postcode !== coAutoPostcode && suburb.value.trim() === coAutoSuburb && coAutoSuburb) {
+    suburb.value = '';
+    coAutoSuburb = '';
+    coAutoPostcode = '';
+  }
+  if (document.getElementById('co-country').value !== 'AU' || !/^\d{4}$/.test(postcode)) return;
+  status.textContent = 'Finding suburbs for ' + postcode + '…';
+  status.hidden = false;
+  coPostcodeTimer = setTimeout(async () => {
+    try {
+      let places = coPostcodeCache.get(postcode);
+      if (!places) {
+        const response = await fetch(`https://api.zippopotam.us/AU/${postcode}`);
+        if (!response.ok) throw new Error('Postcode not found');
+        const data = await response.json();
+        places = Array.isArray(data.places) ? data.places : [];
+        coPostcodeCache.set(postcode, places);
+      }
+      if (token !== coPostcodeLookupToken || document.getElementById('co-country').value !== 'AU') return;
+      const names = [...new Set(places.map(place => place['place name']).filter(Boolean))].sort();
+      const state = places[0]?.['state abbreviation'];
+      const stateSelect = document.getElementById('co-state-select');
+      if (state && Array.from(stateSelect.options).some(option => option.value === state)) stateSelect.value = state;
+      if (!names.length) throw new Error('Postcode not found');
+      if (names.length === 1) {
+        if (!suburb.value.trim()) {
+          suburb.value = names[0];
+          coAutoSuburb = names[0];
+          coAutoPostcode = postcode;
+        }
+        status.textContent = 'Suburb and state suggested. Check your delivery address.';
+      } else {
+        const select = document.getElementById('coSuburbSuggestions');
+        select.replaceChildren();
+        select.add(new Option('Select a suburb', ''));
+        names.forEach(name => select.add(new Option(name, name)));
+        choice.hidden = false;
+        status.textContent = 'Select your suburb below, or enter it manually.';
+      }
+    } catch {
+      if (token !== coPostcodeLookupToken) return;
+      status.textContent = 'Postcode lookup unavailable. Enter suburb and state manually.';
+      status.hidden = false;
+    }
+  }, 350);
+}
+
+function coSelectSuburbSuggestion() {
+  const selected = document.getElementById('coSuburbSuggestions').value;
+  if (!selected) return;
+  document.getElementById('co-suburb').value = selected;
+  coAutoSuburb = selected;
+  coAutoPostcode = document.getElementById('co-postcode').value.trim();
+  document.getElementById('coPostcodeStatus').textContent = 'Suburb selected. Check your delivery address.';
 }
 
 function coVal(id) { return document.getElementById(id)?.value.trim() || ''; }

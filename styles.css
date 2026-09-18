@@ -1187,6 +1187,9 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .co-select option { background: #0D0D0D; }
 .co-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .co-row--3 { grid-template-columns: 1fr 140px 100px; }
+.co-row--address { grid-template-columns: 110px minmax(0, 1fr) 140px; }
+.co-postcode-status { margin: -4px 0 14px; color: #aaa; font-size: 12px; line-height: 1.5; }
+.co-postcode-choice { margin-top: -4px; }
 
 /* Payment box */
 .co-bank-box {
