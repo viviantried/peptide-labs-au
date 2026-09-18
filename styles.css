@@ -1821,7 +1821,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .nav__mobile-toggle span { background:#26354B; }
 .nav__mobile-menu { background:#FFFFFF; }
 .nav__mobile-link { color:#26354B; }
-.hero { background:linear-gradient(145deg,#171F33 0%,#1C263E 100%); color:#F5F7FB; }
+.hero { background:#171F33; color:#F5F7FB; }
 .hero,.quality-section,.final-cta,.footer,.cart-panel,.co-overlay,.mobile-cta,.recon-section,.recon-more {
   --text-primary:#F5F7FB; --text-secondary:#CAD3E0; --text-muted:#A9B7C9;
   --border:#34445E; --card-bg:#202B43; --slate-100:#2A3953;
@@ -1832,9 +1832,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .hero__eyebrow-dot { background:#39A9ED; }
 .hero__title em { color:#F5F7FB; }
 .hero__product-image {
-  mix-blend-mode:screen;
-  -webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 68%,transparent 100%);
-  mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 68%,transparent 100%);
+  -webkit-mask-image:none;
+  mask-image:none;
 }
 .hero-finder__search { border-color:#586981; }
 .hero-finder__chips button:hover,.hero-finder__chips button:focus-visible { color:#8FC8EB; border-color:#8FC8EB; background:rgba(57,169,237,.1); }
@@ -1872,3 +1871,57 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   --border:#48647E; --teal-50:#213A55; --teal-100:#355A78; --teal-600:#8FC8EB;
 }
 .popup-prize-hero { background:#202B43; }
+
+/* Restore green offer, stock, discount and payment highlights. */
+.product-card__badge,.mix-bundle-card__badge { background:#176B49; }
+.bundle-card-note,.recon-supply-card__price span { color:#147D4F; }
+.pdp-bundle-box { --bundle-accent:#168354; }
+.pdp-bundle-option input:checked + .pdp-bundle-option__body { background:#EDF9F1; }
+.pdp-bundle-option__badge { background:#E2F5E8; color:#176B49; }
+.cart-row--discount span,.cart-row--discount strong { color:#4ADE80; }
+.multibuy-badge { background:#DCF7E5; color:#176B49; }
+.cart-bundle-nudge { background:#143025; border-color:#2C6847; color:#4ADE80; }
+.bundle-savings-banner { background:#123426; border-color:#287A51; }
+.bundle-savings-banner__tiers b,.mix-bundle-kicker,.mix-bundle-summary > div strong { color:#4ADE80; }
+.bundle-savings-banner__build,.mix-bundle-add { background:#176B49; border-color:#2A9A62; color:#FFFFFF; }
+.mix-bundle-card { border-color:#2A9A62; }
+.mix-bundle-track span { background:#4ADE80; }
+.mix-bundle-card__img { background:#171F33; }
+.mix-bundle-card__img .product-card__photo { padding:0; }
+.co-success__check svg,.co-success__card h2,.co-success__card-row.highlight span:last-child { color:#4ADE80; }
+.co-success__notice--green { background:#123426; border-color:#287A51; color:#B5F4CB; }
+
+/* Light calculator palette from the supplied reference. */
+.recon-section {
+  background:#FFFFFF; color:#1B273C; border-color:#E3E9F0;
+  --text-primary:#1B273C; --text-secondary:#4D5C70; --text-muted:#66768B;
+  --border:#DDE5EE; --card-bg:#FFFFFF;
+}
+.recon-section .section-title,.recon-field legend { color:#1B273C; }
+.recon-intro { color:#666B72; }
+.recon-starter-link,.recon-starter-link:hover,.recon-starter-link:focus-visible { color:#126396; }
+.recon-starter-link:focus-visible { outline-color:#39A9ED; }
+.recon-options span { background:#FFFFFF; border-color:#D4E0EC; color:#1B273C; }
+.recon-options input:checked + span { background:#35A9EF; border-color:#35A9EF; color:#FFFFFF; }
+.recon-options label:hover span { border-color:#35A9EF; }
+.recon-options input:focus-visible + span { outline-color:#126396; }
+.recon-custom label { color:#4D5C70; }
+.recon-custom input { background:#FFFFFF; border-color:#D4E0EC; color:#1B273C; }
+.recon-custom input:focus { outline-color:#35A9EF; }
+.recon-results { background:#FFFFFF; border:0; padding:0; color:#1B273C; }
+.recon-scale-heading,.recon-note { color:#66768B; }
+.recon-output { border-color:#D4E0EC; }
+.recon-output-label,.recon-value small,.recon-stats dt { color:#666B72; }
+.recon-value strong { color:#35A9EF; }
+.recon-error { color:#B42318; }
+.recon-more { background:#FFFFFF; }
+.recon-more a,.recon-more a:hover,.recon-more a:focus-visible { color:#126396; }
+
+/* Footer wordmark and icon use one white colour. */
+.footer__logo-mark svg,.footer__logo-name,.footer__logo-name span { color:#FFFFFF; }
+
+/* Tracking fields on the light support page. */
+.track-input,.track-select { background-color:#FFFFFF; border-color:#C9D4E1; color:#1B273C; }
+.track-input::placeholder { color:#78869A; }
+.track-input:focus,.track-select:focus { border-color:#1875AC; box-shadow:0 0 0 3px rgba(53,169,239,.14); }
+.track-select option { background:#FFFFFF; color:#1B273C; }
