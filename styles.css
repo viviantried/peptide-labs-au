@@ -1942,3 +1942,4 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .track-input::placeholder { color:#78869A; }
 .track-input:focus,.track-select:focus { border-color:#1875AC; box-shadow:0 0 0 3px rgba(53,169,239,.14); }
 .track-select option { background:#FFFFFF; color:#1B273C; }
+.nav__calculator { font-size:13.5px; font-weight:500; padding:8px 12px; border-radius:var(--radius-sm); }
