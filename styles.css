@@ -1881,9 +1881,11 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .cart-row--discount span,.cart-row--discount strong { color:#4ADE80; }
 .multibuy-badge { background:#DCF7E5; color:#176B49; }
 .cart-bundle-nudge { background:#143025; border-color:#2C6847; color:#4ADE80; }
-.bundle-savings-banner { background:#123426; border-color:#287A51; }
-.bundle-savings-banner__tiers span { background:#39424A; border-color:#88939B; color:#F2F4F5; }
-.bundle-savings-banner__tiers b,.mix-bundle-kicker,.mix-bundle-summary > div strong { color:#4ADE80; }
+.bundle-savings-banner { background:#EAF5FC; border-color:#B8D9ED; }
+.bundle-savings-banner strong { color:#1B273C; }
+.bundle-savings-banner__tiers span { background:#ECEFF1; border-color:#CDD4D9; color:#26354B; }
+.bundle-savings-banner__tiers b { color:#147D4F; }
+.mix-bundle-kicker,.mix-bundle-summary > div strong { color:#4ADE80; }
 .bundle-savings-banner__build,.mix-bundle-add { background:#176B49; border-color:#2A9A62; color:#FFFFFF; }
 .mix-bundle-card { border-color:#2A9A62; }
 .mix-bundle-track span { background:#4ADE80; }
