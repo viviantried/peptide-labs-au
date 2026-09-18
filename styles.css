@@ -464,7 +464,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .hero__title {
   font-family: var(--font-display);
-  font-size: clamp(32px, 3.5vw, 46px); line-height: 1.1;
+  font-size: clamp(30px, 3.2vw, 43px); line-height: 1.1;
   color: white; margin-bottom: 14px; letter-spacing: -0.02em;
 }
 .hero__title em { color: var(--teal-400); font-style: normal; }
