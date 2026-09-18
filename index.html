@@ -245,7 +245,7 @@
               <span>Australian Bank Transfer</span>
             </div>
             <div class="co-pay-opt__details" id="pdet-aud">
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#60f7a4;font-weight:800">A$0.00</span></div>
               <div class="co-pay-intl-note" style="margin-top:8px">Full bank details will be shown on the confirmation page after placing your order.</div>
             </div>
           </div>
@@ -258,7 +258,7 @@
             </div>
             <div class="co-pay-opt__details" id="pdet-intl" style="display:none">
               <div id="pfields-intl"><div class="co-pay-intl-note">Pay in AUD using SWIFT. Full beneficiary details will be shown after placing your order. International transfers may take 1–3 business days.</div></div>
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#4ade80;font-weight:800">A$0.00</span></div>
+              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#60f7a4;font-weight:800">A$0.00</span></div>
             </div>
           </div>
 
@@ -269,7 +269,7 @@
 
       <!-- Marketing consent -->
       <label class="co-consent-row" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;cursor:pointer;background:#142B42;border:1px solid #35516A;border-radius:8px;padding:12px 14px">
-        <input type="checkbox" id="coMarketingConsent" style="margin-top:2px;flex-shrink:0;width:16px;height:16px;accent-color:#4ade80;cursor:pointer">
+        <input type="checkbox" id="coMarketingConsent" style="margin-top:2px;flex-shrink:0;width:16px;height:16px;accent-color:#60f7a4;cursor:pointer">
         <span style="font-size:13px;color:#ccc;line-height:1.5">
           <strong style="color:#fff;font-weight:600">Stay in the loop</strong><br>
           Get early access to new peptides, exclusive discounts, and restock alerts from PeptideLab. Unsubscribe anytime.
@@ -297,8 +297,8 @@
       <div class="co-promo-msg" id="coPromoMsg" style="display:none"></div>
       <hr class="co-sum-divider" style="margin-top:14px" />
       <div class="co-sum-row"><span>Subtotal</span><span id="coSumSubtotal">A$0.00</span></div>
-      <div class="co-sum-row" id="coMultibuyRow" style="display:none"><span id="coMultibuyLabel">Bundle discount</span><span id="coSumMultibuy" style="color:#4ade80">−A$0.00</span></div>
-      <div class="co-sum-row" id="coDiscountRow" style="display:none"><span id="coDiscountLabel">Discount</span><span id="coSumDiscount" style="color:#4ade80">−A$0.00</span></div>
+      <div class="co-sum-row" id="coMultibuyRow" style="display:none"><span id="coMultibuyLabel">Bundle discount</span><span id="coSumMultibuy" style="color:#60f7a4">−A$0.00</span></div>
+      <div class="co-sum-row" id="coDiscountRow" style="display:none"><span id="coDiscountLabel">Discount</span><span id="coSumDiscount" style="color:#60f7a4">−A$0.00</span></div>
       <div class="co-sum-row"><span>Shipping</span><span id="coSumShipping">—</span></div>
       <div class="co-sum-row co-sum-row--total"><span>Total</span><span id="coSumTotal">A$0.00</span></div>
     </div>
@@ -322,7 +322,7 @@
         <div class="co-success__bank-fields" id="coSuccessFields"></div>
         <div class="co-success__amount-row">
           <span>Amount</span>
-          <span id="coSuccessAmt" style="color:#4ade80;font-weight:800;font-size:20px"></span>
+          <span id="coSuccessAmt" style="color:#60f7a4;font-weight:800;font-size:20px"></span>
         </div>
 
         <div class="co-success__step-label" style="margin-top:22px">Step 2: Include the Correct Payment Reference: Your Order number</div>
@@ -368,14 +368,6 @@
 <div class="popup-overlay" id="popupOverlay" onclick="if(event.target===this)closePopup()">
   <div class="popup-modal" id="popupModal">
     <button class="popup-close" onclick="closePopup()">×</button>
-    <div class="popup-prize-hero">
-      <div class="popup-prize-hero__amt">$250</div>
-      <div class="popup-prize-hero__text">
-        <strong>Monthly Store Credit</strong>
-        One winner drawn every month
-      </div>
-    </div>
-    <div class="popup-badge">🎁 Monthly Giveaway</div>
     <h2 class="popup-title">Win $250 to spend on peptides</h2>
     <p class="popup-sub">Enter your email to be automatically entered in every monthly draw. No purchase necessary.</p>
     <div class="popup-form">
@@ -1439,7 +1431,7 @@ function applyPromo() {
     appliedPromo = { ...promo, code };
     msgEl.textContent = `✓ "${code}" applied — ${promo.label}`;
     msgEl.style.display = '';
-    msgEl.style.color = '#4ade80';
+    msgEl.style.color = '#60f7a4';
     coRenderSummary();
   } else {
     msgEl.textContent = 'Invalid discount code.';
@@ -1781,7 +1773,7 @@ async function submitRestockAlert(event) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Could not save your request.');
     message.textContent = 'You’re on the list. We’ll email you when it is back in stock.';
-    message.style.color = '#15803d'; message.style.display = 'block';
+    message.style.color = '#07804d'; message.style.display = 'block';
     submit.style.display = 'none';
   } catch (error) {
     message.textContent = error.message; message.style.color = '#dc2626'; message.style.display = 'block';
