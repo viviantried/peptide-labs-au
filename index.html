@@ -1959,7 +1959,7 @@ function renderCartSuggestions() {
         <div style="font-size:13px;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:1px">${p.size} · ${fmtPrice(p.price)}</div>
       </div>
-      <button onclick="addToCart('${p.id}')" style="flex-shrink:0;background:transparent;border:1.5px solid var(--teal-400);color:var(--teal-400);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">+ Add</button>
+      <button class="cart-suggestion-add" onclick="addToCart('${p.id}')">+ Add</button>
     </div>`;
   }).join('');
 

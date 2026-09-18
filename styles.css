@@ -1943,3 +1943,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .track-input:focus,.track-select:focus { border-color:#1875AC; box-shadow:0 0 0 3px rgba(53,169,239,.14); }
 .track-select option { background:#FFFFFF; color:#1B273C; }
 .nav__calculator { font-size:13.5px; font-weight:500; padding:8px 12px; border-radius:var(--radius-sm); }
+.cart-panel { background:#30363C; --card-bg:#363D43; --border:#59636C; --slate-100:#49525A; --slate-200:#606A72; }
+.cart-footer { background:#363D43; }
+.cart-suggestion-add { flex-shrink:0; background:#176B49; border:1.5px solid #2A9A62; color:#FFFFFF; border-radius:6px; padding:5px 10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.cart-suggestion-add:hover,.cart-suggestion-add:focus-visible { background:#21845A; }
