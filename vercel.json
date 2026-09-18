@@ -3,6 +3,7 @@
     { "source": "/products/:slug", "destination": "/index.html" },
     { "source": "/collections/all", "destination": "/index.html" },
     { "source": "/shop", "destination": "/index.html" },
+    { "source": "/cart", "destination": "/index.html" },
     { "source": "/reconstitution", "destination": "/index.html" },
     { "source": "/quality-testing", "destination": "/index.html" },
     { "source": "/about", "destination": "/index.html" },

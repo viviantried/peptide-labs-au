@@ -23,66 +23,6 @@
   </form>
 </div>
 
-<!-- CART OVERLAY + PANEL -->
-<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
-<div class="cart-panel" id="cartPanel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-  <nav class="cart-site-nav" aria-label="Cart navigation">
-    <div class="cart-site-nav__inner">
-      <a class="cart-site-nav__brand" href="/" onclick="closeCart();showPage('home');return false;">PeptideLab</a>
-      <div class="cart-site-nav__links">
-        <a href="/shop" onclick="closeCart();showPage('shop');return false;">Shop</a>
-        <a href="/reconstitution" onclick="closeCart();showPage('reconstitution');return false;">Reconstitution</a>
-        <a href="/quality-testing" onclick="closeCart();showPage('quality');return false;">Quality &amp; Testing</a>
-        <a href="/faq" onclick="closeCart();showPage('faq');return false;">FAQ</a>
-        <a href="/contact" onclick="closeCart();showPage('contact');return false;">Contact</a>
-        <a href="/track-order" onclick="closeCart();showPage('track');return false;">Track Order</a>
-      </div>
-    </div>
-  </nav>
-  <div class="cart-header">
-    <h2 class="cart-header__title" id="cartTitle">Shopping Cart</h2>
-    <button class="cart-close" type="button" onclick="closeCart()" aria-label="Close shopping cart">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="cart-layout">
-    <div class="cart-main">
-      <div class="cart-empty" id="cartEmpty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <div class="cart-empty__title">Your cart is empty</div>
-        <div class="cart-empty__sub">Add research compounds to get started</div>
-        <button class="btn btn--teal btn--sm" onclick="closeCart();showPage('shop')">Browse Catalog</button>
-      </div>
-      <div class="cart-items" id="cartItemsEl" style="display:none"></div>
-      <div id="cartSuggestionsEl" style="display:none"></div>
-    </div>
-    <aside class="cart-footer" id="cartFooter" style="display:none" aria-label="Order summary">
-      <h3 class="cart-summary-title">Order Summary</h3>
-      <div class="cart-totals">
-        <div class="cart-row"><span>Subtotal (<span id="cartItemCount">0</span> items)</span><strong id="cartSubtotal">A$0.00</strong></div>
-        <div class="cart-row cart-row--discount" id="discountRow" style="display:none">
-          <span>Quantity discount <span class="multibuy-badge" id="discountBadge"></span></span>
-          <strong id="discountAmt">−A$0.00</strong>
-        </div>
-        <div class="cart-row cart-row--shipping" id="shippingRow"><span>Shipping</span><span>Calculated at checkout</span></div>
-        <div class="cart-row cart-row--total"><span>Subtotal after discounts</span><strong id="cartTotal">A$0.00</strong></div>
-      </div>
-      <div class="free-ship-bar" id="freeShipBar">
-        <div class="free-ship-bar__label">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
-          <span id="freeShipMsg">Add A$200.00 more for free standard shipping</span>
-        </div>
-        <div class="free-ship-track"><div class="free-ship-fill" id="freeShipFill" style="width:0%"></div></div>
-      </div>
-      <div class="cart-checkout">
-        <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
-        <button class="btn btn--outline btn--full btn--sm" onclick="closeCart()">Continue Shopping</button>
-      </div>
-      <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
-    </aside>
-  </div>
-</div>
-
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -453,6 +393,52 @@
   </div>
 </nav>
 
+<!-- CART PAGE -->
+<div class="page" id="page-cart">
+<div class="cart-panel" id="cartPanel" aria-labelledby="cartTitle">
+  <div class="cart-header">
+    <h1 class="cart-header__title" id="cartTitle">Shopping Cart</h1>
+    <a class="cart-page-back" href="/shop" onclick="showPage('shop');return false;">Continue shopping</a>
+  </div>
+  <div class="cart-layout">
+    <div class="cart-main">
+      <div class="cart-empty" id="cartEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <div class="cart-empty__title">Your cart is empty</div>
+        <div class="cart-empty__sub">Add research compounds to get started</div>
+        <button class="btn btn--teal btn--sm" onclick="showPage('shop')">Browse Catalog</button>
+      </div>
+      <div class="cart-items" id="cartItemsEl" style="display:none"></div>
+      <div id="cartSuggestionsEl" style="display:none"></div>
+    </div>
+    <aside class="cart-footer" id="cartFooter" style="display:none" aria-label="Order summary">
+      <h3 class="cart-summary-title">Order Summary</h3>
+      <div class="cart-totals">
+        <div class="cart-row"><span>Subtotal (<span id="cartItemCount">0</span> items)</span><strong id="cartSubtotal">A$0.00</strong></div>
+        <div class="cart-row cart-row--discount" id="discountRow" style="display:none">
+          <span>Quantity discount <span class="multibuy-badge" id="discountBadge"></span></span>
+          <strong id="discountAmt">−A$0.00</strong>
+        </div>
+        <div class="cart-row cart-row--shipping" id="shippingRow"><span>Shipping</span><span>Calculated at checkout</span></div>
+        <div class="cart-row cart-row--total"><span>Subtotal after discounts</span><strong id="cartTotal">A$0.00</strong></div>
+      </div>
+      <div class="free-ship-bar" id="freeShipBar">
+        <div class="free-ship-bar__label">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+          <span id="freeShipMsg">Add A$200.00 more for free standard shipping</span>
+        </div>
+        <div class="free-ship-track"><div class="free-ship-fill" id="freeShipFill" style="width:0%"></div></div>
+      </div>
+      <div class="cart-checkout">
+        <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
+        <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
+      </div>
+      <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
+    </aside>
+  </div>
+</div>
+</div>
+
 <!-- ============================================================ -->
 <!--  PAGE: HOME                                                   -->
 <!-- ============================================================ -->
@@ -774,21 +760,14 @@
 <!--  PAGE: QUALITY & TESTING                                      -->
 <!-- ============================================================ -->
 <div class="page" id="page-quality">
-  <div class="policy-hero">
-    <div class="container--narrow" style="text-align:center;">
-      <div class="section-label" style="color:var(--teal-400)">Quality &amp; Testing</div>
-      <h1 class="policy-hero__title">Batch Certification Directory</h1>
-      <p class="policy-hero__sub">Every compound, every batch, every test date. Independently certified by accredited third-party laboratories.</p>
-    </div>
-  </div>
   <section class="section">
     <div class="container">
 
       <!-- CERTIFICATIONS DIRECTORY -->
-      <div style="margin-top:72px;">
+      <div>
         <div class="section-header">
           <div class="section-label">Batch Certificate Directory</div>
-          <h2 class="section-title">All Tested Batches</h2>
+          <h1 class="section-title">All Tested Batches</h1>
           <p class="section-sub">Full list of independently certified batches. Click any entry to view the original certificate from the accredited laboratory.</p>
         </div>
         <div class="cert-search-bar">
@@ -1821,18 +1800,8 @@ function getShippingCost(subtotalAUD, countryCode) {
 // CART LOGIC
 // ============================================================
 function openCart() {
-  document.getElementById('cartOverlay').classList.add('open');
-  document.getElementById('cartPanel').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  showPage('cart');
 }
-function closeCart() {
-  document.getElementById('cartOverlay').classList.remove('open');
-  document.getElementById('cartPanel').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && document.getElementById('cartPanel').classList.contains('open') && !document.getElementById('coOverlay').classList.contains('open')) closeCart();
-});
 function getStock(productId) { return inventory[productId] ?? 999; }
 
 function openRestockAlert(product) {
@@ -2396,7 +2365,7 @@ function filterCerts(q) { renderCerts(q); }
 // ============================================================
 // PAGE ROUTER
 // ============================================================
-const PAGE_PATHS = { home:'/', shop:'/shop', reconstitution:'/reconstitution', quality:'/quality-testing', about:'/about', faq:'/faq', contact:'/contact', track:'/track-order', shipping:'/shipping', refund:'/refunds', terms:'/terms', privacy:'/privacy' };
+const PAGE_PATHS = { home:'/', cart:'/cart', shop:'/shop', reconstitution:'/reconstitution', quality:'/quality-testing', about:'/about', faq:'/faq', contact:'/contact', track:'/track-order', shipping:'/shipping', refund:'/refunds', terms:'/terms', privacy:'/privacy' };
 
 function showPage(id, updateHistory = true) {
   const calculator = document.getElementById('reconstitution-calculator');
