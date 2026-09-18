@@ -2109,3 +2109,9 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 #page-shop .collection-filter-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
 #page-shop .collection-filter-count { color: var(--text-secondary); font-size: 14px; font-weight: 500; }
 @media (max-width: 768px) { #page-shop .collection-filter-bar { align-items: flex-start; flex-direction: column; } }
+
+/* Let the catalog introduction sit directly on the page, without a banner. */
+#page-shop .collection-hero { background: var(--body-bg); padding: 48px 0 0; }
+#page-shop .collection-hero__title { color: var(--text-primary); }
+#page-shop .collection-hero__sub { color: var(--text-secondary); max-width: 620px; }
+@media (max-width: 768px) { #page-shop .collection-hero { padding-top: 36px; } }
