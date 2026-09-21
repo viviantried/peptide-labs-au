@@ -33,7 +33,11 @@ const PRODUCT_CATALOG = {
   'PL-014': { name:'BAC Water', size:'10ml', price:19 },
   'PL-015': { name:'Research Starter Kit', size:'1 kit', price:29 },
 };
-const PROMO_CODES = { VIVIAN: { type:'percent', value:10 } };
+const PROMO_CODES = {
+  VIVIAN: { type:'percent', value:10 },
+  TIKTOK: { type:'percent', value:10 },
+  INSTA:  { type:'percent', value:10 },
+};
 const FREE_SHIP_THRESHOLD = 200;
 const MIX_BUNDLE_ID = 'PL-MIX-10';
 
