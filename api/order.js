@@ -37,6 +37,7 @@ const PROMO_CODES = {
   VIVIAN: { type:'percent', value:10 },
   TIKTOK: { type:'percent', value:10 },
   INSTA:  { type:'percent', value:10 },
+  REORDER: { type:'percent', value:15 },
 };
 const FREE_SHIP_THRESHOLD = 200;
 const MIX_BUNDLE_ID = 'PL-MIX-10';
