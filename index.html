@@ -544,6 +544,85 @@
     </div>
   </section>
 
+  <!-- REAL ORDERS + REVIEW LAYOUT PREVIEW -->
+  <section class="orders-proof" aria-labelledby="ordersProofTitle">
+    <div class="container">
+      <header class="orders-proof__header">
+        <div class="orders-proof__heading">
+          <div class="orders-proof__eyebrow"><span>1,000+</span> orders shipped from Australia</div>
+          <h2 id="ordersProofTitle">Trusted by <em>PeptideLab</em> customers</h2>
+          <p>Real orders. Real feedback. See why customers keep coming back.</p>
+        </div>
+        <div class="orders-proof__controls" aria-label="Order photo carousel controls">
+          <button type="button" onclick="scrollBuyerGallery(-1)" aria-label="Show previous order photos">‹</button>
+          <button type="button" onclick="scrollBuyerGallery(1)" aria-label="Show next order photos">›</button>
+        </div>
+      </header>
+
+      <div class="buyer-gallery" id="buyerGallery" aria-label="Real packed order photos">
+        <article class="buyer-card">
+          <figure class="buyer-card__photo"><img src="/images/real-orders/fatima-j-order.jpg" width="3024" height="4032" loading="lazy" decoding="async" alt="Fatima J.'s real PeptideLab order containing Retatrutide and GHK-Cu research vials"></figure>
+          <div class="buyer-card__body">
+            <div class="buyer-card__feedback-label">Customer feedback</div>
+            <div class="buyer-card__meta"><strong>Fatima J</strong><div class="buyer-card__rating" aria-label="5 out of 5 stars">★★★★★</div></div>
+            <blockquote>“Perfect thank you”</blockquote>
+            <div class="buyer-card__purchase buyer-card__purchase--bundle">
+              <div class="buyer-card__purchase-images" aria-label="Product listing photos">
+                <img src="/images/retatrutide.jpg" width="64" height="64" loading="lazy" decoding="async" alt="Retatrutide 10 mg product listing photo">
+                <img src="/images/ghk-cu.jpg" width="64" height="64" loading="lazy" decoding="async" alt="GHK-Cu 50 mg product listing photo">
+              </div>
+              <div><small>Products purchased</small><strong>ordered 5 10mg retatrutide 5 50mg ghkcu</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="buyer-card">
+          <figure class="buyer-card__photo"><img src="/images/real-orders/retatrutide-charles-g.png" width="884" height="882" loading="lazy" decoding="async" alt="Charles G.'s real PeptideLab order showing a Retatrutide 10 mg research vial"></figure>
+          <div class="buyer-card__body">
+            <div class="buyer-card__feedback-label">Customer feedback</div>
+            <div class="buyer-card__meta"><strong>Charles G.</strong><div class="buyer-card__rating" aria-label="5 out of 5 stars">★★★★★</div></div>
+            <blockquote>“second time ordering, thank you”</blockquote>
+            <div class="buyer-card__purchase">
+              <img src="/images/retatrutide.jpg" width="64" height="64" loading="lazy" decoding="async" alt="Retatrutide 10 mg product listing photo">
+              <div><small>Product purchased</small><strong>ordered 10mg retatrutide</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="buyer-card">
+          <figure class="buyer-card__photo"><img src="/images/real-orders/order-01.jpg" width="4032" height="3024" loading="lazy" decoding="async" alt="Zahra J.'s real PeptideLab order containing Retatrutide, GHK-Cu and a researcher kit in protective packaging"></figure>
+          <div class="buyer-card__body">
+            <div class="buyer-card__feedback-label">Customer feedback</div>
+            <div class="buyer-card__meta"><strong>Zahra J.</strong><div class="buyer-card__rating" aria-label="5 out of 5 stars">★★★★★</div></div>
+            <blockquote>“everything arrived no problems”</blockquote>
+            <div class="buyer-card__purchase buyer-card__purchase--bundle">
+              <div class="buyer-card__purchase-images" aria-label="Product listing photos">
+                <img src="/images/retatrutide.jpg" width="64" height="64" loading="lazy" decoding="async" alt="Retatrutide 10 mg product listing photo">
+                <img src="/images/ghk-cu.jpg" width="64" height="64" loading="lazy" decoding="async" alt="GHK-Cu 50 mg product listing photo">
+                <img src="/images/research-starter-kit.png" width="64" height="64" loading="lazy" decoding="async" alt="Researcher kit product listing photo">
+              </div>
+              <div><small>Products purchased</small><strong>ordered 10mg retatrutide, 50mg ghkcu, researcher kit</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="buyer-card">
+          <figure class="buyer-card__photo"><img src="/images/real-orders/semax-order-photo.png" width="886" height="878" loading="lazy" decoding="async" alt="Real PeptideLab order showing a Semax 10 mg research vial on protective bubble wrap"></figure>
+          <div class="buyer-card__body">
+            <div class="buyer-card__feedback-label">Customer feedback</div>
+            <div class="buyer-card__meta"><strong>William S</strong><div class="buyer-card__rating" aria-label="5 out of 5 stars">★★★★★</div></div>
+            <blockquote>“fast shipping”</blockquote>
+            <div class="buyer-card__purchase">
+              <img src="/images/semax.jpg" width="64" height="64" loading="lazy" decoding="async" alt="Semax 10 mg product listing photo">
+              <div><small>Product purchased</small><strong>ordered 10mg semax</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
   <!-- DISCLAIMER -->
   <section class="section--sm research-notice-section" style="background:var(--body-bg)">
     <div class="container--narrow">
@@ -2434,6 +2513,13 @@ window.addEventListener('popstate', routeFromLocation);
 
 function toggleMobileMenu() {
   document.getElementById('mobileMenu').classList.toggle('open');
+}
+function scrollBuyerGallery(direction) {
+  const gallery = document.getElementById('buyerGallery');
+  if (!gallery) return;
+  const card = gallery.querySelector('.buyer-card');
+  const gap = parseFloat(getComputedStyle(gallery).columnGap || getComputedStyle(gallery).gap) || 18;
+  gallery.scrollBy({ left: direction * ((card?.getBoundingClientRect().width || gallery.clientWidth * .8) + gap), behavior: 'smooth' });
 }
 function toggleFaq(el) {
   const item = el.closest('.faq-item');
