@@ -1685,6 +1685,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 .buyer-card {
   min-width: 0;
+  align-self: start;
   overflow: hidden;
   scroll-snap-align: start;
   border: 1px solid #d9e3e9;
@@ -1704,18 +1705,18 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .buyer-card__meta span { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 7px 10px; border-radius: 999px; background: #0b0b0d; color: #fff; font-size: 11px; font-weight: 800; white-space: nowrap; }
 .buyer-card__meta b { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: #fff; color: #0b0b0d; font-size: 10px; }
 .buyer-card__body p { margin: 16px 0 0; color: #475872; font-size: 15px; line-height: 1.55; }
-.buyer-card__body blockquote { margin: 16px 0 0; color: #34445d; font-size: 15px; line-height: 1.55; font-style: normal; }
-.buyer-card__purchase { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8ee; }
-.buyer-card__purchase > img { width: 56px; height: 60px; flex: 0 0 auto; object-fit: contain; border: 1px solid #dce5eb; border-radius: 9px; background: #eef3f6; }
+.buyer-card__body blockquote { margin: 12px 0 0; color: #34445d; font-size: 15px; line-height: 1.5; font-style: normal; }
+.buyer-card__purchase { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8ee; }
+.buyer-card__purchase > img { width: 46px; height: 50px; flex: 0 0 auto; object-fit: contain; border: 1px solid #dce5eb; border-radius: 8px; background: #eef3f6; }
 .buyer-card__purchase > div { display: grid; min-width: 0; gap: 3px; }
 .buyer-card__purchase small { color: #738198; font-size: 11px; line-height: 1.25; }
-.buyer-card__purchase strong { color: #0a1c39; font-size: 14px; line-height: 1.3; }
-.buyer-card__purchase--stacked { display: grid; align-items: stretch; gap: 8px; }
-.buyer-card__purchase--stacked > small { margin-bottom: 1px; }
-.buyer-card__purchase-item { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.buyer-card__purchase-item img { width: 42px; height: 48px; flex: 0 0 auto; object-fit: contain; border: 1px solid #dce5eb; border-radius: 7px; background: #eef3f6; }
+.buyer-card__purchase strong { color: #0a1c39; font-size: 13px; line-height: 1.25; }
+.buyer-card__purchase--stacked { display: grid; align-items: stretch; gap: 5px; }
+.buyer-card__purchase--stacked > small { margin-bottom: 0; }
+.buyer-card__purchase-item { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.buyer-card__purchase-item img { width: 34px; height: 38px; flex: 0 0 auto; object-fit: contain; border: 1px solid #dce5eb; border-radius: 6px; background: #eef3f6; }
 .buyer-card__purchase-item strong { display: flex; align-items: baseline; gap: 6px; }
-.buyer-card__purchase-item strong span { color: var(--teal-700); font-size: 15px; font-weight: 850; white-space: nowrap; }
+.buyer-card__purchase-item strong span { color: var(--teal-700); font-size: 13px; font-weight: 850; white-space: nowrap; }
 .buyer-card__purchase--bundle { align-items: flex-start; }
 .buyer-card__purchase--bundle > .buyer-card__purchase-images { display: flex; flex: 0 0 auto; gap: 0; }
 .buyer-card__purchase-images img { width: 42px; height: 48px; object-fit: contain; border: 1px solid #dce5eb; border-radius: 7px; background: #eef3f6; }
