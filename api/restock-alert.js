@@ -1,8 +1,7 @@
-const RESEND_KEY = process.env.RESEND_API_KEY || process.env.resend_api_key;
+const { validEmail, escapeHtml, requestAllowed, sendSupportEmail } = require('../lib/support-requests');
 const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN || process.env.airtable_token;
 const AIRTABLE_BASE = 'appwbIeYvWxx7R9Y8';
 const TABLE = 'Restock Alerts';
-const OWNER_EMAIL = 'support@aupeptidelab.com';
 
 const PRODUCTS = {
   'PL-001': 'Retatrutide', 'PL-002': 'BPC-157', 'PL-003': 'TB-500',
@@ -12,17 +11,9 @@ const PRODUCTS = {
   'PL-013': 'Glutathione', 'PL-014': 'BAC Water', 'PL-015': 'Research Starter Kit',
 };
 
-async function emailOwner(subject, html) {
-  if (!RESEND_KEY) return;
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: 'PeptideLab <orders@aupeptidelab.com>', to: OWNER_EMAIL, subject, html }),
-  });
-}
-
 async function ensureAlertTable() {
   const r = await fetch(`https://api.airtable.com/v0/meta/bases/${AIRTABLE_BASE}/tables`, {
+    signal: AbortSignal.timeout(4000),
     method: 'POST', headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type':'application/json' },
     body: JSON.stringify({ name: TABLE, fields: [
       { name:'Email', type:'email' }, { name:'Product ID', type:'singleLineText' }, { name:'Product', type:'singleLineText' },
@@ -34,15 +25,11 @@ async function ensureAlertTable() {
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (!requestAllowed(req, res)) return;
 
   const { email, productId } = req.body || {};
-  const product = PRODUCTS[productId];
-  if (!product || !/^\S+@\S+\.\S+$/.test(String(email || ''))) {
+  const product = Object.hasOwn(PRODUCTS, productId) ? PRODUCTS[productId] : null;
+  if (!product || typeof email !== 'string' || !validEmail(email.trim())) {
     return res.status(400).json({ error: 'Please enter a valid email address.' });
   }
 
@@ -51,6 +38,7 @@ module.exports = async function handler(req, res) {
   if (AIRTABLE_TOKEN) {
     try {
       const r = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(TABLE)}`, {
+        signal: AbortSignal.timeout(4000),
         method: 'POST',
         headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ records: [{ fields: {
@@ -60,23 +48,31 @@ module.exports = async function handler(req, res) {
       stored = r.ok;
       if (!stored && r.status === 404 && await ensureAlertTable()) {
         const retry = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(TABLE)}`, {
+          signal: AbortSignal.timeout(4000),
           method: 'POST', headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ records: [{ fields: { Email: address, 'Product ID': productId, Product: product, Status: 'Pending', 'Subscribed At': new Date().toISOString() } }] }),
         });
         stored = retry.ok;
       }
     } catch (err) {
-      console.error('Restock alert storage error:', err.message);
+      console.error('Restock request: storage unavailable');
     }
   }
 
-  if (!stored) {
+  if (stored) return res.status(200).json({ ok: true, delivery: 'stored' });
+
+  {
     try {
-      await emailOwner(`Restock alert request — ${product}`, `<p><strong>${address}</strong> requested a restock alert for <strong>${product}</strong> (${productId}).</p>`);
+      const accepted = await sendSupportEmail({
+        subject: `Restock alert request — ${product}`,
+        html: `<p><strong>${escapeHtml(address)}</strong> requested a restock alert for <strong>${escapeHtml(product)}</strong> (${productId}).</p><p>This request could not be saved to the restock list. Please follow up manually.</p>`,
+        replyTo: address,
+      });
+      if (accepted) return res.status(200).json({ ok: true, delivery: 'support' });
     } catch (err) {
-      console.error('Restock alert owner email error:', err.message);
+      console.error('Restock request: email provider unavailable');
     }
   }
 
-  return res.status(200).json({ ok: true });
+  return res.status(503).json({ error: 'We could not save your request. Please retry or email support@aupeptidelab.com.' });
 };
