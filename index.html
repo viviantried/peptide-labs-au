@@ -6,6 +6,7 @@
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="PeptideLab Australia: product specifications, documentation enquiries and order support. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
   <link rel="stylesheet" href="/styles.css?v=26" />
+  <link rel="stylesheet" href="/giveaway.css?v=1" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
   <script>
@@ -323,6 +324,24 @@
 <!-- ═══════════════════ /CHECKOUT OVERLAY ═══════════════════ -->
 
 <!-- EMAIL GIVEAWAY POPUP -->
+<dialog id="popupOverlay" class="giveaway-dialog" aria-labelledby="giveawayTitle" aria-describedby="giveawayIntro">
+  <div class="giveaway-content">
+    <button class="giveaway-close" type="button" onclick="closePopup()" aria-label="Close giveaway">×</button>
+    <p class="giveaway-eyebrow">Monthly giveaway</p>
+    <h2 id="giveawayTitle">Win A$250<br>store credit</h2>
+    <p id="giveawayIntro" class="giveaway-intro">Enter once to join our monthly draws. No purchase necessary. One entry per email address.</p>
+    <form id="giveawayForm">
+      <label class="giveaway-label" for="popupEmail">Email address</label>
+      <input id="popupEmail" class="giveaway-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
+      <div hidden aria-hidden="true"><label for="giveawayWebsite">Leave empty</label><input id="giveawayWebsite" name="website" tabindex="-1" autocomplete="off"></div>
+      <label class="giveaway-marketing"><input type="checkbox" id="giveawayMarketing"> <span>I’d also like occasional PeptideLab marketing emails. Optional; unsubscribe anytime.</span></label>
+      <button id="giveawaySubmit" class="giveaway-submit" type="submit">Enter Monthly Giveaway</button>
+      <p class="giveaway-legal">By entering, you agree that we can save your email to manage the giveaway and contact you if you win. Entries are stored through Resend. <a href="/privacy" onclick="closePopup();showPage('privacy');return false;">Privacy policy</a>.</p>
+    </form>
+    <p id="giveawayStatus" class="giveaway-status" role="status" aria-live="polite"></p>
+    <button id="giveawayDone" class="giveaway-submit giveaway-done" type="button" onclick="closePopup()" hidden>Continue browsing</button>
+  </div>
+</dialog>
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar">
   <span class="announcement-bar__desktop"><strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Australian and international delivery</span>
@@ -1071,10 +1090,11 @@
 </div>
 
 <div class="page" id="page-privacy">
-  <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: 22 September 2026 · We respect your privacy.</p></div>
+  <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: 23 September 2026 · We respect your privacy.</p></div>
   <div class="policy-body"><div class="container--narrow"><div class="policy-content">
     <h2>Information We Collect</h2><p>Order data (name, email, shipping address and selected payment method), communication data from enquiries (name, email, subject, optional order reference and message), and anonymised usage analytics. We do not collect or store online-banking credentials.</p>
     <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p><p>Australian suburb and postcode suggestions use data hosted on this website, sourced from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. This lookup does not send your entered address to an outside service.</p>
+    <h2>Giveaway Entries</h2><p>We store the email address submitted through the giveaway form in Resend to manage entries and contact winners. Marketing emails are optional. Entering the giveaway does not change an existing unsubscribe preference. You may ask support to remove your giveaway entry.</p>
     <h2>Support Enquiries</h2><p>Website enquiries are sent to our support inbox through Resend, our email service provider. Submitting an enquiry does not subscribe you to marketing. Do not include payment credentials or personal health information in your message.</p>
     <h2>Data Security</h2><p>SSL/TLS encrypted transmission. Appropriate technical and organisational security measures. Order data retained for 7 years for Australian legal/accounting compliance.</p>
     <h2>Your Rights</h2><p>Subject to applicable Australian law, you may request access, correction, deletion, or portability of your data. Contact: <strong>support@aupeptidelab.com</strong></p>
@@ -1114,6 +1134,7 @@
           <span class="footer__link" onclick="showPage('quality')">Quality &amp; Testing</span>
           <span class="footer__link" onclick="showPage('faq')">FAQ</span>
           <span class="footer__link" onclick="showPage('contact')">Contact</span>
+          <button type="button" class="footer__link giveaway-footer" onclick="openPopup()">Monthly giveaway</button>
           <span class="footer__link" onclick="showPage('shipping')">Shipping Info</span>
         </div>
       </div>
@@ -2725,6 +2746,7 @@ loadInventory();
 })();
 </script>
 <script src="/storefront-support.js?v=1"></script>
+<script src="/giveaway.js?v=1"></script>
 
 </body>
 </html>
