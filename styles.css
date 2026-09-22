@@ -1647,8 +1647,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .orders-proof__heading { max-width: 960px; }
 .orders-proof__eyebrow { margin-bottom: 7px; color: #506078; font-size: 13px; font-weight: 750; letter-spacing: .025em; }
 .orders-proof__eyebrow span { color: var(--teal-600); }
-.orders-proof__heading h2 { margin: 0; color: #0a1c39; font-family: var(--font-display); font-size: clamp(30px, 3vw, 42px); line-height: 1.08; letter-spacing: -.035em; }
-.orders-proof__heading h2 em { color: var(--teal-600); font-style: normal; }
+.orders-proof__heading h2 { margin: 0; color: #000; font-family: var(--font-display); font-size: clamp(30px, 3vw, 42px); line-height: 1.08; letter-spacing: -.035em; }
+.orders-proof__heading h2 em { color: #000; font-style: normal; }
 .orders-proof__heading p { margin: 10px 0 0; color: #607089; font-size: clamp(15px, 1.25vw, 17px); line-height: 1.45; }
 
 .orders-proof__controls { display: flex; gap: 9px; flex: 0 0 auto; }
