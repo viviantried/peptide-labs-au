@@ -74,6 +74,10 @@ async function notifyRestockSubscribers(productId) {
 }
 
 module.exports = async function handler(req, res) {
+  if (process.env.TRACKER_ENABLED === 'true') {
+    if (req.method === 'GET') { res.setHeader('Location','/admin'); return res.status(302).end(); }
+    return res.status(409).json({error:'Stock is now managed in /admin. Please use the live tracker.'});
+  }
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (req.method === 'GET') {

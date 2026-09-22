@@ -3,6 +3,8 @@
 // Sends a dispatch confirmation email to the customer.
 
 const crypto = require('crypto');
+const tracker = require('../lib/tracker');
+const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
 const SECRET       = process.env.CONFIRM_SECRET  || process.env.confirm_secret || RESEND_KEY;
@@ -18,6 +20,7 @@ function makeToken(order, email, amt, secret = SECRET) {
 }
 
 async function sendEmail(to, subject, html) {
+  if (process.env.VERCEL_ENV === 'preview' && process.env.TRACKER_TEST_MODE === 'true') throw new Error('Email delivery disabled for preview testing');
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
@@ -30,7 +33,11 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (!SECRET || !RESEND_KEY) return res.status(500).send(page('Server configuration error.', 'error'));
 
-  const { order, email, amt, name, token, reminder_id, items } = req.query;
+  res.setHeader('Cache-Control','no-store');
+  res.setHeader('Referrer-Policy','no-referrer');
+  if (!['GET','POST'].includes(req.method)) return res.status(405).send('Method not allowed');
+  const params=req.method==='POST'?req.body:req.query;
+  const { order, email, amt, name, token, reminder_id, items } = params || {};
 
   if (!order || !email || !token) {
     return res.status(400).send(page('Missing parameters', 'error'));
@@ -40,8 +47,23 @@ module.exports = async function handler(req, res) {
   const legacyExpected = /^PL-\d{5}$/.test(order)
     ? makeToken(order, email, amt || '', LEGACY_SECRET)
     : null;
-  if (token !== expected && token !== legacyExpected) {
+  if (token !== expected && (tracker.enabled() || token !== legacyExpected)) {
     return res.status(403).send(page('Invalid or expired confirmation link.', 'error'));
+  }
+  // Email scanners may open GET links. Require an explicit submit before confirming payment.
+  if (req.method==='GET') {
+    const fields=['order','email','amt','name','token','reminder_id','items'].map(k=>`<input type="hidden" name="${k}" value="${escapeHtml(params[k])}">`).join('');
+    return res.status(200).send(page(`<h2>Confirm payment received</h2><p>Only continue once the full transfer for ${escapeHtml(order)} has cleared.</p><form method="POST">${fields}<button type="submit">Confirm cleared payment</button></form>`,'success'));
+  }
+  if (tracker.enabled()) {
+    try {
+      const saved=await tracker.find(order);
+      if (saved) {
+        if (saved.details.email!==email || Number(saved.details.total)!==Number(amt)) return res.status(403).send(page('Order details do not match.','error'));
+        if (saved.status!=='shipped') await tracker.change(order,'paid');
+        await tracker.cancelReminder(saved);
+      }
+    } catch { return res.status(503).send(page('Could not save payment status. Check the order in /admin before trying again.','error')); }
   }
 
   const firstName = (name || 'there').split(' ')[0];

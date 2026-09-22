@@ -1,5 +1,7 @@
 {
+  "functions": { "api/order.js": { "maxDuration": 60 } },
   "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
     { "source": "/products/:slug", "destination": "/index.html" },
     { "source": "/collections/all", "destination": "/index.html" },
     { "source": "/shop", "destination": "/index.html" },

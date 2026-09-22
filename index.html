@@ -1757,6 +1757,12 @@ async function placeOrder() {
   btn.classList.add('loading'); btn.disabled = true;
 
   try {
+    // Keep the same reference for retries, including after a reload. No customer details are persisted here.
+    const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(payload))))).map(b=>b.toString(16).padStart(2,'0')).join('');
+    const savedAttempt = JSON.parse(sessionStorage.getItem('pl-checkout-attempt') || 'null');
+    const attempt = savedAttempt?.digest === digest ? savedAttempt : {digest,key:crypto.randomUUID()};
+    sessionStorage.setItem('pl-checkout-attempt',JSON.stringify(attempt));
+    payload.checkoutKey = attempt.key;
     const res  = await fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Order failed');
@@ -1768,7 +1774,7 @@ async function placeOrder() {
     const emailNotice = document.getElementById('coSuccessEmailNotice');
     emailNotice.textContent = !data.customerEmailAccepted
       ? 'Your confirmation email could not be sent. Please keep this page and contact support with your order reference.'
-      : !data.storeAlertAccepted
+      : !data.storeAlertAccepted && !data.orderSaved
         ? 'Your confirmation email was accepted. Our store alert is delayed; contact support with your reference if you need urgent help.'
         : 'A confirmation email has been accepted for sending; please keep this order reference as a backup.';
     const isInternationalPayment = (data.paymentMethod || coSelectedPayId) === 'intl';
@@ -1795,6 +1801,7 @@ async function placeOrder() {
     trackFunnel('Order Submitted', { items: getCartCount(), total: Number(total.toFixed(2)), currency: 'AUD', promo: appliedPromo?.code || 'none' });
 
     cart = [];
+    sessionStorage.removeItem('pl-checkout-attempt');
     renderCart();
   } catch (err) {
     const e = document.getElementById('coError');

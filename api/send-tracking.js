@@ -2,6 +2,7 @@
 // Owner submits tracking number after shipping — sends branded tracking email to customer.
 
 const crypto = require('crypto');
+const tracker = require('../lib/tracker');
 
 const RESEND_KEY  = process.env.RESEND_API_KEY || process.env.resend_api_key;
 const SECRET      = process.env.CONFIRM_SECRET || process.env.confirm_secret || RESEND_KEY;
@@ -48,6 +49,15 @@ module.exports = async function handler(req, res) {
   if (token !== expected) {
     return res.status(403).send(page('Invalid or expired link.', 'error'));
   }
+  if (tracker.enabled()) {
+    try {
+      const saved=await tracker.find(order);
+      if (saved) {
+        if (saved.details.email!==email) return res.status(403).send(page('Order details do not match.','error'));
+        await tracker.change(order,'shipped',tracking,carrier);
+      }
+    } catch { return res.status(503).send(page('Could not save dispatch. Check the order in /admin before trying again.','error')); }
+  }
 
   const trackUrl = CARRIER_TRACK_URLS[carrier]
     ? CARRIER_TRACK_URLS[carrier] + encodeURIComponent(tracking)
@@ -88,6 +98,7 @@ module.exports = async function handler(req, res) {
   </body></html>`;
 
   try {
+    if (process.env.VERCEL_ENV === 'preview' && process.env.TRACKER_TEST_MODE === 'true') throw new Error('Email delivery disabled for preview testing');
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },

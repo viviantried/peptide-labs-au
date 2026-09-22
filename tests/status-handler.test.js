@@ -1,0 +1,15 @@
+const {test,beforeEach,after}=require('node:test');
+const assert=require('node:assert/strict'),crypto=require('crypto');
+process.env.NODE_ENV='test';process.env.TRACKER_ENABLED='true';process.env.CONFIRM_SECRET='test-status-secret';process.env.RESEND_API_KEY='test-not-a-real-key';process.env.TRACKER_ADMIN_KEY='test-admin-secret';
+const tracker=require('../lib/tracker'),confirm=require('../api/confirm-payment'),ship=require('../api/send-tracking'),admin=require('../api/tracker');
+const originalFetch=global.fetch;let changes=[],sends=0;
+function token(action){return crypto.createHmac('sha256','test-status-secret').update('PL-test:test@example.invalid:'+action).digest('hex').slice(0,20)}
+function response(){return{setHeader(){},status(n){this.code=n;return this},send(body){this.body=body;return this},json(body){this.body=body;return this}}}
+beforeEach(()=>{changes=[];sends=0;tracker.find=async()=>({id:'PL-test',status:'pending',details:{email:'test@example.invalid',total:100},emails:{}});tracker.change=async(...args)=>{changes.push(args);return{}};tracker.cancelReminder=async()=>{};global.fetch=async()=>{sends++;return{ok:false,text:async()=>'Simulated outage'}}});
+after(()=>global.fetch=originalFetch);
+test('email link GET presents confirmation without changing payment or sending email',async()=>{const r=response();await confirm({method:'GET',query:{order:'PL-test',email:'test@example.invalid',amt:'100',token:token('100')}},r);assert.equal(r.code,200);assert.match(r.body,/Confirm cleared payment/);assert.equal(changes.length,0);assert.equal(sends,0)});
+test('payment status saves before failed confirmation email',async()=>{const r=response();await confirm({method:'POST',body:{order:'PL-test',email:'test@example.invalid',amt:'100',token:token('100')}},r);assert.equal(r.code,500);assert.deepEqual(changes,[['PL-test','paid']]);assert.equal(sends,1)});
+test('payment database failure blocks email and reports no success',async()=>{tracker.change=async()=>{throw new Error('database down')};const r=response();await confirm({method:'POST',body:{order:'PL-test',email:'test@example.invalid',amt:'100',token:token('100')}},r);assert.equal(r.code,503);assert.equal(sends,0)});
+test('tracking is saved before a failed dispatch email',async()=>{const r=response();await ship({method:'POST',body:{order:'PL-test',email:'test@example.invalid',tracking:'TEST123',carrier:'Australia Post',token:token('track')}},r);assert.equal(r.code,500);assert.deepEqual(changes,[['PL-test','shipped','TEST123','Australia Post']]);assert.equal(sends,1)});
+test('admin endpoint rejects unauthenticated requests without reading records',async()=>{tracker.query=async()=>{throw new Error('must not read')};const r=response();await admin({method:'GET',headers:{}},r);assert.equal(r.code,401)});
+test('tracked payment rejects tampered order amount',async()=>{const r=response();await confirm({method:'POST',body:{order:'PL-test',email:'test@example.invalid',amt:'99',token:token('99')}},r);assert.equal(r.code,403);assert.equal(changes.length,0);assert.equal(sends,0)});

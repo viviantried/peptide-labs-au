@@ -4,6 +4,8 @@
 const crypto       = require('crypto');
 const fs           = require('fs');
 const path         = require('path');
+const tracker      = require('../lib/tracker');
+const PREVIEW_TEST = process.env.VERCEL_ENV === 'preview' && process.env.TRACKER_TEST_MODE === 'true';
 const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
@@ -62,10 +64,12 @@ function paymentDetails() {
 }
 
 async function addToAudience(email, firstName, lastName) {
+  if (PREVIEW_TEST) return;
   if (!RESEND_KEY || !RESEND_AUDIENCE) return;
   try {
     await fetch(`https://api.resend.com/audiences/${RESEND_AUDIENCE}/contacts`, {
       method: 'POST',
+      signal: AbortSignal.timeout(5000),
       headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, first_name: firstName, last_name: lastName, unsubscribed: false }),
     });
@@ -75,13 +79,16 @@ async function addToAudience(email, firstName, lastName) {
 }
 
 async function logToAirtable(order) {
+  if (PREVIEW_TEST) return;
   if (!AIRTABLE_TOKEN) return;
   try {
-    await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/Orders`, {
+    const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/Orders`, {
       method: 'POST',
+      signal: AbortSignal.timeout(5000),
       headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ records: [{ fields: order }] }),
     });
+    if (!response.ok) throw new Error(`Airtable ${response.status}`);
   } catch (err) {
     console.error('Airtable log error:', err.message);
   }
@@ -95,8 +102,7 @@ function makeConfirmToken(order, email, amt) {
 }
 
 function generateOrderId() {
-  const number = crypto.randomInt(10_000, 100_000);
-  return `PL-${number}`;
+  return `PL-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
 }
 
 function validateAvailability(rawItems) {
@@ -145,6 +151,7 @@ function calculateOrder(rawItems, country, shippingMethod, promoCode) {
 }
 
 async function sendEmail(to, subject, html, orderName, role) {
+  if (PREVIEW_TEST) throw new Error('Email delivery disabled for preview testing');
   if (!RESEND_KEY) throw new Error('Email service is not configured');
   const payload = JSON.stringify({
     from: `PeptideLab <${FROM_EMAIL}>`, reply_to: OWNER_EMAIL, to, subject, html,
@@ -155,6 +162,7 @@ async function sendEmail(to, subject, html, orderName, role) {
     try {
       const response = await fetch('https://api.resend.com/emails', {
         method:'POST',
+        signal: AbortSignal.timeout(5000),
         headers: {
           Authorization:`Bearer ${RESEND_KEY}`,
           'Content-Type':'application/json',
@@ -183,18 +191,19 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!CONFIRM_SECRET || !RESEND_KEY) return res.status(500).json({ error: 'Order email service unavailable' });
+  if (!tracker.enabled() && (!CONFIRM_SECRET || !RESEND_KEY)) return res.status(500).json({ error: 'Order email service unavailable' });
   if (!BSB || !ACCOUNT) return res.status(500).json({ error: 'Payment details unavailable' });
 
   const {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
     items: rawItems, promoCode, shippingMethod, marketingConsent,
-  } = req.body;
+  } = req.body || {};
 
-  if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !rawItems?.length) {
+  if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !Array.isArray(rawItems) || !rawItems.length || rawItems.length > 50) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
+  if ([email,firstName,lastName,address1,address2,suburb,state,postcode,country,phone,shippingMethod,promoCode].some(value => value != null && (typeof value !== 'string' || value.length > 500))) return res.status(400).json({error:'Invalid customer details'});
   if (!/^\S+@\S+\.\S+$/.test(String(email)) || !/^[A-Z]{2}$/.test(String(country || ''))) {
     return res.status(400).json({ error: 'Invalid customer details' });
   }
@@ -211,14 +220,32 @@ module.exports = async function handler(req, res) {
 
   let calculated;
   try {
-    validateAvailability(rawItems);
+    if (!tracker.enabled()) validateAvailability(rawItems);
     calculated = calculateOrder(rawItems, country, shippingMethod, promoCode);
   } catch {
     return res.status(400).json({ error: 'Invalid cart' });
   }
   const { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount } = calculated;
 
-  const orderName = generateOrderId();
+  let orderName = generateOrderId();
+  if (tracker.enabled()) {
+    const checkoutKey = req.body.checkoutKey || crypto.randomUUID();
+    if (typeof checkoutKey !== 'string' || !/^[a-zA-Z0-9-]{20,100}$/.test(checkoutKey)) return res.status(400).json({error:'Invalid checkout reference'});
+    const details = { email,firstName,lastName,address1,address2:address2 || '',suburb,state:state || '',postcode,country,phone:phone || '',items,subtotal,shipping,discount,total,promoCode:promoCode || '',shippingMethod:shippingMethod || 'Standard',paymentMethod,paymentLabel };
+    try {
+      const saved = await tracker.create(orderName,checkoutKey,details,items);
+      orderName = saved.id;
+      if (saved.replayed) {
+        if (['expired','cancelled'].includes(saved.status)) return res.status(409).json({error:'This order has expired or been cancelled. Refresh checkout to place a new order.'});
+        return res.status(200).json({orderName,total:saved.details.total,paymentMethod,paymentLabel,paymentFields,bsb:BSB,acct:ACCOUNT,customerEmailAccepted:saved.emails.customer==='accepted',storeAlertAccepted:saved.emails.owner==='accepted',orderSaved:true});
+      }
+    } catch (error) {
+      console.error('Order save failed',error.message.includes('OUT_OF_STOCK')?'out_of_stock':'database_or_request_error');
+      if (error.message.includes('OUT_OF_STOCK')) return res.status(409).json({error:'An item is no longer available in the requested quantity. Please update your cart.'});
+      if (error.message.includes('IDEMPOTENCY_CONFLICT')) return res.status(409).json({error:'This checkout reference was already used. Refresh checkout before trying again.'});
+      return res.status(503).json({error:'We could not save your order. Please retry. Do not transfer payment until an order reference is shown.'});
+    }
+  }
 
   const paymentWindowHours = 24;
   const deadline = new Date(Date.now() + paymentWindowHours * 60 * 60 * 1000);
@@ -324,8 +351,10 @@ module.exports = async function handler(req, res) {
   // ── Send reminder first so we have its ID for the owner confirm-link ──
   let reminderId = '';
   try {
+    if (PREVIEW_TEST) throw new Error('Reminder disabled for preview testing');
     const reminderRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
+      signal: AbortSignal.timeout(5000),
       headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: `PeptideLab <${FROM_EMAIL}>`,
@@ -431,7 +460,7 @@ module.exports = async function handler(req, res) {
     </div>
 
     <div style="text-align:center">
-      <a href="${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}&items=${reorderData}${reminderId ? '&reminder_id=' + encodeURIComponent(reminderId) : ''}"
+      <a href="${CONFIRM_SECRET ? `${SITE_URL}/api/confirm-payment?order=${encodeURIComponent(orderName)}&email=${encodeURIComponent(email)}&amt=${encodeURIComponent(total)}&name=${encodeURIComponent(firstName + ' ' + lastName)}&token=${makeConfirmToken(orderName, email, String(total))}&items=${reorderData}${reminderId ? '&reminder_id=' + encodeURIComponent(reminderId) : ''}` : `${SITE_URL}/admin`}"
         style="display:inline-block;background:#16a34a;color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;text-decoration:none">
         ✓ Confirm Payment Received
       </a>
@@ -458,9 +487,13 @@ module.exports = async function handler(req, res) {
   if (!customerEmailAccepted) console.error('Customer order email failed', JSON.stringify({ orderName, reason:customerResult.reason?.message }));
   if (!storeAlertAccepted) console.error('Store order alert failed', JSON.stringify({ orderName, reason:ownerResult.reason?.message }));
 
-  if (marketingConsent) addToAudience(email, firstName, lastName);
-  logToAirtable(orderRecord);
+  if (tracker.enabled()) {
+    try { await tracker.setEmails(orderName,{customer:customerEmailAccepted?'accepted':'failed',owner:storeAlertAccepted?'accepted':'failed',customerId:customerResult.value || null,ownerId:ownerResult.value || null,reminderId}); }
+    catch { console.error('Email status update failed',orderName); }
+  }
+  if (marketingConsent) await addToAudience(email, firstName, lastName);
+  await logToAirtable(orderRecord);
 
-  return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, bsb: BSB, acct: ACCOUNT, customerEmailAccepted, storeAlertAccepted });
+  return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, bsb: BSB, acct: ACCOUNT, customerEmailAccepted, storeAlertAccepted, orderSaved:tracker.enabled() });
 };
 if (process.env.NODE_ENV === 'test') module.exports._pricing = { calculateOrder, validateAvailability };
