@@ -205,19 +205,6 @@
             </div>
           </div>
 
-          <!-- INTERNATIONAL SWIFT -->
-          <div class="co-pay-opt" id="popt-intl" onclick="selectPayMethod('intl')">
-            <div class="co-pay-opt__hdr">
-              <div class="co-radio-dot"></div>
-              <span>International Wire Transfer (SWIFT)</span>
-            </div>
-            <div class="co-pay-opt__details" id="pdet-intl" style="display:none">
-              <div id="pfields-intl"><div class="co-pay-intl-note">Pay in AUD using SWIFT. Full beneficiary details will be shown after placing your order. International transfers may take 1–3 business days.</div></div>
-              <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#60f7a4;font-weight:800">A$0.00</span></div>
-            </div>
-          </div>
-
-
         </div>
         <div class="co-bsb-note" id="coPaymentNote" style="margin-top:10px;border-radius:8px;background:#142B42;border:1px solid #35516A">Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.</div>
       </div>
@@ -286,8 +273,6 @@
         <div class="co-success__ref-box">
           Your order reference: <strong id="coSuccessRef" style="color:#fff;font-size:17px"></strong>
         </div>
-        <p class="co-success__transfer-tip" id="coSuccessIntlTransferTip" hidden>Sending from overseas? Wise or Revolut may let you send AUD to the Australian bank account above. Enter the account details exactly as shown, include your order reference, and check the final AUD amount and fees before confirming the transfer.</p>
-        <p class="co-success__transfer-tip" id="coSuccessIntlTimingTip" hidden>Your transfer may take time to appear as received in our account. We’ll fulfil your order as soon as the full payment has cleared.</p>
       </div>
 
       <div class="co-success__notice co-success__notice--green">
@@ -335,8 +320,8 @@
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar">
-  <span class="announcement-bar__desktop"><strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Standard and express delivery<span>•</span>Worldwide delivery</span>
-  <span class="announcement-bar__mobile"><strong>🇦🇺 Australian-based</strong> · Worldwide delivery</span>
+  <span class="announcement-bar__desktop"><strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Standard and express delivery across Australia</span>
+  <span class="announcement-bar__mobile"><strong>🇦🇺 Australian-based</strong> · Australia-wide delivery</span>
 </div>
 
 <!-- NAVIGATION -->
@@ -583,7 +568,7 @@
       <div class="why-grid">
         <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="why-card__title">Third-Party Batch Certified</div><p class="why-card__text">Every batch independently tested. HPLC and MS results documented per batch. Certificates available in our directory — not hidden, not on request.</p></div>
         <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="why-card__title">Standard or Express AU Delivery</div><p class="why-card__text">Choose $10 standard or $15 express delivery within Australia. Orders of $200 AUD or more receive free standard shipping, or express for a $5 upgrade.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="why-card__title">Ships Worldwide</div><p class="why-card__text">International shipping to destinations where research compound import is permitted. Customers responsible for local compliance.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="why-card__title">Australia-Wide Delivery</div><p class="why-card__text">Standard and express delivery are available across Australia. International ordering is temporarily unavailable.</p></div>
         <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="why-card__title">Discreet Packaging</div><p class="why-card__text">All orders shipped in plain, unmarked outer packaging. Cold-chain protocols applied where required. Tracking provided for all orders.</p></div>
         <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div class="why-card__title">Transparent Documentation</div><p class="why-card__text">Our full batch certificate directory is publicly available. Every compound, every lot, every test date — no gatekeeping.</p></div>
         <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="why-card__title">Secure Ordering</div><p class="why-card__text">Orders are submitted through an encrypted connection. Payment instructions and a unique bank-transfer reference are provided after ordering.</p></div>
@@ -598,7 +583,7 @@
       <div class="section-header section-header--center"><div class="section-label">FAQ</div><h2 class="section-title">Common Questions</h2><p class="section-sub">Quick answers for Australian and international research customers.</p></div>
       <div class="faq-list">
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Are these products for human use?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">No. All products are for laboratory research purposes only. Not for human consumption, veterinary use, or any clinical application. By purchasing you confirm products will be used in a supervised laboratory research setting.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Orders of $200 AUD or more receive free standard shipping. Express upgrades are $5 within Australia, $13 to New Zealand, and $20 to other international destinations.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Australian orders of $200 AUD or more receive free standard shipping, with express available for a $5 upgrade.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How are products shipped within Australia?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Australian customers can choose standard delivery for $10 AUD or express delivery for $15 AUD. Orders of $200 AUD or more receive free standard delivery, or express for a $5 upgrade. All orders include tracking and discreet, unmarked packaging.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How should peptides be stored?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Store lyophilised peptides at -20°C or below in a dry, dark environment. Avoid repeated freeze-thaw cycles. Once reconstituted, store at 2–8°C and use within the timeframe required by your research protocol. See each product's specification sheet for compound-specific guidance.</div></div>
       </div>
@@ -609,7 +594,7 @@
   <section class="final-cta">
     <div class="container">
       <h2 class="final-cta__title">Explore Research Peptides</h2>
-      <p class="final-cta__sub">Browse our full catalog of batch-certified research compounds. Express delivery across Australia. Ships worldwide.</p>
+      <p class="final-cta__sub">Browse our full catalog of batch-certified research compounds. Express delivery across Australia.</p>
       <div class="final-cta__actions">
         <button class="btn btn--teal btn--lg" onclick="showPage('shop')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop Research Peptides</button>
         <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">View Batch Certificates</button>
@@ -747,7 +732,7 @@
             <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><div id="pdpDescDetail"><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Each batch is independently tested and documented.</p></div></div>
             <div class="tab-content" id="tab-specs"><table class="spec-table" id="pdpSpecTable"></table></div>
             <div class="tab-content" id="tab-storage"><div id="pdpStorageContent"><p><strong>Lyophilised Storage</strong></p><p>Store at <strong>-20°C or below</strong> in a dry, dark environment. Avoid repeated freeze-thaw cycles. Properly stored lyophilised compound is stable for up to 24 months from manufacture date.</p><p><strong>After Reconstitution</strong></p><p>Store at <strong>2–8°C</strong> (refrigerated). Use within the timeframe required by your laboratory protocol. Do not freeze reconstituted solution unless required by research conditions.</p><p><strong>Handling</strong></p><p>Handle with appropriate laboratory PPE. Reconstitute in a sterile environment using appropriate laboratory-grade solvent per research protocol.</p></div></div>
-            <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. Orders of $200 AUD or more receive <strong>free standard shipping</strong>, with express available as a $5 AUD upgrade.</p><p>Standard and express shipping options are also available to eligible international destinations. Customers are responsible for local import compliance. All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
+            <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. Orders of $200 AUD or more receive <strong>free standard shipping</strong>, with express available as a $5 AUD upgrade.</p><p>International ordering is temporarily unavailable. All Australian orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
           </div>
           <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
           <div style="margin-top:24px;" id="pdpFaq"></div>
@@ -811,13 +796,13 @@
       <div class="section-label">Our Mission</div>
       <h2 class="section-title">Precision Supply for the Research Community</h2>
       <p style="font-size:16px;line-height:1.8;color:var(--text-secondary);margin-bottom:16px;">PeptideLab is an Australian-based supplier of research-grade peptides. We exist to supply researchers, laboratories, and institutions with independently tested compounds, backed by traceable batch documentation.</p>
-      <p style="font-size:15px;line-height:1.8;color:var(--text-muted);margin-bottom:16px;">Standard and express delivery are available across Australia and to eligible worldwide destinations. Orders of $200 AUD or more receive free standard shipping; express upgrades depend on the destination.</p>
+      <p style="font-size:15px;line-height:1.8;color:var(--text-muted);margin-bottom:16px;">Standard and express delivery are available across Australia. Orders of $200 AUD or more receive free standard shipping, with express available for a $5 upgrade.</p>
       <p style="font-size:15px;line-height:1.8;color:var(--text-muted);margin-bottom:32px;">Our batch certificate directory is publicly accessible — no request required, no gatekeeping. Every compound, every lot, every test date is published for full transparency.</p>
       <div class="values-grid">
         <div class="value-card"><div class="value-card__title">Scientific Integrity</div><p class="value-card__text">We make no claims beyond what test data supports. Documentation is factual and verifiable.</p></div>
         <div class="value-card"><div class="value-card__title">Compliance First</div><p class="value-card__text">Sold for research use only. We are transparent about what compounds are and are not for.</p></div>
         <div class="value-card"><div class="value-card__title">Independent Verification</div><p class="value-card__text">Every batch certified by accredited third-party laboratories — not self-certified.</p></div>
-        <div class="value-card"><div class="value-card__title">Australian Operations</div><p class="value-card__text">Based in Australia. Express domestic delivery. Worldwide shipping available.</p></div>
+        <div class="value-card"><div class="value-card__title">Australian Operations</div><p class="value-card__text">Based in Australia, with standard and express domestic delivery.</p></div>
       </div>
     </div>
     <div class="about-visual">
@@ -839,11 +824,11 @@
     <div style="margin-bottom:40px;">
       <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal-600);margin-bottom:16px;">Shipping &amp; Orders (Australia &amp; International)</div>
       <div class="faq-list">
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Orders of $200 AUD or more receive free standard shipping; express upgrades are $5 within Australia, $13 to New Zealand, and $20 to other international destinations. Below $200, Australian shipping is $10 standard or $15 express; New Zealand shipping is $15 standard or $28 express; and other international shipping is $20 standard or $40 express.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Australian orders of $200 AUD or more receive free standard shipping, with express available for a $5 upgrade. Below $200, standard shipping is $10 and express shipping is $15.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How fast is Australian delivery?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Standard Australian delivery is estimated at 3–7 business days and express at 1–2 business days. Orders are processed within 1–2 business days, and rural delivery times may vary. Tracking is provided by email.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you ship internationally?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. New Zealand shipping is $15 standard or $28 express. Other eligible international destinations are $20 standard or $40 express. Orders of $200 AUD or more receive free standard shipping, or express for a $13 upgrade to New Zealand and a $20 upgrade to other international destinations. Buyers are responsible for compliance with local import laws.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you ship internationally?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">International ordering is temporarily unavailable.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Can I return opened products?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Opened products cannot be returned. Unopened sealed products may be eligible for return within 30 days. If you receive a damaged or incorrect product, contact us within 7 days of delivery with photos and your order number.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Payment is accepted by bank transfer. Australian and New Zealand customers receive local transfer instructions; eligible international customers receive the available transfer details at checkout. Orders are processed after funds clear.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Payment is currently accepted by Australian bank transfer for Australian orders. Orders are processed after funds clear.</div></div>
       </div>
     </div>
     <div style="background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;">
@@ -872,7 +857,7 @@
     </div></div>
     <div style="display:flex;flex-direction:column;gap:16px;">
       <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="contact-card__title">Email Support</div><p class="contact-card__text">support@aupeptidelab.com<br/>General enquiries &amp; order support.<br/><strong style="color:var(--text-secondary);">Response: 1–2 business days (AEST)</strong></p></div></div>
-      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="contact-card__title">Australian Operations</div><p class="contact-card__text">Orders dispatched from Australia.<br/>Express AU delivery: 1–2 business days.<br/>Worldwide shipping available.</p></div></div>
+      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="contact-card__title">Australian Operations</div><p class="contact-card__text">Orders dispatched from Australia.<br/>Express AU delivery: 1–2 business days.<br/>International ordering is temporarily unavailable.</p></div></div>
       <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div><div class="contact-card__title">Institutional &amp; Bulk Orders</div><p class="contact-card__text">support@aupeptidelab.com<br/>For research institutions requiring volume pricing or custom documentation.</p></div></div>
       <div style="background:var(--slate-50);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;"><div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:10px;">Business Hours (AEST)</div><div style="font-size:13px;color:var(--text-muted);line-height:2;">Monday – Friday: 9:00am – 5:00pm<br/>Saturday – Sunday: Closed<br/><span style="color:var(--teal-600);font-weight:600;">Orders processed on business days only</span></div></div>
     </div>
@@ -956,7 +941,7 @@
     <h2>Order Processing</h2><p>Orders are processed within <strong>1–2 business days</strong> (Mon–Fri, excluding Australian public holidays) following payment confirmation. You will receive a tracking number by email once dispatched.</p>
     <h2>Australian Shipping</h2>
     <ul><li><strong>Standard Shipping (3–7 business days):</strong> Flat rate <strong>$10 AUD</strong>.</li><li><strong>Express Shipping (1–2 business days):</strong> Flat rate <strong>$15 AUD</strong>. Metro estimates shown; rural delivery may take longer.</li><li><strong>Orders of $200 AUD or more:</strong> Standard shipping is <strong>free</strong>, or choose express for a <strong>$5 AUD upgrade</strong>.</li></ul>
-    <h2>International Shipping</h2><p>We ship to destinations where purchase and import of research compounds is lawfully permitted. New Zealand shipping is <strong>$15 AUD standard</strong> or <strong>$28 AUD express</strong>. Other eligible international destinations are <strong>$20 AUD standard</strong> or <strong>$40 AUD express</strong>. Orders of $200 AUD or more receive <strong>free standard shipping</strong>; express is a <strong>$13 AUD upgrade to New Zealand</strong> or a <strong>$20 AUD upgrade to other international destinations</strong>. International standard and express orders are sent with Australia Post. Delivery estimates vary by destination and are shown at checkout; customs clearance may add time. Buyers are responsible for local import laws, duties, taxes, customs delays and seizures.</p>
+    <h2>International Shipping</h2><p>International ordering is temporarily unavailable.</p>
     <h2>Packaging</h2><p>All orders shipped in plain, unmarked outer packaging. No branding or contents descriptions on the exterior. Cold-chain compounds packaged with appropriate thermal insulation.</p>
     <h2>Tracking</h2><p>Tracking number provided by email for all orders. May take up to 24 hours to update in the carrier's system after dispatch.</p>
     <h2>Damaged or Missing Orders</h2><p>Contact support@aupeptidelab.com within <strong>7 days of delivery</strong> with your order number and photos if your order arrives damaged, incomplete, or incorrect.</p>
@@ -1010,7 +995,7 @@
           <div class="footer__logo-mark"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg></div>
           <span class="footer__logo-name">Peptide<span>Lab</span></span>
         </div>
-        <p class="footer__tagline">Australian-based research peptide supplier. Third-party batch-certified compounds. Express delivery nationwide. Ships worldwide.</p>
+        <p class="footer__tagline">Australian-based research peptide supplier. Third-party batch-certified compounds. Express delivery nationwide.</p>
         <div class="footer__compliance"><strong style="color:var(--slate-400);display:block;margin-bottom:4px;">Compliance Statement</strong>All products sold for laboratory research purposes only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. This website does not provide medical advice. Customers responsible for compliance with all applicable laws. All prices AUD.</div>
       </div>
       <div>
@@ -1212,7 +1197,6 @@ let coPayApiData    = {};
 
 const PAY_METHOD_LABELS = {
   aud:  'Australian Bank Transfer',
-  intl: 'International Wire Transfer (SWIFT)',
 };
 
 const SHIP_ZONES = {
@@ -1281,7 +1265,7 @@ async function coLoadPayMethods() {
 
 function selectPayMethod(id) {
   coSelectedPayId = id;
-  ['aud', 'intl'].forEach(mid => {
+  ['aud'].forEach(mid => {
     const opt = document.getElementById(`popt-${mid}`);
     const det = document.getElementById(`pdet-${mid}`);
     const dot = opt?.querySelector('.co-radio-dot');
@@ -1301,14 +1285,17 @@ function coUpdatePaymentForCountry() {
   const country = document.getElementById('co-country')?.value || 'AU';
   const isDomestic = country === 'AU';
   const audOpt = document.getElementById('popt-aud');
-  const intlOpt = document.getElementById('popt-intl');
   if (audOpt) audOpt.style.display = isDomestic ? '' : 'none';
-  if (intlOpt) intlOpt.style.display = isDomestic ? 'none' : '';
-  selectPayMethod(isDomestic ? 'aud' : 'intl');
+  selectPayMethod('aud');
   const note = document.getElementById('coPaymentNote');
   if (note) note.textContent = isDomestic
     ? 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.'
-    : 'Send the payment in AUD and use your order reference. Select a fee option that ensures the full order total reaches us. Your transfer may take time to appear as received in our account. We’ll fulfil your order as soon as the full payment has cleared.';
+    : 'International ordering is temporarily unavailable.';
+  const placeOrderButton = document.getElementById('coPlaceBtn');
+  if (placeOrderButton) {
+    placeOrderButton.disabled = !isDomestic;
+    placeOrderButton.textContent = isDomestic ? 'Place Order' : 'International Orders Temporarily Unavailable';
+  }
 }
 
 function coGetShipMethods() {
@@ -1600,6 +1587,12 @@ function coSelectSuburbSuggestion() {
 function coVal(id) { return document.getElementById(id)?.value.trim() || ''; }
 
 async function placeOrder() {
+  if (coVal('co-country') !== 'AU') {
+    const e = document.getElementById('coError');
+    e.textContent = 'International ordering is temporarily unavailable.';
+    e.style.display = 'block';
+    return;
+  }
   const required = { 'co-email': 'Email', 'co-first': 'First name', 'co-last': 'Last name', 'co-address1': 'Address', 'co-suburb': 'Suburb / City', 'co-postcode': 'Postcode' };
   let firstErr = null;
   for (const [id, label] of Object.entries(required)) {
@@ -1670,18 +1663,9 @@ async function placeOrder() {
       : !data.storeAlertAccepted
         ? 'Your confirmation email was accepted. Our store alert is delayed; contact support with your reference if you need urgent help.'
         : 'A confirmation email has been accepted for sending; please keep this order reference as a backup.';
-    const isInternationalPayment = data.paymentMethod === 'intl';
-    document.getElementById('coSuccessIntlTransferTip').hidden = !isInternationalPayment;
-    document.getElementById('coSuccessIntlTimingTip').hidden = !isInternationalPayment;
-    document.getElementById('coSuccessPaymentTitle').textContent = isInternationalPayment
-      ? 'Step 1: Complete an International Wire Transfer'
-      : 'Step 1: Complete an Australian Bank Transfer';
-    document.getElementById('coSuccessDeadline').textContent = isInternationalPayment
-      ? 'International orders are reserved for 72 hours to allow the SWIFT transfer to arrive.'
-      : 'Orders not paid within 24 hours will be automatically cancelled.';
-    document.getElementById('coSuccessPaymentHelp').textContent = isInternationalPayment
-      ? 'Send in AUD and choose a fee option that ensures the full order total reaches us. International transfers usually take 1–3 business days.'
-      : 'Use the exact BSB, account number and order reference shown above.';
+    document.getElementById('coSuccessPaymentTitle').textContent = 'Step 1: Complete an Australian Bank Transfer';
+    document.getElementById('coSuccessDeadline').textContent = 'Orders not paid within 24 hours will be automatically cancelled.';
+    document.getElementById('coSuccessPaymentHelp').textContent = 'Use the exact BSB, account number and order reference shown above.';
     // Render selected bank fields — prefer API data, fall back to order response BSB
     const apiFields = data.paymentFields || coPayApiData[data.paymentMethod || coSelectedPayId] || [];
     const fields = apiFields.length ? apiFields

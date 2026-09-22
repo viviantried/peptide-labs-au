@@ -9,7 +9,6 @@ const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
 const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret || RESEND_KEY;
 const ACCOUNT_NAME   = 'Australian Peptide Labs Store';
-const BENEFICIARY_ADDRESS = process.env.BENEFICIARY_ADDRESS || process.env.beneficiary_address || '';
 const OWNER_EMAIL    = 'support@aupeptidelab.com';
 const ORDER_ALERT_EMAIL = 'viviantriedk@gmail.com';
 const FROM_EMAIL     = 'orders@aupeptidelab.com';
@@ -54,19 +53,7 @@ function bundleSelection(raw) {
   return selections;
 }
 
-function paymentDetails(method) {
-  if (method === 'intl') {
-    return [
-      { label:'Account Name', value:ACCOUNT_NAME },
-      { label:'Bank', value:'Commonwealth Bank of Australia' },
-      { label:'SWIFT / BIC', value:'CTBAAU2S' },
-      { label:'BSB', value:BSB },
-      { label:'Account No.', value:ACCOUNT },
-      { label:'14-digit account', value:`${BSB || ''}${ACCOUNT || ''}`.replace(/\D/g, '') },
-      { label:'Beneficiary address', value:BENEFICIARY_ADDRESS },
-      { label:'Currency', value:'AUD' },
-    ].filter(field => field.value);
-  }
+function paymentDetails() {
   return [
     { label:'Account Name', value:ACCOUNT_NAME },
     { label:'BSB', value:BSB },
@@ -213,10 +200,13 @@ module.exports = async function handler(req, res) {
   if (!/^\S+@\S+\.\S+$/.test(String(email)) || !/^[A-Z]{2}$/.test(String(country || ''))) {
     return res.status(400).json({ error: 'Invalid customer details' });
   }
+  if (country !== 'AU') {
+    return res.status(400).json({ error: 'International ordering is temporarily unavailable' });
+  }
 
-  const paymentMethod = country === 'AU' ? 'aud' : 'intl';
-  const paymentLabel = paymentMethod === 'intl' ? 'International Wire Transfer (SWIFT)' : 'Australian Bank Transfer';
-  const paymentFields = paymentDetails(paymentMethod);
+  const paymentMethod = 'aud';
+  const paymentLabel = 'Australian Bank Transfer';
+  const paymentFields = paymentDetails();
   const paymentRowsHtml = paymentFields.map(field => `
         <tr><td style="padding:6px 0;color:#555;font-size:14px;width:44%">${field.label}</td><td style="padding:6px 0;font-weight:700;font-size:14px">${field.value}</td></tr>`).join('');
 
@@ -231,7 +221,7 @@ module.exports = async function handler(req, res) {
 
   const orderName = generateOrderId();
 
-  const paymentWindowHours = paymentMethod === 'intl' ? 72 : 24;
+  const paymentWindowHours = 24;
   const deadline = new Date(Date.now() + paymentWindowHours * 60 * 60 * 1000);
   const deadlineStr = deadline.toLocaleString('en-AU', {
     timeZone: 'Australia/Sydney',
@@ -316,13 +306,12 @@ module.exports = async function handler(req, res) {
     <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">Your order is waiting, ${firstName}!</h1>
     <p style="color:#666;margin:0 0 24px;font-size:15px">We noticed payment hasn't been received yet for order <strong>${orderName}</strong>. Please transfer as soon as possible to avoid cancellation.</p>
     <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:22px;margin:0 0 24px">
-      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">${paymentMethod === 'intl' ? 'International Wire Transfer (SWIFT)' : 'Bank Transfer Details'}</h2>
+      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">Bank Transfer Details</h2>
       <table style="width:100%;border-collapse:collapse">
         ${paymentRowsHtml}
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Amount</td><td style="padding:6px 0;font-weight:800;font-size:18px;color:#16a34a">A$${Number(total).toFixed(2)}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>
-      ${paymentMethod === 'intl' ? `<div style="margin-top:10px;font-size:12px;line-height:1.6;color:#555">Sending from overseas? Wise or Revolut may let you send AUD to this Australian account. Use the details above, include ${orderName} as the reference, and check fees so the full amount arrives. International transfers may take 1–3 business days.</div>` : ''}
     </div>
     <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
   </div>
@@ -344,7 +333,7 @@ module.exports = async function handler(req, res) {
         to: email,
         subject: `Reminder: Payment still pending — Order ${orderName}`,
         html: reminderEmailHtml,
-        scheduled_at: new Date(Date.now() + (paymentMethod === 'intl' ? 48 : 12) * 60 * 60 * 1000).toISOString(),
+        scheduled_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
       }),
     });
     if (reminderRes.ok) {
@@ -364,11 +353,11 @@ module.exports = async function handler(req, res) {
   </div>
   <div style="padding:32px">
     <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 6px">Order Received — Payment Required</h1>
-    <p style="color:#666;margin:0 0 24px;font-size:15px">Hi ${firstName}, thank you for your order. Please complete your ${paymentMethod === 'intl' ? 'international wire transfer within 72 hours' : 'bank transfer within 24 hours'} to confirm it.</p>
+    <p style="color:#666;margin:0 0 24px;font-size:15px">Hi ${firstName}, thank you for your order. Please complete your bank transfer within 24 hours to confirm it.</p>
 
     <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:14px 16px;margin:0 0 24px">
       <div style="font-size:13px;font-weight:700;color:#b45309">PAYMENT DUE BY ${deadlineStr.toUpperCase()} (AEST)</div>
-      <div style="font-size:13px;color:#92400e;margin-top:4px">Your order will be cancelled if payment is not received in time.${paymentMethod === 'intl' ? ' International transfers may take 1–3 business days to clear.' : ''}</div>
+      <div style="font-size:13px;color:#92400e;margin-top:4px">Your order will be cancelled if payment is not received in time.</div>
     </div>
 
     <div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:0 0 24px;background:#fafafa">
@@ -385,26 +374,15 @@ module.exports = async function handler(req, res) {
     </table>
 
     <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:22px;margin:0 0 24px">
-      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">${paymentMethod === 'intl' ? 'International Wire Transfer (SWIFT)' : 'Bank Transfer Details'}</h2>
+      <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">Bank Transfer Details</h2>
       <table style="width:100%;border-collapse:collapse">
         <tr><td style="padding:6px 0;color:#555;font-size:14px;width:44%">Account Name</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT_NAME}</td></tr>
-        ${paymentMethod === 'intl' ? `
-        <tr><td style="padding:6px 0;color:#555;font-size:14px">Bank</td><td style="padding:6px 0;font-weight:700;font-size:14px">Commonwealth Bank of Australia</td></tr>
-        <tr><td style="padding:6px 0;color:#555;font-size:14px">SWIFT / BIC</td><td style="padding:6px 0;font-weight:700;font-size:14px">CTBAAU2S</td></tr>
-        <tr><td style="padding:6px 0;color:#555;font-size:14px">BSB</td><td style="padding:6px 0;font-weight:700;font-size:14px">${BSB}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;font-size:14px">Account No.</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;font-size:14px">14-digit account</td><td style="padding:6px 0;font-weight:700;font-size:14px">${`${BSB || ''}${ACCOUNT || ''}`.replace(/\D/g, '')}</td></tr>
-        ${BENEFICIARY_ADDRESS ? `<tr><td style="padding:6px 0;color:#555;font-size:14px">Beneficiary address</td><td style="padding:6px 0;font-weight:700;font-size:14px">${BENEFICIARY_ADDRESS}</td></tr>` : ''}
-        <tr><td style="padding:6px 0;color:#555;font-size:14px">Currency</td><td style="padding:6px 0;font-weight:700;font-size:14px">AUD</td></tr>
-        ` : `
         <tr><td style="padding:6px 0;color:#555;font-size:14px">BSB</td><td style="padding:6px 0;font-weight:700;font-size:14px">${BSB}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Account Number</td><td style="padding:6px 0;font-weight:700;font-size:14px">${ACCOUNT}</td></tr>
-        `}
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Amount</td><td style="padding:6px 0;font-weight:800;font-size:18px;color:#16a34a">A$${Number(total).toFixed(2)}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>
       <div style="margin-top:14px;padding:10px 12px;background:#dcfce7;border-radius:6px;font-size:13px;color:#166534">Always use <strong>${orderName}</strong> as your payment reference.</div>
-      ${paymentMethod === 'intl' ? `<div style="margin-top:10px;font-size:12px;line-height:1.6;color:#555">Sending from overseas? Wise or Revolut may let you send AUD to this Australian account. Use the details above, include ${orderName} as the reference, and check fees so the full amount arrives. Australia does not use IBAN; if your provider requires one or needs a beneficiary address that is not shown, contact support before sending.</div>` : ''}
     </div>
 
     <p style="color:#666;font-size:13px;margin:0 0 8px">Once your payment clears, your order will be dispatched within 1-2 business days. A <strong>dispatch confirmation email</strong> with your tracking number will be sent when your order ships.</p>
@@ -424,7 +402,7 @@ module.exports = async function handler(req, res) {
 <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1)">
   <div style="background:#111;padding:20px 32px">
     <div style="color:#fff;font-size:17px;font-weight:700">New Order — ${orderName}</div>
-    <div style="color:#aaa;font-size:13px;margin-top:2px">A$${Number(total).toFixed(2)} — Awaiting ${paymentMethod === 'intl' ? 'SWIFT Transfer' : 'Bank Transfer'}</div>
+    <div style="color:#aaa;font-size:13px;margin-top:2px">A$${Number(total).toFixed(2)} — Awaiting Bank Transfer</div>
   </div>
   <div style="padding:28px 32px">
     <div style="margin-bottom:20px">
@@ -462,7 +440,7 @@ module.exports = async function handler(req, res) {
 </div>
 </body></html>`;
 
-  const ownerSubject = `New Order ${orderName} — A$${Number(total).toFixed(2)} (${paymentMethod === 'intl' ? 'SWIFT' : 'bank transfer'} pending)`;
+  const ownerSubject = `New Order ${orderName} — A$${Number(total).toFixed(2)} (bank transfer pending)`;
   const [customerResult, ownerResult] = await Promise.allSettled([
     sendEmail(email, `Order ${orderName} — Complete Your Bank Transfer`, customerHtml, orderName, 'customer'),
     (async () => {
