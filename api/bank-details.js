@@ -20,6 +20,17 @@ module.exports = function handler(req, res) {
         { label: 'Account No.',  value: ACCOUNT },
       ],
     });
+
+    methods.push({
+      id: 'intl',
+      label: 'International Transfer via Wise / Revolut',
+      currency: 'AUD',
+      fields: [
+        { label: 'Account Name', value: 'Australian Peptide Labs Store' },
+        { label: 'BSB',          value: BSB },
+        { label: 'Account No.',  value: ACCOUNT },
+      ],
+    });
   }
 
   return res.status(200).json({ methods });

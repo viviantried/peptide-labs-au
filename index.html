@@ -66,10 +66,63 @@
         <div class="co-section-title">Delivery</div>
         <div class="co-field">
           <label for="co-country">Country / Region</label>
-          <select class="co-select" id="co-country" autocomplete="shipping country">
+          <select class="co-select" id="co-country" onchange="coCountryChange()" autocomplete="shipping country">
             <option value="AU">Australia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="JP">Japan</option>
+            <option value="SG">Singapore</option>
+            <option value="HK">Hong Kong</option>
+            <option value="IE">Ireland</option>
+            <option value="IT">Italy</option>
+            <option value="ES">Spain</option>
+            <option value="NL">Netherlands</option>
+            <option value="SE">Sweden</option>
+            <option value="NO">Norway</option>
+            <option value="DK">Denmark</option>
+            <option value="FI">Finland</option>
+            <option value="CH">Switzerland</option>
+            <option value="AT">Austria</option>
+            <option value="BE">Belgium</option>
+            <option value="PT">Portugal</option>
+            <option value="PL">Poland</option>
+            <option value="GR">Greece</option>
+            <option value="CZ">Czech Republic</option>
+            <option value="RO">Romania</option>
+            <option value="HU">Hungary</option>
+            <option value="SK">Slovakia</option>
+            <option value="HR">Croatia</option>
+            <option value="BG">Bulgaria</option>
+            <option value="LT">Lithuania</option>
+            <option value="LV">Latvia</option>
+            <option value="EE">Estonia</option>
+            <option value="MT">Malta</option>
+            <option value="CY">Cyprus</option>
+            <option value="LU">Luxembourg</option>
+            <option value="SI">Slovenia</option>
+            <option value="KR">South Korea</option>
+            <option value="TW">Taiwan</option>
+            <option value="MY">Malaysia</option>
+            <option value="TH">Thailand</option>
+            <option value="PH">Philippines</option>
+            <option value="ID">Indonesia</option>
+            <option value="VN">Vietnam</option>
+            <option value="IN">India</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="IL">Israel</option>
+            <option value="ZA">South Africa</option>
+            <option value="MX">Mexico</option>
+            <option value="BR">Brazil</option>
+            <option value="AR">Argentina</option>
+            <option value="CL">Chile</option>
+            <option value="CO">Colombia</option>
           </select>
-          <small class="co-locality-help">Australian delivery addresses only.</small>
+          <small class="co-locality-help">International orders are paid in AUD through Wise, Revolut or another transfer service.</small>
         </div>
         <div class="co-row">
           <div class="co-field">
@@ -142,7 +195,7 @@
       <!-- Payment -->
       <div class="co-section">
         <div class="co-section-title">Payment</div>
-        <p style="font-size:12px;color:#555;margin:0 0 12px">Payment is by Australian bank transfer. Your details are encrypted in transit.</p>
+        <p style="font-size:12px;color:#555;margin:0 0 12px">Payment is by bank transfer in AUD. Your details are encrypted in transit.</p>
         <div class="co-pay-group" id="coPayGroup">
 
           <!-- AUSTRALIA -->
@@ -154,6 +207,19 @@
             <div class="co-pay-opt__details" id="pdet-aud">
               <div class="co-bsb-row"><span>Amount</span><span class="co-pay-amt-inline" style="color:#60f7a4;font-weight:800">A$0.00</span></div>
               <div class="co-pay-intl-note" style="margin-top:8px">Full bank details will be shown on the confirmation page after placing your order.</div>
+            </div>
+          </div>
+
+          <!-- INTERNATIONAL VIA WISE / REVOLUT -->
+          <div class="co-pay-opt" id="popt-intl" onclick="selectPayMethod('intl')" style="display:none">
+            <div class="co-pay-opt__hdr">
+              <div class="co-radio-dot"></div>
+              <span>International Transfer via Wise / Revolut</span>
+            </div>
+            <div class="co-pay-opt__details" id="pdet-intl" style="display:none">
+              <div class="co-pay-intl-note">Use your own Wise, Revolut or similar transfer service to convert your currency and send the exact total in AUD as a local Australian bank transfer. No SWIFT transfer is required.</div>
+              <div class="co-bsb-row"><span>Amount to arrive</span><span class="co-pay-amt-inline" style="color:#60f7a4;font-weight:800">A$0.00</span></div>
+              <div class="co-pay-intl-note" style="margin-top:8px">The Australian account name, BSB and account number will be shown after placing your order. Transfer availability depends on your provider and country.</div>
             </div>
           </div>
 
@@ -272,8 +338,8 @@
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar">
-  <span class="announcement-bar__desktop"><strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Standard and express delivery across Australia</span>
-  <span class="announcement-bar__mobile"><strong>🇦🇺 Australian-based</strong> · Australia-wide delivery</span>
+  <span class="announcement-bar__desktop"><strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Australian and international delivery</span>
+  <span class="announcement-bar__mobile"><strong>🇦🇺 Australian-based</strong> · International delivery</span>
 </div>
 
 <!-- NAVIGATION -->
@@ -363,7 +429,7 @@
       </div>
       <div id="cartFreeShipSuggestions" class="cart-free-ship-suggestions" hidden></div>
       <div class="cart-checkout">
-        <div class="checkout-payment-note"><strong>Payment method</strong><span>Australian bank transfer · details shown after you place the order</span></div>
+        <div class="checkout-payment-note"><strong>Payment method</strong><span>Bank transfer in AUD · international customers can pay through Wise or Revolut</span></div>
         <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
         <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
       </div>
@@ -752,7 +818,7 @@
               <span aria-hidden="true">🚚</span>
               <span><strong>Ships from Australia</strong><br>Express delivery: 1–2 business days · Standard: 3–7 business days</span>
             </div>
-            <div class="pdp-payment-note"><strong>Payment:</strong> Australian bank transfer. Account details are shown after the order is placed.</div>
+            <div class="pdp-payment-note"><strong>Payment:</strong> Bank transfer in AUD. International customers can pay through Wise or Revolut.</div>
           </div>
           <div class="product-cert-box" id="pdpCertBox">
             <div><div class="product-cert-box__title" id="pdpCertTitle">Product-specific batch records</div><div class="product-cert-box__sub" id="pdpCertSub">Independent third-party testing · Batch dates published in our directory</div></div>
@@ -771,7 +837,7 @@
             <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><div id="pdpDescDetail"><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Each batch is independently tested and documented.</p></div></div>
             <div class="tab-content" id="tab-specs"><table class="spec-table" id="pdpSpecTable"></table></div>
             <div class="tab-content" id="tab-storage"><div id="pdpStorageContent"><p><strong>Lyophilised Storage</strong></p><p>Store at <strong>-20°C or below</strong> in a dry, dark environment. Avoid repeated freeze-thaw cycles. Properly stored lyophilised compound is stable for up to 24 months from manufacture date.</p><p><strong>After Reconstitution</strong></p><p>Store at <strong>2–8°C</strong> (refrigerated). Use within the timeframe required by your laboratory protocol. Do not freeze reconstituted solution unless required by research conditions.</p><p><strong>Handling</strong></p><p>Handle with appropriate laboratory PPE. Reconstitute in a sterile environment using appropriate laboratory-grade solvent per research protocol.</p></div></div>
-            <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. Orders of $200 AUD or more receive <strong>free standard shipping</strong>, with express available as a $5 AUD upgrade.</p><p>We currently accept Australian delivery addresses only. All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
+            <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. New Zealand and selected international destinations are also available, with the price and delivery estimate shown at checkout.</p><p>All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
           </div>
           <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
           <div style="margin-top:24px;" id="pdpFaq"></div>
@@ -865,9 +931,9 @@
       <div class="faq-list">
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Australian orders of $200 AUD or more receive free standard shipping, with express available for a $5 upgrade. Below $200, standard shipping is $10 and express shipping is $15.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How fast is Australian delivery?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Standard Australian delivery is estimated at 3–7 business days and express at 1–2 business days. Orders are processed within 1–2 business days, and rural delivery times may vary. Tracking is provided by email.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Where do you deliver?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">We currently accept Australian delivery addresses only.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Where do you deliver?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">We deliver across Australia, New Zealand and selected international destinations listed at checkout. Customers are responsible for checking their local import requirements.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Can I return opened products?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Opened products cannot be returned. Unopened sealed products may be eligible for return within 30 days. If you receive a damaged or incorrect product, contact us within 7 days of delivery with photos and your order number.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Payment is currently accepted by Australian bank transfer for Australian orders. Orders are processed after funds clear.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">What payment methods are accepted?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Australian orders can use a local bank transfer. International customers can use their own Wise, Revolut or similar service to send the exact order total in AUD to our Australian account. Orders are processed after funds clear.</div></div>
       </div>
     </div>
     <div style="background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);padding:28px 32px;text-align:center;">
@@ -896,7 +962,7 @@
     </div></div>
     <div style="display:flex;flex-direction:column;gap:16px;">
       <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="contact-card__title">Email Support</div><p class="contact-card__text">support@aupeptidelab.com<br/>General enquiries &amp; order support.<br/><strong style="color:var(--text-secondary);">Response: 1–2 business days (AEST)</strong></p></div></div>
-      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="contact-card__title">Australian Operations</div><p class="contact-card__text">Orders dispatched from Australia.<br/>Express AU delivery: 1–2 business days.<br/>Australian delivery addresses only.</p></div></div>
+      <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="contact-card__title">Australian Operations</div><p class="contact-card__text">Orders dispatched from Australia.<br/>Express AU delivery: 1–2 business days.<br/>Selected international destinations available.</p></div></div>
       <div class="contact-card"><div class="contact-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div><div class="contact-card__title">Institutional &amp; Bulk Orders</div><p class="contact-card__text">support@aupeptidelab.com<br/>For research institutions requiring volume pricing or custom documentation.</p></div></div>
       <div style="background:var(--slate-50);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;"><div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:10px;">Business Hours (AEST)</div><div style="font-size:13px;color:var(--text-muted);line-height:2;">Monday – Friday: 9:00am – 5:00pm<br/>Saturday – Sunday: Closed<br/><span style="color:var(--teal-600);font-weight:600;">Orders processed on business days only</span></div></div>
     </div>
@@ -974,13 +1040,13 @@
 <!--  POLICY PAGES                                                 -->
 <!-- ============================================================ -->
 <div class="page" id="page-shipping">
-  <div class="policy-hero"><h1 class="policy-hero__title">Shipping Policy</h1><p class="policy-hero__sub">Last updated: September 2026 · Australia-wide delivery</p></div>
+  <div class="policy-hero"><h1 class="policy-hero__title">Shipping Policy</h1><p class="policy-hero__sub">Last updated: September 2026 · Australian and international delivery</p></div>
   <div class="policy-body"><div class="container--narrow"><div class="policy-content">
     <div class="warning-box"><p>All products are sold for laboratory research purposes only. Customers are responsible for compliance with applicable laws in their jurisdiction.</p></div>
     <h2>Order Processing</h2><p>Orders are processed within <strong>1–2 business days</strong> (Mon–Fri, excluding Australian public holidays) following payment confirmation. You will receive a tracking number by email once dispatched.</p>
     <h2>Australian Shipping</h2>
     <ul><li><strong>Standard Shipping (3–7 business days):</strong> Flat rate <strong>$10 AUD</strong>.</li><li><strong>Express Shipping (1–2 business days):</strong> Flat rate <strong>$15 AUD</strong>. Metro estimates shown; rural delivery may take longer.</li><li><strong>Orders of $200 AUD or more:</strong> Standard shipping is <strong>free</strong>, or choose express for a <strong>$5 AUD upgrade</strong>.</li></ul>
-    <h2>Delivery Area</h2><p>We currently accept Australian delivery addresses only.</p>
+    <h2>International Shipping</h2><p>New Zealand standard shipping is $15 AUD and express shipping is $28 AUD. Other supported destinations are $20 AUD standard or $40 AUD express. Available countries, current prices and estimated delivery times are shown at checkout. Customers are responsible for confirming that the ordered products may lawfully be imported into their destination.</p>
     <h2>Packaging</h2><p>All orders shipped in plain, unmarked outer packaging. No branding or contents descriptions on the exterior. Cold-chain compounds packaged with appropriate thermal insulation.</p>
     <h2>Tracking</h2><p>Tracking number provided by email for all orders. May take up to 24 hours to update in the carrier's system after dispatch.</p>
     <h2>Damaged or Missing Orders</h2><p>Contact support@aupeptidelab.com within <strong>7 days of delivery</strong> with your order number and photos if your order arrives damaged, incomplete, or incorrect.</p>
@@ -1236,12 +1302,21 @@ let coPayApiData    = {};
 
 const PAY_METHOD_LABELS = {
   aud:  'Australian Bank Transfer',
+  intl: 'International Transfer via Wise / Revolut',
 };
 
 const SHIP_ZONES = {
   AU: [
     { id: 'au-std', label: 'Standard', carrier: 'Australia Post',         eta: '3–7 business days',  price: 10, freeOk: true,  isExpress: false },
     { id: 'au-exp', label: 'Express',  carrier: 'Australia Post Express', eta: '1–2 business days',  price: 15, freeOk: false, isExpress: true  },
+  ],
+  NZ: [
+    { id: 'nz-std', label: 'Standard', carrier: 'Aust. Post International', eta: '6–12 business days', price: 15, freeOk: true,  isExpress: false },
+    { id: 'nz-exp', label: 'Express',  carrier: 'Australia Post International Express', eta: '2–5 business days', price: 28, freeOk: false, isExpress: true },
+  ],
+  INTL: [
+    { id: 'int-std', label: 'Standard', carrier: 'Aust. Post International', eta: '7–21 business days', price: 20, freeOk: true,  isExpress: false },
+    { id: 'int-exp', label: 'Express',  carrier: 'Australia Post International Express', eta: '3–12 business days', price: 40, freeOk: false, isExpress: true },
   ],
 };
 let selectedShipping = null;
@@ -1253,7 +1328,8 @@ function trackFunnel(name, data = {}) {
 function coShipPrice(method, subtotal) {
   // Express upgrade when standard shipping is free
   if (method.isExpress && subtotal >= FREE_SHIP_THRESHOLD) {
-    return method.price - SHIP_ZONES.AU.find(option => option.freeOk).price;
+    const zone = method.id.startsWith('au-') ? 'AU' : method.id.startsWith('nz-') ? 'NZ' : 'INTL';
+    return method.price - SHIP_ZONES[zone].find(option => option.freeOk).price;
   }
   if (method.freeOk   && subtotal >= FREE_SHIP_THRESHOLD) return 0;
   return method.price;
@@ -1300,7 +1376,7 @@ async function coLoadPayMethods() {
 
 function selectPayMethod(id) {
   coSelectedPayId = id;
-  ['aud'].forEach(mid => {
+  ['aud', 'intl'].forEach(mid => {
     const opt = document.getElementById(`popt-${mid}`);
     const det = document.getElementById(`pdet-${mid}`);
     const dot = opt?.querySelector('.co-radio-dot');
@@ -1317,11 +1393,17 @@ function selectPayMethod(id) {
 }
 
 function coUpdatePaymentForCountry() {
+  const country = document.getElementById('co-country')?.value || 'AU';
+  const isDomestic = country === 'AU';
   const audOpt = document.getElementById('popt-aud');
-  if (audOpt) audOpt.style.display = '';
-  selectPayMethod('aud');
+  const intlOpt = document.getElementById('popt-intl');
+  if (audOpt) audOpt.style.display = isDomestic ? '' : 'none';
+  if (intlOpt) intlOpt.style.display = isDomestic ? 'none' : '';
+  selectPayMethod(isDomestic ? 'aud' : 'intl');
   const note = document.getElementById('coPaymentNote');
-  if (note) note.textContent = 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.';
+  if (note) note.textContent = isDomestic
+    ? 'Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.'
+    : 'Use Wise, Revolut or a similar service to send the exact AUD total to our Australian account. Use your order number as the payment reference. Orders are dispatched after the full payment clears.';
   const placeOrderButton = document.getElementById('coPlaceBtn');
   if (placeOrderButton) {
     placeOrderButton.disabled = false;
@@ -1330,7 +1412,10 @@ function coUpdatePaymentForCountry() {
 }
 
 function coGetShipMethods() {
-  return SHIP_ZONES.AU;
+  const country = document.getElementById('co-country')?.value || 'AU';
+  if (country === 'AU') return SHIP_ZONES.AU;
+  if (country === 'NZ') return SHIP_ZONES.NZ;
+  return SHIP_ZONES.INTL;
 }
 
 function coRenderShippingOptions() {
@@ -1686,13 +1771,18 @@ async function placeOrder() {
       : !data.storeAlertAccepted
         ? 'Your confirmation email was accepted. Our store alert is delayed; contact support with your reference if you need urgent help.'
         : 'A confirmation email has been accepted for sending; please keep this order reference as a backup.';
-    document.getElementById('coSuccessPaymentTitle').textContent = 'Step 1: Complete an Australian Bank Transfer';
+    const isInternationalPayment = (data.paymentMethod || coSelectedPayId) === 'intl';
+    document.getElementById('coSuccessPaymentTitle').textContent = isInternationalPayment
+      ? 'Step 1: Send AUD via Wise / Revolut'
+      : 'Step 1: Complete an Australian Bank Transfer';
     document.getElementById('coSuccessDeadline').textContent = 'Orders not paid within 24 hours will be automatically cancelled.';
-    document.getElementById('coSuccessPaymentHelp').textContent = 'Use the exact BSB, account number and order reference shown above.';
+    document.getElementById('coSuccessPaymentHelp').textContent = isInternationalPayment
+      ? 'In Wise, Revolut or a similar service, choose AUD and a local Australian bank transfer. The exact AUD total must arrive; do not use SWIFT.'
+      : 'Use the exact BSB, account number and order reference shown above.';
     // Render selected bank fields — prefer API data, fall back to order response BSB
     const apiFields = data.paymentFields || coPayApiData[data.paymentMethod || coSelectedPayId] || [];
     const fields = apiFields.length ? apiFields
-      : ((data.paymentMethod || coSelectedPayId) === 'aud' && data.bsb
+      : (['aud', 'intl'].includes(data.paymentMethod || coSelectedPayId) && data.bsb
           ? [{ label: 'Account Name', value: 'Australian Peptide Labs Store' },
              { label: 'BSB',          value: data.bsb },
              { label: 'Account No.',  value: data.acct }]

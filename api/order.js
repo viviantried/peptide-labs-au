@@ -198,13 +198,14 @@ module.exports = async function handler(req, res) {
   if (!/^\S+@\S+\.\S+$/.test(String(email)) || !/^[A-Z]{2}$/.test(String(country || ''))) {
     return res.status(400).json({ error: 'Invalid customer details' });
   }
-  if (country !== 'AU') {
-    return res.status(400).json({ error: 'We currently accept Australian delivery addresses only' });
-  }
-
-  const paymentMethod = 'aud';
-  const paymentLabel = 'Australian Bank Transfer';
+  const paymentMethod = country === 'AU' ? 'aud' : 'intl';
+  const paymentLabel = paymentMethod === 'intl'
+    ? 'International Transfer via Wise / Revolut'
+    : 'Australian Bank Transfer';
   const paymentFields = paymentDetails();
+  const internationalPaymentNote = paymentMethod === 'intl'
+    ? '<div style="margin-top:14px;padding:10px 12px;background:#e0f2fe;border-radius:6px;font-size:13px;color:#075985">Use your own Wise, Revolut or similar transfer service. Convert to AUD, choose a local Australian bank transfer, and ensure the exact AUD total arrives. Do not use SWIFT. Transfer availability depends on your provider and country.</div>'
+    : '';
   const paymentRowsHtml = paymentFields.map(field => `
         <tr><td style="padding:6px 0;color:#555;font-size:14px;width:44%">${field.label}</td><td style="padding:6px 0;font-weight:700;font-size:14px">${field.value}</td></tr>`).join('');
 
@@ -310,6 +311,7 @@ module.exports = async function handler(req, res) {
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Amount</td><td style="padding:6px 0;font-weight:800;font-size:18px;color:#16a34a">A$${Number(total).toFixed(2)}</td></tr>
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>
+      ${internationalPaymentNote}
     </div>
     <p style="color:#666;font-size:13px;margin:0">Questions? <a href="mailto:support@aupeptidelab.com" style="color:#111;font-weight:600">support@aupeptidelab.com</a></p>
   </div>
@@ -381,6 +383,7 @@ module.exports = async function handler(req, res) {
         <tr><td style="padding:6px 0;color:#555;font-size:14px">Reference</td><td style="padding:6px 0;font-weight:800;font-size:15px;color:#dc2626">${orderName}</td></tr>
       </table>
       <div style="margin-top:14px;padding:10px 12px;background:#dcfce7;border-radius:6px;font-size:13px;color:#166534">Always use <strong>${orderName}</strong> as your payment reference.</div>
+      ${internationalPaymentNote}
     </div>
 
     <p style="color:#666;font-size:13px;margin:0 0 8px">Once your payment clears, your order will be dispatched within 1-2 business days. A <strong>dispatch confirmation email</strong> with your tracking number will be sent when your order ships.</p>
