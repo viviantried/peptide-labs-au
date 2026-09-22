@@ -2607,6 +2607,13 @@ updateReconstitution();
 // ============================================================
 // INIT
 // ============================================================
+const featuredProductsSection = document.querySelector('#page-home > .featured-products');
+const reviewsSection = document.querySelector('#page-home > .orders-proof');
+const packagingSection = document.querySelector('#page-home > .discreet-packaging');
+if (featuredProductsSection && reviewsSection && packagingSection) {
+  featuredProductsSection.after(reviewsSection);
+  reviewsSection.after(packagingSection);
+}
 routeFromLocation();
 renderFeatured();
 renderShop();
