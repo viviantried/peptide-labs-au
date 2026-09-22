@@ -5,6 +5,7 @@ const crypto       = require('crypto');
 const fs           = require('fs');
 const path         = require('path');
 const tracker      = require('../lib/tracker');
+const PREVIEW_TEST = process.env.VERCEL_ENV === 'preview' && process.env.TRACKER_TEST_MODE === 'true';
 const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
@@ -63,6 +64,7 @@ function paymentDetails() {
 }
 
 async function addToAudience(email, firstName, lastName) {
+  if (PREVIEW_TEST) return;
   if (!RESEND_KEY || !RESEND_AUDIENCE) return;
   try {
     await fetch(`https://api.resend.com/audiences/${RESEND_AUDIENCE}/contacts`, {
@@ -77,6 +79,7 @@ async function addToAudience(email, firstName, lastName) {
 }
 
 async function logToAirtable(order) {
+  if (PREVIEW_TEST) return;
   if (!AIRTABLE_TOKEN) return;
   try {
     const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/Orders`, {
@@ -148,6 +151,7 @@ function calculateOrder(rawItems, country, shippingMethod, promoCode) {
 }
 
 async function sendEmail(to, subject, html, orderName, role) {
+  if (PREVIEW_TEST) throw new Error('Email delivery disabled for preview testing');
   if (!RESEND_KEY) throw new Error('Email service is not configured');
   const payload = JSON.stringify({
     from: `PeptideLab <${FROM_EMAIL}>`, reply_to: OWNER_EMAIL, to, subject, html,
@@ -347,6 +351,7 @@ module.exports = async function handler(req, res) {
   // ── Send reminder first so we have its ID for the owner confirm-link ──
   let reminderId = '';
   try {
+    if (PREVIEW_TEST) throw new Error('Reminder disabled for preview testing');
     const reminderRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       signal: AbortSignal.timeout(5000),

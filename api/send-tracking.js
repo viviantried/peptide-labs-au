@@ -98,6 +98,7 @@ module.exports = async function handler(req, res) {
   </body></html>`;
 
   try {
+    if (process.env.VERCEL_ENV === 'preview' && process.env.TRACKER_TEST_MODE === 'true') throw new Error('Email delivery disabled for preview testing');
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
