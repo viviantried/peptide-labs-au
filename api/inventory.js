@@ -1,11 +1,16 @@
 const fs   = require('fs');
 const path = require('path');
+const tracker = require('../lib/tracker');
 
-module.exports = function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'no-store');
 
   try {
+    if (tracker.enabled()) {
+      const rows = await tracker.inventory();
+      return res.status(200).json({stock:Object.fromEntries(rows.map(r=>[r.sku,r.available])),restocking:Object.fromEntries(rows.map(r=>[r.sku,r.restocking]))});
+    }
     const file = path.join(process.cwd(), 'inventory.json');
     const raw  = JSON.parse(fs.readFileSync(file, 'utf8'));
 
