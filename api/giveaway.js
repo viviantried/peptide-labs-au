@@ -60,7 +60,12 @@ module.exports = async function handler(req, res) {
 
     // Segment membership records entry; existing subscription preferences are preserved.
     const joined = await resendRequest(apiKey, `${contactPath}/segments/${encodeURIComponent(segmentId)}`, { method: 'POST' });
-    if (!joined.ok || joined.body.id !== segmentId) throw new Error('Entry not saved');
+    if (!joined.ok || joined.body.id !== segmentId) {
+      // Some provider responses reject a repeated add. Confirm membership before acknowledging it.
+      const membership = await resendRequest(apiKey, `${contactPath}/segments?limit=100`);
+      if (!membership.ok || !Array.isArray(membership.body.data)
+          || !membership.body.data.some(item => item.id === segmentId)) throw new Error('Entry not saved');
+    }
     return res.status(200).json({ ok: true });
   } catch {
     console.error('Giveaway entry: Resend storage unavailable');

@@ -72,7 +72,13 @@ test('a competing contact creation is recovered by looking up the existing conta
   assert.equal(calls.length, 4);
 });
 test('entry cannot succeed when adding its giveaway membership fails', async () => {
-  responses([[200, { id:'existing-contact' }], [500, {}]]);
+  responses([[200, { id:'existing-contact' }], [500, {}], [200,{data:[]}]]);
+  assert.equal((await invoke()).code, 503);
+});
+test('an already-added membership is acknowledged only after reading it back', async () => {
+  responses([[200,{id:'contact'}],[409,{}],[200,{data:[{id:segment}]}]]);
+  assert.equal((await invoke()).code, 200);
+  responses([[200,{id:'contact'}],[409,{}],[200,{data:[{id:'another-segment'}]}]]);
   assert.equal((await invoke()).code, 503);
 });
 test('provider rejection, invalid acceptance bodies and network errors cannot show success', async () => {
