@@ -136,10 +136,8 @@ function calculateOrder(rawItems, country, shippingMethod, promoCode) {
   const promo = PROMO_CODES[String(promoCode || '').toUpperCase()];
   const promoDiscount = promo?.type === 'percent' ? (subtotal - mbDiscount) * promo.value / 100 : 0;
   const isExpress = String(shippingMethod || '').toLowerCase().startsWith('express');
-  const baseShipping = country === 'AU' ? (isExpress ? 15 : 10)
-    : country === 'NZ' ? (isExpress ? 28 : 15)
-    : (isExpress ? 40 : 20);
-  const standardShipping = country === 'AU' ? 10 : country === 'NZ' ? 15 : 20;
+  const baseShipping = isExpress ? 15 : 10;
+  const standardShipping = 10;
   const shipping = subtotal >= FREE_SHIP_THRESHOLD ? (isExpress ? baseShipping - standardShipping : 0) : baseShipping;
   const discount = mbDiscount + promoDiscount;
   const total = Math.max(0, subtotal - discount) + shipping;
@@ -201,7 +199,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid customer details' });
   }
   if (country !== 'AU') {
-    return res.status(400).json({ error: 'International ordering is temporarily unavailable' });
+    return res.status(400).json({ error: 'We currently accept Australian delivery addresses only' });
   }
 
   const paymentMethod = 'aud';
