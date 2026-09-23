@@ -21,3 +21,13 @@ test('expiry releases only unpaid expired orders',async()=>{await seed();await c
 test('stock adjustment detects stale counts and protects reservations',async()=>{await seed();await create();await assert.rejects(db.query("SELECT pl_adjust_stock('A',8,5,false,1,'new delivery')"),/STOCK_CHANGED/);await assert.rejects(db.query("SELECT pl_adjust_stock('A',1,5,false,2,'physical count')"),/INVALID_STOCK/);await db.query("SELECT pl_adjust_stock('A',8,5,false,2,'new delivery')");assert.equal((await stock()).on_hand,8)});
 test('restocking and unknown products cannot be purchased',async()=>{await seed();await db.query("UPDATE pl_inventory SET restocking=true WHERE sku='A'");await assert.rejects(create(),/OUT_OF_STOCK/);await assert.rejects(create('two','two',{UNKNOWN:1}),/OUT_OF_STOCK/)});
 test('empty cart cannot be persisted',async()=>{await seed();await assert.rejects(create('one','one',{}),/INVALID_ITEMS/)});
+test('duplicate five-digit number leaves the existing order and stock intact',async()=>{
+  await seed();await create('PL-12345','first',{A:1});
+  await assert.rejects(create('PL-12345','second',{A:2}),error=>error.code==='23505'&&error.constraint==='pl_orders_pkey');
+  assert.equal((await stock()).reserved,1);
+  const next=await create('PL-67890','second',{A:2});
+  assert.equal(next.id,'PL-67890');assert.equal((await stock()).reserved,3);
+  const replay=await create('PL-54321','second',{A:2});
+  assert.equal(replay.id,'PL-67890');assert.equal(replay.replayed,true);assert.equal((await stock()).reserved,3);
+  assert.equal((await db.query('SELECT * FROM pl_events')).rows.length,2);
+});
