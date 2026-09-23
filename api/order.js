@@ -102,7 +102,7 @@ function makeConfirmToken(order, email, amt) {
 }
 
 function generateOrderId() {
-  return `PL-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
+  return `PL-${crypto.randomInt(10_000, 100_000)}`;
 }
 
 function validateAvailability(rawItems) {
@@ -233,7 +233,17 @@ module.exports = async function handler(req, res) {
     if (typeof checkoutKey !== 'string' || !/^[a-zA-Z0-9-]{20,100}$/.test(checkoutKey)) return res.status(400).json({error:'Invalid checkout reference'});
     const details = { email,firstName,lastName,address1,address2:address2 || '',suburb,state:state || '',postcode,country,phone:phone || '',items,subtotal,shipping,discount,total,promoCode:promoCode || '',shippingMethod:shippingMethod || 'Standard',paymentMethod,paymentLabel };
     try {
-      const saved = await tracker.create(orderName,checkoutKey,details,items);
+      let saved;
+      for (let attempt = 0; ; attempt++) {
+        try {
+          saved = await tracker.create(orderName,checkoutKey,details,items);
+          break;
+        } catch (error) {
+          // The database rejects duplicate numbers atomically, before reserving stock.
+          if (error.code !== '23505' || error.constraint !== 'pl_orders_pkey' || attempt >= 9) throw error;
+          orderName = generateOrderId();
+        }
+      }
       orderName = saved.id;
       if (saved.replayed) {
         if (['expired','cancelled'].includes(saved.status)) return res.status(409).json({error:'This order has expired or been cancelled. Refresh checkout to place a new order.'});
