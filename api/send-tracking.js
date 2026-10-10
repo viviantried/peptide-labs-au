@@ -10,7 +10,7 @@ const FROM_EMAIL  = 'orders@aupeptidelab.com';
 const OWNER_EMAIL = 'support@aupeptidelab.com';
 
 const CARRIER_TRACK_URLS = {
-  'Australia Post': 'https://auspost.com.au/mypost/track/#/search?id=',
+  'Australia Post': 'https://auspost.com.au/track/',
   'DHL Express':    'https://www.dhl.com/au-en/home/tracking/tracking-express.html?submit=1&tracking-id=',
   'FedEx':          'https://www.fedex.com/fedextrack/?trknbr=',
   'StarTrack':      'https://startrack.com.au/track/search?id=',
