@@ -2633,7 +2633,7 @@ function trackOrder() {
   }
   const carrier = document.getElementById('trackCarrier').value;
   const urls = {
-    auspost: `https://auspost.com.au/mypost/tracking/details/${encodeURIComponent(num)}`,
+    auspost: `https://auspost.com.au/track/${encodeURIComponent(num)}`,
     dhl:     `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(num)}&brand=DHL`,
     fedex:   `https://www.fedex.com/en-us/tracking.html?tracknumbers=${encodeURIComponent(num)}`,
     ups:     `https://www.ups.com/track?tracknum=${encodeURIComponent(num)}`,
