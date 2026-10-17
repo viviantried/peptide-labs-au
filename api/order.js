@@ -328,6 +328,12 @@ module.exports = async function handler(req, res) {
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px">A$${(i.price * i.qty).toFixed(2)}</td>
     </tr>`).join('');
 
+  const alreadyPaidHtml = `
+    <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:14px 16px;margin:0 0 24px">
+      <div style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:5px">Already paid? You’re all set.</div>
+      <p style="font-size:13px;line-height:1.6;color:#1e3a8a;margin:0">If you sent the exact amount and used your order number as the payment reference, no further action is needed. We manually match cleared bank transfers to orders, so an “awaiting payment” email may arrive in the meantime. Once confirmed, we’ll prepare your order and email your tracking details when the shipping label is created.</p>
+    </div>`;
+
   const reminderEmailHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"/></head>
 <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif">
 <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1)">
@@ -339,8 +345,9 @@ module.exports = async function handler(req, res) {
     <div style="display:inline-block;background:#fff8e1;border:2px solid #ffe082;border-radius:50px;padding:8px 20px;margin-bottom:20px">
       <span style="color:#b45309;font-weight:700;font-size:14px">⏰ Payment Reminder</span>
     </div>
-    <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">Your order is waiting, ${firstName}!</h1>
-    <p style="color:#666;margin:0 0 24px;font-size:15px">We noticed payment hasn't been received yet for order <strong>${orderName}</strong>. Please transfer as soon as possible to avoid cancellation.</p>
+    <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">Bank transfer awaiting confirmation</h1>
+    <p style="color:#666;margin:0 0 24px;font-size:15px">Hi ${firstName}, order <strong>${orderName}</strong> is still awaiting manual payment confirmation. If you haven’t sent the transfer yet, please do so before the deadline to avoid cancellation.</p>
+    ${alreadyPaidHtml}
     <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:22px;margin:0 0 24px">
       <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">Bank Transfer Details</h2>
       <table style="width:100%;border-collapse:collapse">
@@ -370,7 +377,7 @@ module.exports = async function handler(req, res) {
         from: `PeptideLab <${FROM_EMAIL}>`,
         reply_to: OWNER_EMAIL,
         to: email,
-        subject: `Reminder: Payment still pending — Order ${orderName}`,
+        subject: `Reminder: Bank transfer awaiting confirmation — Order ${orderName}`,
         html: reminderEmailHtml,
         scheduled_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
       }),
@@ -424,6 +431,8 @@ module.exports = async function handler(req, res) {
       <div style="margin-top:14px;padding:10px 12px;background:#dcfce7;border-radius:6px;font-size:13px;color:#166534">Always use <strong>${orderName}</strong> as your payment reference.</div>
       ${internationalPaymentNote}
     </div>
+
+    ${alreadyPaidHtml}
 
     <p style="color:#666;font-size:13px;margin:0 0 8px">Once your payment clears, your order will be dispatched within 1-2 business days. A <strong>dispatch confirmation email</strong> with your tracking number will be sent when your order ships.</p>
     <div style="margin:0 0 16px;padding:12px 16px;background:#f0f4ff;border:1px solid #c7d2fe;border-radius:8px;font-size:13px;color:#3730a3">
