@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="PeptideLab Australia: product specifications, documentation enquiries and order support. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=26" />
-  <link rel="stylesheet" href="/giveaway.css?v=1" />
+  <link rel="stylesheet" href="/styles.css?v=28" />
+  <link rel="stylesheet" href="/giveaway.css?v=5" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
   <script>
@@ -328,23 +328,22 @@
 </div>
 <!-- ═══════════════════ /CHECKOUT OVERLAY ═══════════════════ -->
 
-<!-- EMAIL GIVEAWAY POPUP -->
-<dialog id="popupOverlay" class="giveaway-dialog" aria-labelledby="giveawayTitle" aria-describedby="giveawayIntro">
-  <div class="giveaway-content">
-    <button class="giveaway-close" type="button" onclick="closePopup()" aria-label="Close giveaway">×</button>
-    <p class="giveaway-eyebrow">Monthly giveaway</p>
-    <h2 id="giveawayTitle">Win A$250<br>store credit</h2>
-    <p id="giveawayIntro" class="giveaway-intro">Enter once to join our monthly draws. No purchase necessary. One entry per email address.</p>
-    <form id="giveawayForm">
-      <label class="giveaway-label" for="popupEmail">Email address</label>
-      <input id="popupEmail" class="giveaway-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
-      <div hidden aria-hidden="true"><label for="giveawayWebsite">Leave empty</label><input id="giveawayWebsite" name="website" tabindex="-1" autocomplete="off"></div>
-      <label class="giveaway-marketing"><input type="checkbox" id="giveawayMarketing"> <span>I’d also like occasional PeptideLab marketing emails. Optional; unsubscribe anytime.</span></label>
-      <button id="giveawaySubmit" class="giveaway-submit" type="submit">Enter Monthly Giveaway</button>
-      <p class="giveaway-legal">By entering, you agree that we can save your email to manage the giveaway and contact you if you win. Entries are stored through Resend. <a href="/privacy" onclick="closePopup();showPage('privacy');return false;">Privacy policy</a>.</p>
-    </form>
-    <p id="giveawayStatus" class="giveaway-status" role="status" aria-live="polite"></p>
-    <button id="giveawayDone" class="giveaway-submit giveaway-done" type="button" onclick="closePopup()" hidden>Continue browsing</button>
+<!-- 10-VIAL OFFER POPUP -->
+<dialog id="popupOverlay" class="ten-vial-dialog" aria-labelledby="tenVialOfferTitle" aria-describedby="tenVialOfferIntro">
+  <div class="ten-vial-content">
+    <button class="ten-vial-close" type="button" onclick="closePopup()" aria-label="Close 10-vial offer">×</button>
+    <div class="ten-vial-media">
+      <img src="/images/hero-peptide-vials-soft-green.jpg" width="1400" height="788" alt="PeptideLab GHK-Cu, Retatrutide and BPC-157 research vials; only GHK-Cu has blue contents" decoding="async">
+    </div>
+    <div class="ten-vial-copy">
+      <p class="ten-vial-eyebrow">Mix &amp; match offer</p>
+      <h2 id="tenVialOfferTitle">25% off your<br>10-vial set</h2>
+      <p id="tenVialOfferIntro" class="ten-vial-intro">Pick any 10 available research vials, including repeats. Save 25% compared with buying them individually.</p>
+      <button class="ten-vial-cta" type="button" onclick="openPromoBundleBuilder()">
+        Pick your 10 research vials <span aria-hidden="true">→</span>
+      </button>
+      <p class="ten-vial-note">Examples shown. For laboratory research use only. The offer replaces the standard quantity discount for this set.</p>
+    </div>
   </div>
 </dialog>
 <!-- ANNOUNCEMENT BAR -->
@@ -369,8 +368,13 @@
         <span class="nav__link" onclick="showPage('track')">Track Order</span>
       </div>
       <div class="nav__actions">
-        <select class="nav__currency" id="currencySelect" title="Prices are shown in Australian dollars" aria-label="Currency">
+        <select class="nav__currency" id="currencySelect" onchange="setCurrency(this.value)" title="Display currency; checkout is in AUD" aria-label="Display currency; checkout is in Australian dollars">
           <option value="AUD" selected>AUD</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="NZD">NZD</option>
+          <option value="CAD">CAD</option>
         </select>
         <div class="nav__cart-btn" onclick="openCart()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -401,6 +405,7 @@
     </div>
   </div>
 </nav>
+<div class="currency-display-note" id="currencyDisplayNote" role="status" hidden></div>
 
 <!-- CART PAGE -->
 <div class="page" id="page-cart">
@@ -460,12 +465,15 @@
       <div class="hero__inner">
         <div class="hero__content">
           <div class="hero__eyebrow"><span class="hero__eyebrow-dot"></span>Australian Research Peptides</div>
-          <h1 class="hero__title">The Standard for <em>Research-Grade</em> Peptide Supply</h1>
+          <h1 class="hero__title">
+            <span class="hero__title-desktop">The Standard for <em>Research-Grade</em> Peptide Supply</span>
+            <span class="hero__title-mobile">Research peptides.<br><em>Supplied in Australia.</em></span>
+          </h1>
           <p class="hero__sub">Product specifications and documentation enquiries for research compounds supplied from Australia.</p>
           <div class="hero-finder" role="search">
             <div class="hero-finder__search">
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-              <input id="heroSearch" type="search" autocomplete="off" placeholder="Search a compound — BPC-157, retatrutide, TB-500…" aria-label="Search compounds" oninput="searchHeroProducts(this.value)" onkeydown="handleHeroSearch(event)">
+              <input id="heroSearch" type="search" autocomplete="off" placeholder="Search compounds" aria-label="Search compounds" oninput="searchHeroProducts(this.value)" onkeydown="handleHeroSearch(event)">
               <div class="hero-finder__results" id="heroSearchResults" hidden></div>
             </div>
             <button class="btn btn--teal hero-finder__button" onclick="openHeroSearch()">Shop Peptides</button>
@@ -509,7 +517,8 @@
         <h2>Popular research compounds</h2>
         <button onclick="showPage('shop')">View all 14 <span aria-hidden="true">→</span></button>
       </div>
-      <div class="products-grid" id="featuredGrid"></div>
+      <p class="sr-only" id="featuredProductsHint">Swipe horizontally or use the Tab key to browse popular research compounds.</p>
+      <div class="products-grid" id="featuredGrid" role="region" aria-label="Popular research compounds" aria-describedby="featuredProductsHint" tabindex="0"></div>
       <div class="bundle-savings-banner">
         <div><strong>Mix &amp; Match Bundle Savings</strong></div>
         <div class="bundle-savings-banner__tiers"><span>2 items <b>3% off</b></span><span>3+ items <b>5% off</b></span><span>5+ items <b>10% off</b></span><button type="button" class="bundle-savings-banner__build" onclick="openMixBundleBuilder()">Build 10 vials · save 25% →</button></div>
@@ -584,7 +593,8 @@
         </div>
       </header>
 
-      <div class="buyer-gallery" id="buyerGallery" aria-label="Real packed order photos">
+      <p class="sr-only" id="buyerGalleryHint">Swipe horizontally or use the previous and next buttons to browse customer feedback.</p>
+      <div class="buyer-gallery" id="buyerGallery" role="region" aria-roledescription="carousel" aria-label="Customer reviews and packed order photos" aria-describedby="buyerGalleryHint" aria-live="off" tabindex="0">
         <article class="buyer-card">
           <figure class="buyer-card__photo"><img src="/images/real-orders/fatima-j-order.webp" width="675" height="900" loading="lazy" decoding="async" alt="Fatima J.'s PeptideLab order containing Retatrutide and GHK-Cu research vials"></figure>
           <div class="buyer-card__body">
@@ -714,7 +724,7 @@
         <button class="btn btn--teal btn--lg" onclick="showPage('shop')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop Research Peptides</button>
         <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">View Batch Certificates</button>
       </div>
-      <p class="final-cta__disclaimer">For laboratory research use only · Not for human consumption · Not intended to diagnose, treat, cure, or prevent any disease · All prices AUD</p>
+      <p class="final-cta__disclaimer">For laboratory research use only · Not for human consumption · Not intended to diagnose, treat, cure, or prevent any disease · Checkout in AUD</p>
     </div>
   </section>
 </div>
@@ -1118,7 +1128,7 @@
           <span class="footer__logo-name">Peptide<span>Lab</span></span>
         </div>
         <p class="footer__tagline">Australian-based research supply. Product information and documentation support. Express delivery nationwide.</p>
-        <div class="footer__compliance"><strong style="color:var(--slate-400);display:block;margin-bottom:4px;">Compliance Statement</strong>All products sold for laboratory research purposes only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. This website does not provide medical advice. Customers responsible for compliance with all applicable laws. All prices AUD.</div>
+        <div class="footer__compliance"><strong style="color:var(--slate-400);display:block;margin-bottom:4px;">Compliance Statement</strong>All products sold for laboratory research purposes only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. This website does not provide medical advice. Customers responsible for compliance with all applicable laws. Checkout and payment are in AUD.</div>
       </div>
       <div>
         <div class="footer__col-title">Products</div>
@@ -1139,7 +1149,7 @@
           <span class="footer__link" onclick="showPage('quality')">Quality &amp; Testing</span>
           <span class="footer__link" onclick="showPage('faq')">FAQ</span>
           <span class="footer__link" onclick="showPage('contact')">Contact</span>
-          <button type="button" class="footer__link giveaway-footer" onclick="openPopup()">Monthly giveaway</button>
+          <button type="button" class="footer__link ten-vial-footer" onclick="openPopup()">10-vial offer</button>
           <span class="footer__link" onclick="showPage('shipping')">Shipping Info</span>
         </div>
       </div>
@@ -1163,7 +1173,7 @@
       </div>
     </div>
   </div>
-  <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · All prices AUD · Australian Operations</div></div>
+  <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · Checkout in AUD · Australian Operations</div></div>
 </footer>
 
 <div class="mix-bundle-overlay" id="mixBundleDialog" hidden>
@@ -1837,15 +1847,60 @@ async function placeOrder() {
 // CURRENCY
 // ============================================================
 const RATES  = { AUD:1 };
-const SYMS   = { AUD:'A$' };
+const SYMS   = { AUD:'A$', USD:'US$', EUR:'€', GBP:'£', NZD:'NZ$', CAD:'C$' };
 let currentCurrency = 'AUD';
+let currencyRateDate = '';
+let currencyRatesPromise = null;
 function fmtPrice(aud) {
   return SYMS[currentCurrency] + (aud * RATES[currentCurrency]).toFixed(2);
 }
-function setCurrency(val) {
+function currencyPriceNote() {
+  return currentCurrency === 'AUD' ? 'AUD' : currentCurrency + ' estimate · checkout in AUD';
+}
+async function loadCurrencyRates() {
+  if (currencyRateDate) return;
+  if (!currencyRatesPromise) currencyRatesPromise = (async () => {
+    const currencies = ['USD', 'EUR', 'GBP', 'NZD', 'CAD'];
+    const response = await fetch('https://api.frankfurter.dev/v2/rates?base=AUD&quotes=' + currencies.join(','));
+    if (!response.ok) throw new Error('Exchange rates are unavailable');
+    const rows = await response.json();
+    if (!Array.isArray(rows)) throw new Error('Invalid exchange rates');
+    const asOf = rows[0]?.date;
+    const rateAge = Date.now() - Date.parse(asOf + 'T00:00:00Z');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(asOf) || !Number.isFinite(rateAge) || rateAge < -86400000 || rateAge > 7 * 86400000) throw new Error('Exchange rates are out of date');
+    const nextRates = {};
+    for (const row of rows) {
+      if (row.base !== 'AUD' || row.date !== asOf || !currencies.includes(row.quote) || !Number.isFinite(row.rate) || row.rate <= 0) throw new Error('Invalid exchange rates');
+      nextRates[row.quote] = row.rate;
+    }
+    if (!currencies.every(code => nextRates[code])) throw new Error('Incomplete exchange rates');
+    Object.assign(RATES, nextRates);
+    currencyRateDate = asOf;
+  })();
+  try { await currencyRatesPromise; }
+  finally { currencyRatesPromise = null; }
+}
+async function setCurrency(val) {
+  const select = document.getElementById('currencySelect');
+  const notice = document.getElementById('currencyDisplayNote');
+  if (!Object.hasOwn(SYMS, val)) { select.value = currentCurrency; return; }
+  if (val !== 'AUD' && !currencyRateDate) {
+    select.disabled = true;
+    notice.hidden = false;
+    notice.textContent = 'Loading current exchange rates…';
+    try { await loadCurrencyRates(); }
+    catch {
+      select.value = currentCurrency;
+      notice.textContent = 'Exchange rates are unavailable. Prices remain in AUD.';
+      return;
+    } finally { select.disabled = false; }
+  }
   currentCurrency = val;
+  select.value = val;
   const note = document.getElementById('cartCurrencyNote');
-  if (note) note.textContent = val;
+  if (note) note.textContent = val === 'AUD' ? 'AUD' : val + ' (estimate; checkout in AUD)';
+  notice.hidden = val === 'AUD';
+  if (val !== 'AUD') notice.textContent = `Approximate ${val} prices use ${currencyRateDate} reference rates. Checkout and payment are in AUD; your provider sets the final conversion.`;
   renderFeatured(); renderShop();
   renderReconSupplies();
   updatePdpPrices();
@@ -1859,7 +1914,7 @@ function updatePdpPrices() {
   if (!currentProduct) return;
   const p = currentProduct;
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
-  document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currentCurrency + ' · Research use only';
+  document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currencyPriceNote() + ' · Research use only';
   renderPdpBundles();
 }
 
@@ -2279,16 +2334,15 @@ function makeCard(p, mini) {
 
 function makeMixBundleCard() {
   return `<div class="product-card mix-bundle-card" onclick="openMixBundleBuilder()">
-    <div class="product-card__img mix-bundle-card__img"><span class="product-card__badge mix-bundle-card__badge">SAVE 25%</span><img class="product-card__photo" src="/images/hero-peptide-vials-navy.webp" alt="Research vials for a mix and match set" loading="lazy" decoding="async"></div>
+    <div class="product-card__img mix-bundle-card__img"><span class="product-card__badge mix-bundle-card__badge">SAVE 25%</span><img class="product-card__photo" src="/images/hero-peptide-vials-soft-green.jpg" alt="Research vials for a mix and match set" loading="lazy" decoding="async"></div>
     <div class="product-card__body"><div class="product-card__name">Mix &amp; Match 10-Vial Set</div><div class="product-card__sub">Choose any 10 available research vials. Repeats welcome.</div><div class="product-card__meta"><span class="product-card__tag">Build your own set</span></div><div class="product-card__price">25% off</div><div class="bundle-card-note">Compared with the selected vials' individual prices</div><button type="button" class="product-card__add-full" onclick="event.stopPropagation();openMixBundleBuilder()">Choose your 10 vials →</button></div>
   </div>`;
 }
 
 function renderFeatured() {
   const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0, 7);
-  document.getElementById('featuredGrid').innerHTML = featured
-    .map((product, index) => (index === 3 ? makeMixBundleCard() : '') + makeCard(product, false))
-    .join('');
+  document.getElementById('featuredGrid').innerHTML = makeMixBundleCard()
+    + featured.map(product => makeCard(product, false)).join('');
 }
 function renderShop(filter) {
   const list = filter && filter !== 'all' ? PRODUCTS.filter(p=>p.category===filter) : PRODUCTS;
@@ -2405,7 +2459,7 @@ function viewProduct(id, updateHistory = true) {
   document.getElementById('pdpId').textContent = p.size + (p.kind === 'kit' ? ' · Laboratory Accessories · For Research Use Only' : ' · Research Compound · For Laboratory Use Only');
   document.getElementById('pdpPurity').textContent = p.kind === 'kit' ? '1 vial + 4 syringes + 4 prep wipes' : p.purity + ' · Supplier specification; check lot documentation';
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
-  document.getElementById('pdpPriceNote').textContent = (p.kind === 'kit' ? 'Per kit' : 'Per vial') + ' · ' + currentCurrency + ' · Research use only';
+  document.getElementById('pdpPriceNote').textContent = (p.kind === 'kit' ? 'Per kit' : 'Per vial') + ' · ' + currencyPriceNote() + ' · Research use only';
   document.getElementById('pdpImgLabel').textContent = p.kind === 'kit' ? 'Illustrative photo · Kit includes 4 syringes and 4 wipes' : p.name + ' · ' + p.size + ' · Research Grade';
   document.getElementById('pdpDesc').textContent = p.desc;
   trackFunnel('Product Viewed', { product: p.name, sku: p.id, value: p.price, currency: 'AUD' });
@@ -2594,12 +2648,122 @@ window.addEventListener('popstate', routeFromLocation);
 function toggleMobileMenu() {
   document.getElementById('mobileMenu').classList.toggle('open');
 }
-function scrollBuyerGallery(direction) {
+
+const buyerGalleryMotion = {
+  timer: 0,
+  resumeTimer: 0,
+  visible: false,
+  hovered: false,
+  focused: false,
+  manualPause: false,
+  pageHidden: document.hidden,
+  reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)'),
+};
+
+function buyerGalleryStep(gallery) {
+  const card = gallery.querySelector('.buyer-card');
+  const styles = getComputedStyle(gallery);
+  const gap = parseFloat(styles.columnGap || styles.gap) || 18;
+  return (card?.getBoundingClientRect().width || gallery.clientWidth * .8) + gap;
+}
+
+function buyerGalleryCanAutoplay(gallery) {
+  const interactionRegion = gallery.closest('.orders-proof') || gallery;
+  return buyerGalleryMotion.visible
+    && !buyerGalleryMotion.hovered
+    && !buyerGalleryMotion.focused
+    && !buyerGalleryMotion.manualPause
+    && !buyerGalleryMotion.pageHidden
+    && !buyerGalleryMotion.reducedMotion.matches
+    && !interactionRegion.contains(document.activeElement)
+    && gallery.scrollWidth > gallery.clientWidth + 4;
+}
+
+function scheduleBuyerGalleryAutoplay(delay = 6500) {
+  clearTimeout(buyerGalleryMotion.timer);
+  const gallery = document.getElementById('buyerGallery');
+  if (!gallery || !buyerGalleryCanAutoplay(gallery)) return;
+  buyerGalleryMotion.timer = window.setTimeout(() => {
+    if (!buyerGalleryCanAutoplay(gallery)) return;
+    scrollBuyerGallery(1, true);
+    scheduleBuyerGalleryAutoplay();
+  }, delay);
+}
+
+function setBuyerGalleryPause(reason, paused, resumeDelay = 3200) {
+  buyerGalleryMotion[reason] = paused;
+  clearTimeout(buyerGalleryMotion.timer);
+  if (!paused) scheduleBuyerGalleryAutoplay(resumeDelay);
+}
+
+function temporarilyPauseBuyerGallery(delay = 9000) {
+  clearTimeout(buyerGalleryMotion.timer);
+  clearTimeout(buyerGalleryMotion.resumeTimer);
+  buyerGalleryMotion.manualPause = true;
+  buyerGalleryMotion.resumeTimer = window.setTimeout(() => {
+    buyerGalleryMotion.manualPause = false;
+    scheduleBuyerGalleryAutoplay(3200);
+  }, delay);
+}
+
+function scrollBuyerGallery(direction, automatic = false) {
   const gallery = document.getElementById('buyerGallery');
   if (!gallery) return;
-  const card = gallery.querySelector('.buyer-card');
-  const gap = parseFloat(getComputedStyle(gallery).columnGap || getComputedStyle(gallery).gap) || 18;
-  gallery.scrollBy({ left: direction * ((card?.getBoundingClientRect().width || gallery.clientWidth * .8) + gap), behavior: 'smooth' });
+  if (!automatic) temporarilyPauseBuyerGallery();
+  const step = buyerGalleryStep(gallery);
+  const maxScroll = Math.max(0, gallery.scrollWidth - gallery.clientWidth);
+  if (maxScroll < 4) return;
+  let next = gallery.scrollLeft + direction * step;
+  if (direction > 0 && gallery.scrollLeft >= maxScroll - step * .45) next = 0;
+  if (direction < 0 && gallery.scrollLeft <= step * .45) next = maxScroll;
+  gallery.scrollTo({
+    left: Math.max(0, Math.min(maxScroll, next)),
+    behavior: buyerGalleryMotion.reducedMotion.matches ? 'auto' : 'smooth',
+  });
+}
+
+function initBuyerGalleryAutoplay() {
+  const gallery = document.getElementById('buyerGallery');
+  if (!gallery) return;
+  const interactionRegion = gallery.closest('.orders-proof') || gallery;
+
+  const updateVisibility = visible => {
+    buyerGalleryMotion.visible = visible;
+    clearTimeout(buyerGalleryMotion.timer);
+    if (visible) scheduleBuyerGalleryAutoplay(4800);
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      updateVisibility(entries.some(entry => entry.isIntersecting));
+    }, { threshold: .35 });
+    observer.observe(gallery);
+  } else {
+    updateVisibility(true);
+  }
+
+  interactionRegion.addEventListener('mouseenter', () => setBuyerGalleryPause('hovered', true));
+  interactionRegion.addEventListener('mouseleave', () => setBuyerGalleryPause('hovered', false));
+  interactionRegion.addEventListener('focusin', () => setBuyerGalleryPause('focused', true));
+  interactionRegion.addEventListener('focusout', () => requestAnimationFrame(() => {
+    if (!interactionRegion.contains(document.activeElement)) setBuyerGalleryPause('focused', false);
+  }));
+  interactionRegion.addEventListener('pointerdown', () => temporarilyPauseBuyerGallery(), { passive: true });
+  interactionRegion.addEventListener('wheel', () => temporarilyPauseBuyerGallery(), { passive: true });
+
+  document.addEventListener('visibilitychange', () => {
+    buyerGalleryMotion.pageHidden = document.hidden;
+    clearTimeout(buyerGalleryMotion.timer);
+    if (!document.hidden) scheduleBuyerGalleryAutoplay(3200);
+  });
+  window.addEventListener('resize', () => scheduleBuyerGalleryAutoplay(3200), { passive: true });
+
+  const onMotionPreferenceChange = () => {
+    clearTimeout(buyerGalleryMotion.timer);
+    if (!buyerGalleryMotion.reducedMotion.matches) scheduleBuyerGalleryAutoplay(3200);
+  };
+  if (buyerGalleryMotion.reducedMotion.addEventListener) buyerGalleryMotion.reducedMotion.addEventListener('change', onMotionPreferenceChange);
+  else buyerGalleryMotion.reducedMotion.addListener(onMotionPreferenceChange);
 }
 function toggleFaq(el) {
   const item = el.closest('.faq-item');
@@ -2701,6 +2865,7 @@ renderReconSupplies();
 renderCerts();
 renderCart();
 updateMobileCartBtn();
+initBuyerGalleryAutoplay();
 
 loadInventory();
 
@@ -2751,7 +2916,7 @@ loadInventory();
 })();
 </script>
 <script src="/storefront-support.js?v=1"></script>
-<script src="/giveaway.js?v=1"></script>
+<script src="/giveaway.js?v=2"></script>
 
 </body>
 </html>
