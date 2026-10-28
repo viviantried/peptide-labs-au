@@ -354,10 +354,57 @@ test('cart keeps the established layout while Mix 10 uses the accessible popup',
   assert.match(mixBuilder, /getElementById\('mixBundleDialog'\)\.hidden = false/);
   assert.match(addToCart, /if \(destination === 'checkout'\) openCheckout\(\)/);
   assert.match(suggestions, /class="cart-water-upsell"/);
-  assert.match(suggestions, /You Might Also Like/);
+  assert.match(suggestions, /Recommended products/);
   assert.match(suggestions, /class="cart-rec-card"/);
   assert.match(suggestions, /Add \$\{water\.size\} · \$\{fmtPrice\(water\.price\)\}/);
   assert.doesNotMatch(suggestions, /cart-upsell-actions|cart-rec-card__actions|,'checkout'/);
   assert.doesNotMatch(css, /\.cart-page-active|#page-cart #cartSuggestionsEl/);
   assert.match(css, /\.checkout-progress\s*\{/);
+});
+
+test('cart recommendations stay populated for accessory-only carts', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const recommendationLogic = html.slice(
+    html.indexOf('const PAIRINGS ='),
+    html.indexOf('function renderFreeShippingSuggestions')
+  );
+  const products = [
+    { id: 'PL-015', name: 'Research Starter Kit', size: '1 kit', price: 29, img: '/kit.webp', category: 'accessories' },
+    { id: 'PL-014', name: 'BAC Water', size: '10ml', price: 19, img: '/water.webp', category: 'accessories' },
+    { id: 'PL-012', name: 'GHK-Cu', size: '50mg', price: 49, img: '/12.jpg', category: 'cellular' },
+    { id: 'PL-002', name: 'BPC-157', size: '10mg', price: 85, img: '/2.jpg', category: 'recovery' },
+    { id: 'PL-003', name: 'TB-500', size: '5mg', price: 79, img: '/3.jpg', category: 'recovery' },
+    { id: 'PL-004', name: 'Tesamorelin', size: '5mg', price: 95, img: '/4.jpg', category: 'gh' },
+    { id: 'PL-005', name: 'Semax', size: '10mg', price: 69, img: '/5.jpg', category: 'cognitive' },
+    { id: 'PL-006', name: 'Selank', size: '10mg', price: 59, img: '/6.jpg', category: 'cognitive' },
+    { id: 'PL-013', name: 'Glutathione', size: '1500mg', price: 85, img: '/13.jpg', category: 'cellular' },
+    { id: 'PL-011', name: 'NAD+', size: '500mg', price: 75, img: '/11.jpg', category: 'cellular' },
+    { id: 'PL-007', name: 'DSIP', size: '5mg', price: 49, img: '/7.jpg', category: 'cognitive' },
+    { id: 'PL-008', name: 'Melanotan-2', size: '10mg', price: 69, img: '/8.jpg', category: 'cognitive' },
+    { id: 'PL-009', name: 'Melanotan-1', size: '10mg', price: 69, img: '/9.jpg', category: 'cognitive' },
+  ];
+  const cart = [{ id: 'PL-015' }];
+  const suggestionsEl = { style: {}, innerHTML: '' };
+  const context = vm.createContext({
+    cart,
+    PRODUCTS: products,
+    restocking: { 'PL-004': true },
+    getStock(id) { return id === 'PL-003' ? 0 : 10; },
+    document: { getElementById() { return suggestionsEl; } },
+    fmtPrice() { return 'A$1.00'; },
+  });
+  vm.runInContext(recommendationLogic, context);
+  const ids = Array.from(context.getCartRecommendations(), product => product.id);
+  assert.deepEqual(ids, ['PL-012', 'PL-002', 'PL-005', 'PL-006']);
+  assert.equal(new Set(ids).size, 4);
+  assert.ok(ids.every(id => !['PL-014', 'PL-015'].includes(id)));
+  context.renderCartSuggestions();
+  assert.match(suggestionsEl.innerHTML, /Recommended products/);
+  assert.doesNotMatch(suggestionsEl.innerHTML, /Add bacteriostatic water/);
+
+  cart.splice(0, 1, { id: 'PL-MIX-10', selections: [{ id: 'PL-012', qty: 10 }] });
+  const mixIds = Array.from(context.getCartRecommendations(), product => product.id);
+  assert.equal(mixIds.length, 4);
+  assert.ok(!mixIds.includes('PL-012'));
+  assert.ok(mixIds.every(id => products.find(product => product.id === id).category !== 'accessories'));
 });

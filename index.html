@@ -2300,23 +2300,47 @@ const PAIRINGS = {
   'PL-012': ['PL-011','PL-013'],
   'PL-013': ['PL-011','PL-012'],
   'PL-014': ['PL-002','PL-001','PL-003'],
+  'PL-015': ['PL-012','PL-002','PL-003','PL-004'],
 };
+
+const CART_RECOMMENDATION_FALLBACKS = [
+  'PL-012','PL-002','PL-003','PL-004','PL-005','PL-006','PL-013','PL-011','PL-007','PL-008','PL-009'
+];
+
+function getCartContextIds() {
+  return new Set(cart.flatMap(item => [item.id, ...(item.selections || []).map(selection => selection.id)]));
+}
+
+function getCartRecommendations(limit = 4) {
+  const cartIds = getCartContextIds();
+  const scores = {};
+  cartIds.forEach(cartId => (PAIRINGS[cartId] || []).forEach((id, rank) => {
+    if (!cartIds.has(id) && id !== 'PL-014') scores[id] = (scores[id] || 0) + (10 - rank);
+  }));
+  const canRecommend = product => product && product.category !== 'accessories' &&
+    !cartIds.has(product.id) && getStock(product.id) > 0 && restocking[product.id] !== true;
+  const ranked = Object.entries(scores)
+    .sort((a, b) => b[1] - a[1])
+    .map(([id]) => PRODUCTS.find(product => product.id === id))
+    .filter(canRecommend);
+  const seen = new Set(ranked.map(product => product.id));
+  CART_RECOMMENDATION_FALLBACKS.forEach(id => {
+    const product = PRODUCTS.find(candidate => candidate.id === id);
+    if (!seen.has(id) && canRecommend(product)) {
+      ranked.push(product);
+      seen.add(id);
+    }
+  });
+  return ranked.slice(0, limit);
+}
 
 function renderCartSuggestions() {
   const el = document.getElementById('cartSuggestionsEl');
   if (cart.length === 0) { el.style.display = 'none'; return; }
-  const cartIds = new Set(cart.map(item => item.id));
-  const scores = {};
-  cart.forEach(item => (PAIRINGS[item.id] || []).forEach((id, rank) => {
-    if (!cartIds.has(id) && id !== 'PL-014') scores[id] = (scores[id] || 0) + (10 - rank);
-  }));
-  const suggestions = Object.entries(scores)
-    .sort((a, b) => b[1] - a[1])
-    .map(([id]) => PRODUCTS.find(product => product.id === id))
-    .filter(product => product && getStock(product.id) > 0 && restocking[product.id] !== true)
-    .slice(0, 4);
+  const cartIds = getCartContextIds();
+  const suggestions = getCartRecommendations();
   const water = PRODUCTS.find(product => product.id === 'PL-014');
-  const showWater = water && !cartIds.has('PL-014') && getStock('PL-014') > 0 && restocking['PL-014'] !== true;
+  const showWater = water && !cartIds.has('PL-014') && !cartIds.has('PL-015') && getStock('PL-014') > 0 && restocking['PL-014'] !== true;
   const waterUpsell = showWater ? `<div class="cart-water-upsell">
     <img src="${water.img}" alt="${water.name} ${water.size}" loading="lazy">
     <div class="cart-water-upsell__copy"><strong>Add bacteriostatic water</strong><span>For laboratory reconstitution; not included with peptide vials.</span></div>
@@ -2325,12 +2349,12 @@ function renderCartSuggestions() {
   const cards = suggestions.map(product => `<article class="cart-rec-card">
     <img src="${product.img}" alt="${product.name} ${product.size}" loading="lazy">
     <div class="cart-rec-card__body"><strong>${product.name}</strong><span>${product.size} · ${fmtPrice(product.price)}</span>
-      <button type="button" onclick="addToCart('${product.id}')">Add to cart</button>
+      <button type="button" onclick="addToCart('${product.id}')" aria-label="Add ${product.name} ${product.size} to cart">Add to cart</button>
     </div>
   </article>`).join('');
   el.style.display = waterUpsell || cards ? 'block' : 'none';
-  el.innerHTML = `${waterUpsell}${cards ? `<section class="cart-recommendations" aria-label="You might also like">
-    <h3>You Might Also Like</h3><div class="cart-rec-grid">${cards}</div>
+  el.innerHTML = `${waterUpsell}${cards ? `<section class="cart-recommendations" aria-label="Recommended products">
+    <h3>Recommended products</h3><div class="cart-rec-grid">${cards}</div>
   </section>` : ''}`;
 }
 
