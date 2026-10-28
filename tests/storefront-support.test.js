@@ -286,8 +286,13 @@ test('checkout uses a compact cart-aligned light layout', () => {
   assert.match(css, /\.co-body\s*\{[^}]*width:\s*min\(100%,\s*1180px\)[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*minmax\(320px,\s*360px\)/s);
   assert.match(css, /\.co-place-order\s*\{[^}]*background:\s*#1875AC[^}]*color:\s*#FFFFFF/s);
   assert.match(css, /\.co-ship-opt--on,[\s\S]*?\.co-pay-opt--on\s*\{[^}]*border-color:\s*#1875AC[^}]*background:\s*#EDF7FD/s);
-  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-body\s*\{[^}]*width:\s*100%[^}]*min-height:\s*0[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.co-body\s*\{[^}]*width:\s*100%[^}]*min-height:\s*0[^}]*grid-template-columns:\s*1fr/s);
   assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-summary-col\s*\{[^}]*order:\s*2/s);
+  assert.match(css, /\.co-section--shipping\s*\{[^}]*margin-bottom:\s*10px/s);
+  assert.match(css, /@media \(min-width:\s*769px\)[\s\S]*?\.co-body\s*\{[^}]*min-height:\s*calc\(100dvh - 96px\)[^}]*grid-template-columns:/s);
+  assert.match(css, /@media \(min-width:\s*769px\)[\s\S]*?\.co-section--shipping\s*\{[^}]*grid-template-columns:\s*repeat\(12,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(css, /@media \(min-width:\s*769px\) and \(max-height:\s*650px\)[\s\S]*?\.co-form-col\s*\{[^}]*padding:\s*6px 14px 8px[^}]*\}/s);
+  assert.match(css, /@media \(min-width:\s*320px\) and \(max-width:\s*640px\)[\s\S]*?\.co-row--name,[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\) minmax\(0,\s*1fr\)/s);
   assert.match(css, /\.co-success__block\s*\{[^}]*background:\s*#FFFFFF/s);
 });
 
@@ -339,6 +344,8 @@ test('cart keeps the established layout while Mix 10 uses the accessible popup',
   assert.match(cart, />Continue shopping<\/a>/);
   assert.match(cart, />Proceed to Checkout<\/button>/);
   assert.match(cart, />Continue Shopping<\/button>/);
+  assert.match(cart, /class="cart-disclaimer">For research use only · Not for human consumption<\/div>/);
+  assert.doesNotMatch(cart, /Prices in|cartCurrencyNote/);
   assert.doesNotMatch(cart, /cart-progress|cart-mix-builder|cart-checkout__next/);
   assert.match(html, /class="mix-bundle-overlay" id="mixBundleDialog" hidden/);
   assert.match(css, /\.mix-bundle-overlay\s*\{[^}]*position:\s*fixed[^}]*place-items:\s*center/s);
@@ -346,6 +353,9 @@ test('cart keeps the established layout while Mix 10 uses the accessible popup',
   assert.match(mixBuilder, /mixBundleCheckoutAfterAdd = checkoutAfterAdd/);
   assert.match(mixBuilder, /getElementById\('mixBundleDialog'\)\.hidden = false/);
   assert.match(addToCart, /if \(destination === 'checkout'\) openCheckout\(\)/);
+  assert.match(suggestions, /class="cart-water-upsell"/);
+  assert.match(suggestions, /You Might Also Like/);
+  assert.match(suggestions, /class="cart-rec-card"/);
   assert.match(suggestions, /Add \$\{water\.size\} · \$\{fmtPrice\(water\.price\)\}/);
   assert.doesNotMatch(suggestions, /cart-upsell-actions|cart-rec-card__actions|,'checkout'/);
   assert.doesNotMatch(css, /\.cart-page-active|#page-cart #cartSuggestionsEl/);

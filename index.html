@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="PeptideLab Australia: research compounds, straightforward ordering and support. Standard and express delivery available, with free standard shipping on eligible orders." />
-  <link rel="stylesheet" href="/styles.css?v=33" />
+  <link rel="stylesheet" href="/styles.css?v=34" />
   <link rel="stylesheet" href="/giveaway.css?v=5" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
@@ -269,6 +269,7 @@
       <div class="co-sum-row" id="coDiscountRow" style="display:none"><span id="coDiscountLabel">Discount</span><span id="coSumDiscount" style="color:#60f7a4">−A$0.00</span></div>
       <div class="co-sum-row"><span>Shipping</span><span id="coSumShipping">—</span></div>
       <div class="co-sum-row co-sum-row--total"><span>Total</span><span id="coSumTotal">A$0.00</span></div>
+      <p class="co-currency-note" id="coCurrencyNote" role="status" hidden></p>
     </div>
   </div>
 
@@ -359,7 +360,7 @@
         <button type="button" class="nav__icon-btn nav__search-btn" onclick="openSiteSearch()" aria-label="Search products">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
         </button>
-        <select class="nav__currency" id="currencySelect" onchange="setCurrency(this.value)" title="Display currency; checkout is in AUD" aria-label="Display currency; checkout is in Australian dollars">
+        <select class="nav__currency" id="currencySelect" onchange="setCurrency(this.value)" title="Display currency; payment is in AUD" aria-label="Display currency; payment is in Australian dollars">
           <option value="AUD" selected>AUD</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
@@ -406,7 +407,7 @@
 
     <div class="nav-drawer__tools">
       <label for="mobileCurrencySelect">Display currency</label>
-      <select class="nav__currency nav-drawer__currency" id="mobileCurrencySelect" onchange="setCurrency(this.value)" aria-label="Display currency; checkout is in Australian dollars">
+      <select class="nav__currency nav-drawer__currency" id="mobileCurrencySelect" onchange="setCurrency(this.value)" aria-label="Display currency; payment is in Australian dollars">
         <option value="AUD" selected>AUD</option>
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
@@ -480,7 +481,7 @@
         <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
         <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
       </div>
-      <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
+      <div class="cart-disclaimer">For research use only · Not for human consumption</div>
     </aside>
   </div>
 </div>
@@ -1357,9 +1358,9 @@ function coShipPrice(method, subtotal) {
   return method.price;
 }
 function coShipLabel(method, subtotal) {
-  if (method.isExpress && subtotal >= FREE_SHIP_THRESHOLD) return `+A$${coShipPrice(method, subtotal).toFixed(2)}`;
+  if (method.isExpress && subtotal >= FREE_SHIP_THRESHOLD) return `+${fmtPrice(coShipPrice(method, subtotal))}`;
   if (method.freeOk   && subtotal >= FREE_SHIP_THRESHOLD) return 'FREE';
-  return `A$${method.price.toFixed(2)}`;
+  return fmtPrice(method.price);
 }
 
 function openCheckout() {
@@ -1592,7 +1593,7 @@ function coRenderSummary() {
   const mbRow = document.getElementById('coMultibuyRow');
   if (mbRate > 0) {
     document.getElementById('coMultibuyLabel').textContent = `Bundle discount (${getMultibuyLabel(getEligibleCartCount())})`;
-    document.getElementById('coSumMultibuy').textContent   = `−A$${mbDiscount.toFixed(2)}`;
+    document.getElementById('coSumMultibuy').textContent   = `−${fmtPrice(mbDiscount)}`;
     mbRow.style.display = '';
   } else {
     mbRow.style.display = 'none';
@@ -1604,26 +1605,34 @@ function coRenderSummary() {
     return `<div class="co-sum-item">
       <div class="co-sum-item__img">${img}<div class="co-sum-item__badge">${i.qty}</div></div>
       <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px">${i.size}</span>` : ''}${i.selections ? `<br/><span style="color:#aaa;font-size:11px">${bundleContentsLabel(i.selections)}</span>` : ''}</div>
-      <div class="co-sum-item__price">A$${(i.price * i.qty).toFixed(2)}</div>
+      <div class="co-sum-item__price">${fmtPrice(i.price * i.qty)}</div>
     </div>`;
   }).join('');
 
-  document.getElementById('coSumSubtotal').textContent = `A$${subtotal.toFixed(2)}`;
+  document.getElementById('coSumSubtotal').textContent = fmtPrice(subtotal);
   document.getElementById('coSumShipping').textContent = shippingReady
-    ? (ship === 0 ? 'FREE' : `A$${ship.toFixed(2)}`)
+    ? (ship === 0 ? 'FREE' : fmtPrice(ship))
     : 'Calculated after address';
-  document.getElementById('coSumTotal').textContent    = `A$${total.toFixed(2)}`;
+  document.getElementById('coSumTotal').textContent    = fmtPrice(total);
 
   const discRow = document.getElementById('coDiscountRow');
   if (appliedPromo) {
     document.getElementById('coDiscountLabel').textContent = `${appliedPromo.label}`;
-    document.getElementById('coSumDiscount').textContent   = `−A$${discount.toFixed(2)}`;
+    document.getElementById('coSumDiscount').textContent   = `−${fmtPrice(discount)}`;
     discRow.style.display = '';
   } else {
     discRow.style.display = 'none';
   }
 
-  // Update inline amount in payment options
+  const currencyNote = document.getElementById('coCurrencyNote');
+  if (currencyNote) {
+    currencyNote.hidden = currentCurrency === 'AUD';
+    currencyNote.textContent = currentCurrency === 'AUD'
+      ? ''
+      : `${currentCurrency} prices are estimates. Bank-transfer payment is completed in AUD.`;
+  }
+
+  // Payment options always show the exact AUD amount that must reach the bank account.
   document.querySelectorAll('.co-pay-amt-inline').forEach(el => el.textContent = `A$${total.toFixed(2)}`);
 }
 
@@ -1928,6 +1937,7 @@ async function placeOrder() {
 // ============================================================
 const RATES  = { AUD:1 };
 const SYMS   = { AUD:'A$', USD:'US$', EUR:'€', GBP:'£', NZD:'NZ$', CAD:'C$' };
+const CURRENCY_STORAGE_KEY = 'pl-display-currency';
 let currentCurrency = 'AUD';
 let currencyRateDate = '';
 let currencyRatesPromise = null;
@@ -1935,7 +1945,16 @@ function fmtPrice(aud) {
   return SYMS[currentCurrency] + (aud * RATES[currentCurrency]).toFixed(2);
 }
 function currencyPriceNote() {
-  return currentCurrency === 'AUD' ? 'AUD' : currentCurrency + ' estimate · checkout in AUD';
+  return currentCurrency === 'AUD' ? 'AUD' : currentCurrency + ' estimate · payment in AUD';
+}
+function readCurrencyPreference() {
+  try {
+    const saved = localStorage.getItem(CURRENCY_STORAGE_KEY);
+    return Object.hasOwn(SYMS, saved) ? saved : 'AUD';
+  } catch { return 'AUD'; }
+}
+function saveCurrencyPreference(value) {
+  try { localStorage.setItem(CURRENCY_STORAGE_KEY, value); } catch {}
 }
 async function loadCurrencyRates() {
   if (currencyRateDate) return;
@@ -1978,15 +1997,22 @@ async function setCurrency(val) {
     } finally { selectors.forEach(element => { element.disabled = false; }); }
   }
   currentCurrency = val;
+  saveCurrencyPreference(val);
   selectors.forEach(element => { element.value = val; });
-  const note = document.getElementById('cartCurrencyNote');
-  if (note) note.textContent = val === 'AUD' ? 'AUD' : val + ' (estimate; checkout in AUD)';
   notice.hidden = val === 'AUD';
-  if (val !== 'AUD') notice.textContent = `Approximate ${val} prices use ${currencyRateDate} reference rates. Checkout and payment are in AUD; your provider sets the final conversion.`;
+  if (val !== 'AUD') notice.textContent = `Approximate ${val} prices use ${currencyRateDate} reference rates. Bank-transfer payment is completed in AUD; your provider sets the final conversion.`;
   renderFeatured(); renderShop();
   renderReconSupplies();
   updatePdpPrices();
   renderCart();
+  if (document.getElementById('coOverlay')?.classList.contains('open')) {
+    coRenderShippingOptions();
+    coRenderSummary();
+  }
+}
+async function restoreCurrencyPreference() {
+  const saved = readCurrencyPreference();
+  if (saved !== currentCurrency) await setCurrency(saved);
 }
 
 // ============================================================
@@ -3201,6 +3227,7 @@ renderShop();
 renderReconSupplies();
 renderCart();
 updateMobileCartBtn();
+restoreCurrencyPreference();
 
 loadInventory();
 
