@@ -1,5 +1,8 @@
 {
   "functions": { "api/order.js": { "maxDuration": 60 }, "api/giveaway.js": { "maxDuration": 60 } },
+  "redirects": [
+    { "source": "/quality-testing", "destination": "/shop", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/products/:slug", "destination": "/index.html" },
@@ -7,7 +10,6 @@
     { "source": "/shop", "destination": "/index.html" },
     { "source": "/cart", "destination": "/index.html" },
     { "source": "/reconstitution", "destination": "/index.html" },
-    { "source": "/quality-testing", "destination": "/index.html" },
     { "source": "/about", "destination": "/index.html" },
     { "source": "/faq", "destination": "/index.html" },
     { "source": "/contact", "destination": "/index.html" },

@@ -67,6 +67,7 @@ test('all six display options and the mobile selector are present', () => {
   const selector = html.match(/<select class="nav__currency"[\s\S]*?<\/select>/)?.[0] || '';
   for (const code of ['AUD', 'USD', 'EUR', 'GBP', 'NZD', 'CAD']) assert.match(selector, new RegExp(`value="${code}"`));
   assert.match(selector, /onchange="setCurrency\(this\.value\)"/);
+  assert.match(html, /id="mobileCurrencySelect"[\s\S]*onchange="setCurrency\(this\.value\)"/);
   const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
   assert.doesNotMatch(css, /@media\(max-width:768px\)\{\.nav__currency\{display:none\}\}/);
 });

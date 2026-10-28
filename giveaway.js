@@ -39,9 +39,11 @@
     if (automaticAttempted) return;
     const dismissedAt = Number(storage.get(dismissalKey)) || 0;
     if (Date.now() - dismissedAt < dismissalWindow) return;
+    const activePageId = document.querySelector('.page.active')?.id;
+    if (activePageId === 'page-home') return;
     if (document.body.classList.contains('research-agreement-pending')
         || document.getElementById('coOverlay')?.classList.contains('open')
-        || !['page-home', 'page-shop', 'page-product'].includes(document.querySelector('.page.active')?.id)) return;
+        || !['page-shop', 'page-product'].includes(activePageId)) return;
     automaticAttempted = true;
     openPopup();
   }

@@ -142,3 +142,135 @@ test('all inline storefront scripts parse after edits', () => {
   for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)) new vm.Script(match[1]);
   new vm.Script(fs.readFileSync(require.resolve('../storefront-support.js'), 'utf8'));
 });
+test('storefront keeps removed sections out and presents a compact bundle selector', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  for (const removed of [
+    'id="page-quality"',
+    "showPage('quality')",
+    "switchTab(this,'specs')",
+    'id="tab-specs"',
+    'id="pdpSpecTable"',
+    'class="pdp-delivery-estimate"',
+    'class="pdp-payment-note"',
+    'class="bundle-savings-banner"',
+    '${p.tags[0]}',
+  ]) assert.equal(html.includes(removed), false, `${removed} should remain removed`);
+  assert.doesNotMatch(html, /<section class="hero hero--catalog">/);
+  const trustStrip = html.match(/<div class="trust-strip">[\s\S]*?<section class="orders-proof"/)?.[0] || '';
+  assert.doesNotMatch(trustStrip, /Australian Bank Transfer/);
+  assert.match(css, /\.hero\s*\{[^}]*background:#171F33/s);
+  const productOrder = [...html.matchAll(/\{ id:'PL-\d+', name:'([^']+)'/g)].map(match => match[1]);
+  assert.equal(productOrder.indexOf('Retatrutide') + 1, productOrder.indexOf('GHK-Cu'));
+  assert.match(html, /Storage before and after reconstitution/);
+  assert.match(html, /Before reconstitution:<\/strong> Keep the sealed lyophilised vial dry/);
+  assert.match(html, /After reconstitution:<\/strong> Follow the product and lot instructions/);
+  assert.doesNotMatch(html, /This page does not establish a preparation protocol or expiry date/);
+  assert.match(css, /\.pdp-bundle-box__tiers\s*\{[^}]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/s);
+});
+
+test('home landing keeps responsive heroes, four featured products, and accessible navigation', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  const offerController = fs.readFileSync(require.resolve('../giveaway.js'), 'utf8');
+  const home = html.match(/<div class="page active" id="page-home">[\s\S]*?<div class="page" id="page-reconstitution">/)?.[0] || '';
+  const nav = html.match(/<nav class="nav"[\s\S]*?<\/nav>/)?.[0] || '';
+  const mobileHero = home.match(/<section class="mobile-hero"[\s\S]*?<\/section>/)?.[0] || '';
+  const featuredRenderer = html.match(/function renderFeatured\(\) \{[\s\S]*?\n\}/)?.[0] || '';
+
+  assert.doesNotMatch(home, /hero--catalog/);
+  assert.match(home, /class="desktop-hero"/);
+  assert.match(home, /class="desktop-hero__eyebrow">Research Peptides<\/div>/);
+  assert.match(home, /id="desktopHeroTitle">The Standard for Research-Grade Peptide Supply<\/h2>/);
+  assert.match(home, /Research compounds with straightforward ordering and local support\./);
+  assert.match(home, /id="heroSearch"[^>]*placeholder="Search compounds"/);
+  assert.match(home, /class="hero-finder__button"[^>]*>Shop Peptides<\/button>/);
+  for (const compound of ['Retatrutide', 'BPC-157', 'TB-500', 'GHK-Cu', 'Tesamorelin', 'All compounds']) {
+    assert.match(home, new RegExp(`>${compound}(?: <span[^>]*>→<\\/span>)?<\\/button>`));
+  }
+  assert.match(home, /class="desktop-hero__visual"[\s\S]*src="\/images\/hero-peptide-vials-navy\.webp"/);
+  assert.match(mobileHero, /aria-labelledby="mobileHeroTitle"/);
+  assert.match(mobileHero, /id="mobileHeroTitle">Laboratory Grade Research Peptides<\/h2>/);
+  assert.doesNotMatch(mobileHero, /mobile-hero__(?:search|shop|chips|trust)/);
+  assert.doesNotMatch(mobileHero, /≥98%|independent lab reports|COA per batch/i);
+  assert.match(home, /class="section-label">Popular compounds<\/div>/);
+  assert.match(home, /<h1 id="popularPeptidesTitle">Popular compounds<\/h1>/);
+  assert.doesNotMatch(home, /Popular research products/);
+  assert.match(home, /aria-label="View all compounds"[^>]*>View all <span aria-hidden="true">→<\/span>/);
+  assert.match(nav, /id="mobileToggle"[\s\S]*aria-controls="mobileMenu"/);
+  assert.match(nav, /class="nav__icon-btn nav__mobile-search"/);
+  assert.match(html, /id="siteSearch"[\s\S]*placeholder="Search products"/);
+  assert.match(html, /id="mobileMenu"[\s\S]*Shop by research area/);
+  assert.doesNotMatch(home, /id="verification-standard"/);
+  assert.doesNotMatch(home, /Proof over promises/);
+  assert.doesNotMatch(home, /Start with the product information/);
+  assert.doesNotMatch(home, /class="final-cta"/);
+  assert.ok(home.indexOf('class="desktop-hero"') < home.indexOf('class="section featured-products"'));
+  assert.ok(home.indexOf('class="desktop-hero"') < home.indexOf('class="mobile-hero"'));
+  assert.ok(home.indexOf('class="mobile-hero"') < home.indexOf('class="section featured-products"'));
+  assert.ok(home.indexOf('class="trust-strip"') < home.indexOf('class="section featured-products"'));
+  assert.ok(home.indexOf('class="section featured-products"') < home.indexOf('class="orders-proof"'));
+  assert.ok(home.indexOf('class="orders-proof"') < home.indexOf('class="discreet-packaging"'));
+  assert.ok(home.indexOf('class="discreet-packaging"') < home.indexOf('id="homeReconstitutionMount"'));
+  assert.match(featuredRenderer, /makeMixBundleCard\(true\) \+ featured\.map/);
+  assert.match(featuredRenderer, /\['PL-001', 'PL-015', 'PL-012'\]/);
+  assert.doesNotMatch(featuredRenderer, /PL-002/);
+  assert.equal([...html.matchAll(/\{ id:'PL-\d+', name:'([^']+)'/g)][0]?.[1], 'Retatrutide');
+  assert.match(html, /class="product-card__name product-card__open"/);
+  assert.match(offerController, /if \(activePageId === 'page-home'\) return;/);
+  assert.match(offerController, /\['page-shop', 'page-product'\]\.includes\(activePageId\)/);
+  assert.match(offerController, /window\.openPopup/);
+  assert.match(css, /\.nav__mobile-menu\.open\s*\{[^}]*transform:\s*translateX\(0\)/s);
+  assert.match(css, /\.nav__inner\s*\{[^}]*grid-template-columns:\s*48px minmax\(0, 1fr\) 48px/s);
+  assert.match(css, /#homeReconstitutionSource\s*\{\s*display:\s*none/);
+  assert.match(css, /\.desktop-hero\s*\{\s*display:\s*none/);
+  assert.match(css, /@media \(min-width:\s*901px\)[\s\S]*\.desktop-hero\s*\{[\s\S]*display:\s*block/s);
+  assert.match(css, /\.mobile-hero\s*\{[\s\S]*?display:\s*block/s);
+  assert.match(css, /\.mobile-hero__main\s*\{[^}]*text-align:\s*center/s);
+  assert.match(css, /\.mobile-hero h2\s*\{[^}]*font-size:\s*clamp\(28px,\s*6vw,\s*32px\)/s);
+  assert.match(css, /@media \(min-width:\s*901px\)[\s\S]*?\.mobile-hero\s*\{\s*display:\s*none/s);
+  assert.match(css, /\.desktop-hero__finder\s*\{[^}]*max-width:\s*700px/s);
+  assert.match(css, /\.desktop-hero__visual img\s*\{[^}]*height:\s*auto[^}]*object-fit:\s*contain/s);
+  assert.match(css, /#page-home > \.trust-strip \.trust-strip__inner\s*\{[^}]*grid-template-columns:\s*repeat\(3,/s);
+  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?#page-home \.featured-products__heading h1\s*\{\s*display:\s*none/s);
+  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?#page-home \.featured-products\s*\{\s*padding:\s*12px 0 36px/s);
+  assert.match(css, /#page-home \.featured-products \.products-grid\s*\{\s*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(css, /@media \(min-width:\s*901px\)[\s\S]*?#page-home \.featured-products__heading \.section-label\s*\{\s*display:\s*none/s);
+  assert.doesNotMatch(html, /checkout-payment-note|Bank transfer in AUD/);
+});
+
+test('restock dialog preserves retry identity and distinguishes automatic storage from manual fallback', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  assert.match(html, /let restockRequestId = '';/);
+  assert.match(html, /restockRequestId = newRestockRequestId\(\);/);
+  assert.match(html, /JSON\.stringify\(\{ email:[^}]*productId:[^}]*requestId:restockRequestId \}\)/);
+  assert.match(html, /const responseText = await res\.text\(\);/);
+  assert.match(html, /try \{ data = responseText \? JSON\.parse\(responseText\) : \{\}; \} catch \{\}/);
+  assert.match(html, /data\.delivery === 'stored'[\s\S]*automatic restock alert has been saved[\s\S]*submit\.style\.display = 'none'/);
+  assert.match(html, /data\.delivery === 'support'[\s\S]*manual follow-up[\s\S]*Retry automatic alert/);
+  assert.match(html, /restock-message--warning/);
+  assert.match(css, /\.restock-message--warning\s*\{[^}]*background:\s*#FFF8E3[^}]*color:\s*#744F05/s);
+  assert.match(css, /\.restock-message--success\s*\{/);
+  assert.match(css, /\.restock-message--error\s*\{/);
+});
+
+test('checkout uses a compact cart-aligned light layout', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+
+  assert.doesNotMatch(html, /class="co-back"|Back to cart/);
+  assert.match(html, /class="co-close"[^>]*aria-label="Close checkout"/);
+  assert.match(html, /event\.key === 'Escape'[^\n]*coOverlay[^\n]*closeCheckout/);
+  assert.doesNotMatch(html, /id="coMarketingConsent"|Stay in the loop/);
+  assert.match(html, /marketingConsent:\s*document\.getElementById\('coMarketingConsent'\)\?\.checked \|\| false/);
+  assert.match(html, /function coHasDeliveryDetails\(\)/);
+  assert.match(html, /'Calculated after address'/);
+  assert.match(css, /\.co-overlay\s*\{[^}]*background:\s*#F5F7FA[^}]*color:\s*#1B273C/s);
+  assert.match(css, /\.co-body\s*\{[^}]*width:\s*min\(100%,\s*1180px\)[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*minmax\(320px,\s*360px\)/s);
+  assert.match(css, /\.co-place-order\s*\{[^}]*background:\s*#1875AC[^}]*color:\s*#FFFFFF/s);
+  assert.match(css, /\.co-ship-opt--on,[\s\S]*?\.co-pay-opt--on\s*\{[^}]*border-color:\s*#1875AC[^}]*background:\s*#EDF7FD/s);
+  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-body\s*\{[^}]*width:\s*100%[^}]*min-height:\s*0[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-summary-col\s*\{[^}]*order:\s*-1/s);
+  assert.match(css, /\.co-success__block\s*\{[^}]*background:\s*#FFFFFF/s);
+});

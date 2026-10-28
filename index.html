@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
-  <meta name="description" content="PeptideLab Australia: product specifications, documentation enquiries and order support. Standard and express delivery available. Free standard shipping on orders of $200 AUD or more." />
-  <link rel="stylesheet" href="/styles.css?v=28" />
+  <meta name="description" content="PeptideLab Australia: research compounds, straightforward ordering and support. Standard and express delivery available, with free standard shipping on eligible orders." />
+  <link rel="stylesheet" href="/styles.css?v=29" />
   <link rel="stylesheet" href="/giveaway.css?v=5" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
@@ -36,9 +36,8 @@
 
   <!-- HEADER -->
   <div class="co-header">
-    <button class="co-back" onclick="closeCheckout()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to cart
+    <button type="button" class="co-close" onclick="closeCheckout()" aria-label="Close checkout">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
     <div class="co-brand">PeptideLab</div>
     <div class="co-secure">
@@ -52,6 +51,7 @@
 
     <!-- LEFT: FORM -->
     <div class="co-form-col">
+      <div class="co-form-primary">
 
       <!-- Contact -->
       <div class="co-section">
@@ -143,7 +143,7 @@
         </div>
         <div class="co-field">
           <label for="co-address1">Address</label>
-          <input class="co-input" type="text" id="co-address1" autocomplete="shipping address-line1" />
+          <input class="co-input" type="text" id="co-address1" autocomplete="shipping address-line1" oninput="coDeliveryDetailsInput()" />
         </div>
         <div class="co-field">
           <label for="co-address2">Apartment, suite, etc. (optional)</label>
@@ -152,11 +152,11 @@
         <div class="co-row co-row--3 co-row--address">
           <div class="co-field">
             <label for="co-postcode">Postcode</label>
-            <input class="co-input" type="text" id="co-postcode" autocomplete="shipping postal-code" inputmode="numeric" oninput="coPostcodeInput()" onchange="coPostcodeInput()" />
+            <input class="co-input" type="text" id="co-postcode" autocomplete="shipping postal-code" inputmode="numeric" oninput="coPostcodeInput();coDeliveryDetailsInput()" onchange="coPostcodeInput();coDeliveryDetailsInput()" />
           </div>
           <div class="co-field">
             <label for="co-suburb">Suburb / City</label>
-            <input class="co-input" type="text" id="co-suburb" autocomplete="shipping address-level2" />
+            <input class="co-input" type="text" id="co-suburb" autocomplete="shipping address-level2" oninput="coDeliveryDetailsInput()" />
           </div>
           <div class="co-field" id="co-state-wrap">
             <label for="co-state">State</label>
@@ -184,6 +184,9 @@
           <input class="co-input" type="tel" id="co-phone" autocomplete="shipping tel" />
         </div>
       </div>
+      </div>
+
+      <div class="co-form-secondary">
 
       <!-- Shipping method -->
       <div class="co-section" id="coShipSection">
@@ -228,15 +231,6 @@
         <div class="co-bsb-note" id="coPaymentNote" style="margin-top:10px;border-radius:8px;background:#142B42;border:1px solid #35516A">Transfer the exact amount and use your order reference. Orders are dispatched after payment clears.</div>
       </div>
 
-      <!-- Marketing consent -->
-      <label class="co-consent-row" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;cursor:pointer;background:#142B42;border:1px solid #35516A;border-radius:8px;padding:12px 14px">
-        <input type="checkbox" id="coMarketingConsent" style="margin-top:2px;flex-shrink:0;width:16px;height:16px;accent-color:#60f7a4;cursor:pointer">
-        <span style="font-size:13px;color:#ccc;line-height:1.5">
-          <strong style="color:#fff;font-weight:600">Stay in the loop</strong><br>
-          Get early access to new peptides, exclusive discounts, and restock alerts from PeptideLab. Unsubscribe anytime.
-        </span>
-      </label>
-
       <!-- Submit -->
       <button class="co-place-order" id="coPlaceBtn" onclick="placeOrder()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
@@ -244,6 +238,7 @@
       </button>
       <div class="co-error-msg" id="coError"></div>
       <div class="co-legal">By placing your order you agree to our <a href="#" onclick="closeCheckout();showPage('terms')">Terms of Service</a> and <a href="#" onclick="closeCheckout();showPage('privacy')">Privacy Policy</a>. All products are for research use only.</div>
+      </div>
     </div>
 
     <!-- RIGHT: SUMMARY -->
@@ -348,26 +343,31 @@
 </dialog>
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar">
-  <span class="announcement-bar__desktop"><strong>🇦🇺 Australian-based</strong><span>•</span>Free standard shipping from $200 AUD<span>•</span>Australian and international delivery</span>
-  <span class="announcement-bar__mobile"><strong>🇦🇺 Australian-based</strong> · International delivery</span>
+  <span class="announcement-bar__desktop"><strong>Free standard shipping available</strong><span>•</span>Standard and express delivery<span>•</span>Shipping worldwide</span>
+  <span class="announcement-bar__mobile"><strong>Free standard shipping available</strong> · Shipping worldwide</span>
 </div>
 
 <!-- NAVIGATION -->
-<nav class="nav">
+<nav class="nav" aria-label="Primary navigation">
   <div class="container">
     <div class="nav__inner">
-      <div class="nav__logo" onclick="showPage('home')">
+      <button type="button" class="nav__icon-btn nav__mobile-toggle" onclick="toggleMobileMenu()" id="mobileToggle" aria-label="Open navigation menu" aria-controls="mobileMenu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <button type="button" class="nav__logo" onclick="showPage('home')" aria-label="PeptideLab home">
         <span class="nav__logo-name">PeptideLab</span>
-      </div>
+      </button>
       <div class="nav__links">
         <span class="nav__link" onclick="showPage('shop')">Shop</span>
         <a class="nav__calculator" href="/reconstitution" onclick="showPage('reconstitution'); return false;">Reconstitution</a>
-        <span class="nav__link" onclick="showPage('quality')">Quality &amp; Testing</span>
         <span class="nav__link" onclick="showPage('faq')">FAQ</span>
         <span class="nav__link" onclick="showPage('contact')">Contact</span>
         <span class="nav__link" onclick="showPage('track')">Track Order</span>
       </div>
       <div class="nav__actions">
+        <button type="button" class="nav__icon-btn nav__search-btn" onclick="openSiteSearch()" aria-label="Search products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        </button>
         <select class="nav__currency" id="currencySelect" onchange="setCurrency(this.value)" title="Display currency; checkout is in AUD" aria-label="Display currency; checkout is in Australian dollars">
           <option value="AUD" selected>AUD</option>
           <option value="USD">USD</option>
@@ -376,35 +376,76 @@
           <option value="NZD">NZD</option>
           <option value="CAD">CAD</option>
         </select>
-        <div class="nav__cart-btn" onclick="openCart()">
+        <button type="button" class="nav__cart-btn" onclick="openCart()" aria-label="Open cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <div class="nav__cart-count" id="cartCount">0</div>
-        </div>
+        </button>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div class="nav__cart-btn" onclick="openCart()" style="display:none" id="mobileCartBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          <div class="nav__cart-count" id="mobileCartCount">0</div>
-        </div>
-        <div class="nav__mobile-toggle" onclick="toggleMobileMenu()" id="mobileToggle">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="nav__mobile-menu" id="mobileMenu">
-    <span class="nav__mobile-link" onclick="showPage('shop');toggleMobileMenu()">Shop Peptides <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
-    <a class="nav__mobile-link" href="/reconstitution" onclick="showPage('reconstitution');toggleMobileMenu(); return false;">Reconstitution</a>
-    <span class="nav__mobile-link" onclick="showPage('quality');toggleMobileMenu()">Quality &amp; Testing <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
-    <span class="nav__mobile-link" onclick="showPage('faq');toggleMobileMenu()">FAQ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
-    <span class="nav__mobile-link" onclick="showPage('contact');toggleMobileMenu()">Contact <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
-    <span class="nav__mobile-link" onclick="showPage('track');toggleMobileMenu()">Track Order <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>
-    <div style="padding-top:16px;display:flex;gap:8px;">
-      <button class="btn btn--outline btn--sm" onclick="openCart();toggleMobileMenu()" style="flex:1">Cart (<span id="mobileMenuCartCount">0</span>)</button>
-      <button class="btn btn--teal btn--sm" onclick="showPage('shop');toggleMobileMenu()" style="flex:2">Shop Peptides</button>
+      <button type="button" class="nav__icon-btn nav__mobile-search" onclick="openSiteSearch()" aria-label="Search products">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      </button>
     </div>
   </div>
 </nav>
+
+<div class="nav-drawer-backdrop" id="mobileMenuBackdrop" onclick="closeMobileMenu()" aria-hidden="true"></div>
+<aside class="nav__mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Site navigation" aria-hidden="true" inert>
+  <div class="nav-drawer__header">
+    <strong>PeptideLab</strong>
+    <button type="button" class="nav__icon-btn" onclick="closeMobileMenu()" aria-label="Close navigation menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="nav-drawer__body">
+    <div class="nav-drawer__label">Shop by research area</div>
+    <button type="button" class="nav__mobile-link" onclick="openShopCategory('metabolic')"><span>Metabolic &amp; GLP-1</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="openShopCategory('recovery')"><span>Recovery &amp; Repair</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="openShopCategory('gh')"><span>GH Secretagogues</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="openShopCategory('cognitive')"><span>Cognitive &amp; Sleep</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="openShopCategory('cellular')"><span>Longevity &amp; Cellular</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="openShopCategory('accessories')"><span>Lab supplies</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav-drawer__all" onclick="openShopCategory('all')">View all products <span aria-hidden="true">→</span></button>
+
+    <div class="nav-drawer__label nav-drawer__label--pages">Information &amp; support</div>
+    <a class="nav__mobile-link" href="/reconstitution" onclick="navigateFromDrawer('reconstitution'); return false;"><span>Reconstitution</span><span aria-hidden="true">→</span></a>
+    <button type="button" class="nav__mobile-link" onclick="navigateFromDrawer('about')"><span>About us</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="navigateFromDrawer('faq')"><span>FAQ</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="navigateFromDrawer('contact')"><span>Contact</span><span aria-hidden="true">→</span></button>
+    <button type="button" class="nav__mobile-link" onclick="navigateFromDrawer('track')"><span>Track order</span><span aria-hidden="true">→</span></button>
+
+    <div class="nav-drawer__tools">
+      <label for="mobileCurrencySelect">Display currency</label>
+      <select class="nav__currency nav-drawer__currency" id="mobileCurrencySelect" onchange="setCurrency(this.value)" aria-label="Display currency; checkout is in Australian dollars">
+        <option value="AUD" selected>AUD</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="NZD">NZD</option>
+        <option value="CAD">CAD</option>
+      </select>
+      <button type="button" class="nav-drawer__cart" onclick="closeMobileMenu();openCart()">Cart (<span id="mobileMenuCartCount">0</span>)</button>
+    </div>
+  </div>
+</aside>
+
+<div class="site-search-overlay" id="siteSearchOverlay" hidden onclick="if(event.target===this)closeSiteSearch()">
+  <section class="site-search-panel" role="dialog" aria-modal="true" aria-labelledby="siteSearchTitle">
+    <div class="site-search-panel__header">
+      <h2 id="siteSearchTitle">Search products</h2>
+      <button type="button" class="nav__icon-btn" onclick="closeSiteSearch()" aria-label="Close search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="site-search-form" role="search">
+      <div class="site-search-form__field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="siteSearch" type="search" autocomplete="off" placeholder="Search products" aria-label="Search products" oninput="searchSiteProducts(this.value)" onkeydown="handleSiteSearch(event)">
+      </div>
+      <button type="button" onclick="submitSiteSearch()">Search</button>
+    </div>
+    <div class="site-search-results" id="siteSearchResults" aria-live="polite" hidden></div>
+  </section>
+</div>
 <div class="currency-display-note" id="currencyDisplayNote" role="status" hidden></div>
 
 <!-- CART PAGE -->
@@ -445,7 +486,6 @@
       </div>
       <div id="cartFreeShipSuggestions" class="cart-free-ship-suggestions" hidden></div>
       <div class="cart-checkout">
-        <div class="checkout-payment-note"><strong>Payment method</strong><span>Bank transfer in AUD · international customers can pay through Wise or Revolut</span></div>
         <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
         <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
       </div>
@@ -459,37 +499,45 @@
 <!--  PAGE: HOME                                                   -->
 <!-- ============================================================ -->
 <div class="page active" id="page-home">
-
-  <section class="hero">
+  <!-- DESKTOP HERO -->
+  <section class="desktop-hero" aria-labelledby="desktopHeroTitle">
     <div class="container">
-      <div class="hero__inner">
-        <div class="hero__content">
-          <div class="hero__eyebrow"><span class="hero__eyebrow-dot"></span>Australian Research Peptides</div>
-          <h1 class="hero__title">
-            <span class="hero__title-desktop">The Standard for <em>Research-Grade</em> Peptide Supply</span>
-            <span class="hero__title-mobile">Research peptides.<br><em>Supplied in Australia.</em></span>
-          </h1>
-          <p class="hero__sub">Product specifications and documentation enquiries for research compounds supplied from Australia.</p>
-          <div class="hero-finder" role="search">
+      <div class="desktop-hero__inner">
+        <div class="desktop-hero__content">
+          <div class="desktop-hero__eyebrow">Research Peptides</div>
+          <h2 id="desktopHeroTitle">The Standard for Research-Grade Peptide Supply</h2>
+          <p>Research compounds with straightforward ordering and local support.</p>
+          <div class="hero-finder desktop-hero__finder" role="search">
             <div class="hero-finder__search">
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
               <input id="heroSearch" type="search" autocomplete="off" placeholder="Search compounds" aria-label="Search compounds" oninput="searchHeroProducts(this.value)" onkeydown="handleHeroSearch(event)">
               <div class="hero-finder__results" id="heroSearchResults" hidden></div>
             </div>
-            <button class="btn btn--teal hero-finder__button" onclick="openHeroSearch()">Shop Peptides</button>
+            <button type="button" class="hero-finder__button" onclick="openHeroSearch()">Shop Peptides</button>
           </div>
           <div class="hero-finder__chips" aria-label="Popular compounds">
-            <button onclick="selectHeroProduct('PL-001')">Retatrutide</button>
-            <button onclick="selectHeroProduct('PL-002')">BPC-157</button>
-            <button onclick="selectHeroProduct('PL-003')">TB-500</button>
-            <button onclick="selectHeroProduct('PL-012')">GHK-Cu</button>
-            <button onclick="selectHeroProduct('PL-004')">Tesamorelin</button>
-            <button class="hero-finder__all" onclick="showPage('shop')">All compounds <span aria-hidden="true">→</span></button>
+            <button type="button" onclick="selectHeroProduct('PL-001')">Retatrutide</button>
+            <button type="button" onclick="selectHeroProduct('PL-002')">BPC-157</button>
+            <button type="button" onclick="selectHeroProduct('PL-003')">TB-500</button>
+            <button type="button" onclick="selectHeroProduct('PL-012')">GHK-Cu</button>
+            <button type="button" onclick="selectHeroProduct('PL-004')">Tesamorelin</button>
+            <button type="button" class="hero-finder__all" onclick="showPage('shop')">All compounds <span aria-hidden="true">→</span></button>
           </div>
         </div>
-        <div class="hero__visual hero__visual--product">
-          <img class="hero__product-image" src="/images/hero-peptide-vials-navy.webp" width="1400" height="788" fetchpriority="high" decoding="async" alt="Retatrutide, GHK-Cu, and BPC-157 research vials">
-        </div>
+        <figure class="desktop-hero__visual">
+          <img src="/images/hero-peptide-vials-navy.webp" width="1400" height="788" fetchpriority="high" decoding="async" alt="Retatrutide, GHK-Cu and BPC-157 research vials">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOBILE SHOP HERO -->
+  <section class="mobile-hero" aria-labelledby="mobileHeroTitle">
+    <div class="mobile-hero__main">
+      <div class="container">
+        <p class="mobile-hero__eyebrow">Research use only</p>
+        <h2 id="mobileHeroTitle">Laboratory Grade Research Peptides</h2>
+        <p class="mobile-hero__intro">Search by compound or browse current pricing and availability.</p>
       </div>
     </div>
   </section>
@@ -497,41 +545,31 @@
   <div class="trust-strip">
     <div class="container">
       <div class="trust-strip__inner">
-        <div class="trust-badge">Product Specifications</div>
-        <div class="trust-divider"></div>
         <div class="trust-badge">Documentation Support</div>
-        <div class="trust-divider"></div>
         <div class="trust-badge">Free Standard From $200</div>
-        <div class="trust-divider"></div>
         <div class="trust-badge">AU Express 1–2 Days</div>
-        <div class="trust-divider"></div>
-        <div class="trust-badge">Australian Bank Transfer</div>
       </div>
     </div>
   </div>
 
   <!-- FEATURED PRODUCTS -->
-  <section class="section featured-products" style="background:var(--body-bg)">
+  <section class="section featured-products" id="popular-peptides" aria-labelledby="popularPeptidesTitle">
     <div class="container">
       <div class="featured-products__heading">
-        <h2>Popular research compounds</h2>
-        <button onclick="showPage('shop')">View all 14 <span aria-hidden="true">→</span></button>
+        <div><div class="section-label">Popular compounds</div><h1 id="popularPeptidesTitle">Popular compounds</h1><p>Compare vial size, current price and availability, or build a 10-vial set and save 25%.</p></div>
+        <button aria-label="View all compounds" onclick="showPage('shop')">View all <span aria-hidden="true">→</span></button>
       </div>
-      <p class="sr-only" id="featuredProductsHint">Swipe horizontally or use the Tab key to browse popular research compounds.</p>
-      <div class="products-grid" id="featuredGrid" role="region" aria-label="Popular research compounds" aria-describedby="featuredProductsHint" tabindex="0"></div>
-      <div class="bundle-savings-banner">
-        <div><strong>Mix &amp; Match Bundle Savings</strong></div>
-        <div class="bundle-savings-banner__tiers"><span>2 items <b>3% off</b></span><span>3+ items <b>5% off</b></span><span>5+ items <b>10% off</b></span><button type="button" class="bundle-savings-banner__build" onclick="openMixBundleBuilder()">Build 10 vials · save 25% →</button></div>
-      </div>
+      <p class="sr-only" id="featuredProductsHint">Swipe horizontally or use the Tab key to browse popular compounds.</p>
+      <div class="products-grid" id="featuredGrid" role="region" aria-label="Popular compounds" aria-describedby="featuredProductsHint" tabindex="0"></div>
     </div>
   </section>
 
-  <div id="homeReconstitutionMount">
+  <div id="homeReconstitutionSource">
   <section class="section recon-section" id="reconstitution-calculator" aria-labelledby="reconTitle">
     <div class="container">
-      <div class="section-label">Research tools</div>
-      <h2 class="section-title" id="reconTitle">Reconstitution Calculator</h2>
-      <p class="recon-intro">Calculate solution concentration and the volume needed for a target research amount. Enter your vial mass and final solution volume to explore the result.</p>
+      <div class="section-label">Research calculator</div>
+      <h2 class="section-title" id="reconTitle">Reconstitution calculator</h2>
+      <p class="recon-intro">Calculate solution concentration and the volume needed for a target research amount using the vial mass and final solution volume.</p>
       <div class="recon-grid">
         <div class="recon-controls">
 <fieldset class="recon-field recon-field--syringe"><legend>Syringe volume (mL)</legend><a class="recon-starter-link" href="/products/research-starter-kit" onclick="viewProduct('PL-015'); return false;">Need syringes? Starter Kit <span id="reconStarterPrice">A$29.00</span> <span aria-hidden="true">→</span></a><div class="recon-options"><label><input type="radio" name="recon-syringe" value="0.3"  onchange="updateReconstitution()"><span>0.3</span></label><label><input type="radio" name="recon-syringe" value="0.5"  onchange="updateReconstitution()"><span>0.5</span></label><label><input type="radio" name="recon-syringe" value="1" checked onchange="updateReconstitution()"><span>1</span></label></div></fieldset>
@@ -561,31 +599,14 @@
     </div>
   </section>
   </div>
-  <div class="recon-more"><div class="container"><a href="/reconstitution" onclick="showPage('reconstitution'); return false;">Read how the calculator works <span aria-hidden="true">→</span></a></div></div>
-
-  <!-- DISCREET PACKAGING -->
-  <section class="discreet-packaging" data-discreet-packaging aria-labelledby="discreetPackagingTitle">
-    <div class="container">
-      <div class="discreet-packaging__card">
-        <figure class="discreet-packaging__visual">
-          <img src="/images/discreet-packaging-mailer.webp" width="1200" height="898" loading="lazy" decoding="async" alt="Plain white bubble mailer with no branding, labels or product details.">
-        </figure>
-        <div class="discreet-packaging__copy">
-          <h2 class="section-title" id="discreetPackagingTitle">DISCREET PACKAGING</h2>
-          <p class="section-sub">Every order is shipped in plain, unbranded packaging with no product names or identifying details on the outside.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- REAL ORDERS + REVIEW LAYOUT PREVIEW -->
   <section class="orders-proof" aria-labelledby="ordersProofTitle">
     <div class="container">
       <header class="orders-proof__header">
         <div class="orders-proof__heading">
-          <div class="orders-proof__eyebrow"><span>1,000+</span> orders shipped from Australia</div>
-          <h2 id="ordersProofTitle">Trusted by <em>PeptideLab</em> customers</h2>
-          <p>Real orders. Real feedback. See why customers keep coming back.</p>
+          <div class="orders-proof__eyebrow">Customer order photos and feedback</div>
+          <h2 id="ordersProofTitle">Recent customer orders</h2>
+          <p>Selected packed-order photos and customer feedback received by PeptideLab.</p>
         </div>
         <div class="orders-proof__controls" aria-label="Order photo carousel controls">
           <button type="button" onclick="scrollBuyerGallery(-1)" aria-label="Show previous order photos">‹</button>
@@ -669,6 +690,26 @@
     </div>
   </section>
 
+  <!-- PROTECTED DISPATCH -->
+  <section class="discreet-packaging" data-discreet-packaging aria-labelledby="discreetPackagingTitle">
+    <div class="container">
+      <div class="discreet-packaging__card">
+        <figure class="discreet-packaging__visual">
+          <img src="/images/discreet-packaging-mailer.webp" width="1200" height="898" loading="lazy" decoding="async" alt="Plain white bubble mailer with no branding, labels or product details.">
+        </figure>
+        <div class="discreet-packaging__copy">
+          <div class="section-label">Fulfilment</div>
+          <h2 class="section-title" id="discreetPackagingTitle">Plain packaging. Tracking by email.</h2>
+          <p class="section-sub">Orders use plain outer packaging with no product names on the exterior. Tracking is supplied by email after dispatch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECONSTITUTION CALCULATOR -->
+  <div id="homeReconstitutionMount"></div>
+  <div class="recon-more"><div class="container"><a href="/reconstitution" onclick="showPage('reconstitution'); return false;">How the calculator works <span aria-hidden="true">→</span></a></div></div>
+
   <!-- DISCLAIMER -->
   <section class="section--sm research-notice-section" style="background:var(--body-bg)">
     <div class="container--narrow">
@@ -682,21 +723,19 @@
     </div>
   </section>
 
-  <!-- WHY CHOOSE US -->
+  <!-- ORDER ASSURANCE -->
   <section class="section why-section" style="background:var(--body-bg)">
     <div class="container">
       <div class="section-header section-header--center">
-        <div class="section-label">Why PeptideLab</div>
-        <h2 class="section-title">Australia's Research Peptide Standard</h2>
-        <p class="section-sub">Australian-owned and operated. We supply the research community with compounds that meet professional standards, shipped fast from our local fulfilment centre.</p>
+        <div class="section-label">Order assurance</div>
+        <h2 class="section-title">What happens after you place an order</h2>
+        <p class="section-sub">Your order is confirmed on screen. Bank-transfer details and a unique reference are shown after placement; dispatch follows payment clearance, and tracking is sent by email.</p>
       </div>
       <div class="why-grid">
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="why-card__title">Product Documentation</div><p class="why-card__text">Review the supplier certificate archive and contact us for documentation matching a product’s lot number.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="why-card__title">Standard or Express AU Delivery</div><p class="why-card__text">Choose $10 standard or $15 express delivery within Australia. Orders of $200 AUD or more receive free standard shipping, or express for a $5 upgrade.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="why-card__title">Australia-Wide Delivery</div><p class="why-card__text">Standard and express delivery are available to Australian addresses, with tracking supplied by email.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="why-card__title">Discreet Packaging</div><p class="why-card__text">All orders shipped in plain, unmarked outer packaging. Cold-chain protocols applied where required. Tracking provided for all orders.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div class="why-card__title">Transparent Documentation</div><p class="why-card__text">Archive links and supplier-listed dates are available. These records are not currently matched to the lot supplied in each order.</p></div>
-        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="why-card__title">Secure Ordering</div><p class="why-card__text">Orders are submitted through an encrypted connection. Payment instructions and a unique bank-transfer reference are provided after ordering.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="why-card__title">Encrypted submission</div><p class="why-card__text">Order details are submitted through an encrypted connection and confirmed on screen.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg></div><div class="why-card__title">Payment instructions</div><p class="why-card__text">The bank-transfer amount, account details and unique order reference are shown after the order is placed.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg></div><div class="why-card__title">Delivery choices</div><p class="why-card__text">Standard and express options, current prices and delivery estimates are shown during checkout.</p></div>
+        <div class="why-card"><div class="why-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div><div class="why-card__title">Published support route</div><p class="why-card__text">Order and documentation enquiries are handled through the contact form or support email.</p></div>
       </div>
     </div>
   </section>
@@ -710,23 +749,12 @@
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Are these products for human use?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">No. All products are for laboratory research purposes only. Not for human consumption, veterinary use, or any clinical application. By purchasing you confirm products will be used in a supervised laboratory research setting.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Australian orders of $200 AUD or more receive free standard shipping, with express available for a $5 upgrade.</div></div>
         <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How are products shipped within Australia?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Australian customers can choose standard delivery for $10 AUD or express delivery for $15 AUD. Orders of $200 AUD or more receive free standard delivery, or express for a $5 upgrade. All orders include tracking and discreet, unmarked packaging.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How should peptides be stored?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Store lyophilised peptides at -20°C or below in a dry, dark environment. Avoid repeated freeze-thaw cycles. Once reconstituted, store at 2–8°C and use within the timeframe required by your research protocol. See each product's specification sheet for compound-specific guidance.</div></div>
+        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How should peptides be stored?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Store lyophilised peptides at -20°C or below in a dry, dark environment. Avoid repeated freeze-thaw cycles. Once reconstituted, store at 2–8°C and use within the timeframe required by your research protocol. Refer to the product label and lot documentation for compound-specific guidance.</div></div>
       </div>
-      <div style="text-align:center;margin-top:32px;"><button class="btn btn--outline" onclick="showPage('faq')">View All FAQs →</button></div>
+      <div style="text-align:center;margin-top:32px;"><button class="btn btn--outline" onclick="showPage('faq')">View all FAQs →</button></div>
     </div>
   </section>
 
-  <section class="final-cta">
-    <div class="container">
-      <h2 class="final-cta__title">Explore Research Peptides</h2>
-      <p class="final-cta__sub">Browse product information in our catalog. Express delivery across Australia.</p>
-      <div class="final-cta__actions">
-        <button class="btn btn--teal btn--lg" onclick="showPage('shop')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop Research Peptides</button>
-        <button class="btn btn--outline-white btn--lg" onclick="showPage('quality')">View Batch Certificates</button>
-      </div>
-      <p class="final-cta__disclaimer">For laboratory research use only · Not for human consumption · Not intended to diagnose, treat, cure, or prevent any disease · Checkout in AUD</p>
-    </div>
-  </section>
 </div>
 
 <!-- ============================================================ -->
@@ -763,7 +791,7 @@
   <div class="collection-hero">
     <div class="container">
       <h1 class="collection-hero__title">Research Compound Catalog</h1>
-      <p class="collection-hero__sub">See individual product specifications and request lot documentation. Free standard shipping on orders of $200 AUD or more.</p>
+      <p class="collection-hero__sub">Browse available research compounds. Free standard shipping on orders of $200 AUD or more.</p>
     </div>
   </div>
   <section class="section shop-products-section" style="background:var(--body-bg)">
@@ -771,13 +799,13 @@
       <div class="collection-filter-bar">
         <div class="collection-filter-count" id="shopFilterCount">Showing <strong>14 products</strong> · All categories</div>
         <div class="collection-filters">
-          <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
-          <button class="filter-btn" onclick="filterProducts('metabolic',this)">Metabolic</button>
-          <button class="filter-btn" onclick="filterProducts('recovery',this)">Recovery Research</button>
-          <button class="filter-btn" onclick="filterProducts('cognitive',this)">Cognitive Research</button>
-          <button class="filter-btn" onclick="filterProducts('gh',this)">GH Peptides</button>
-          <button class="filter-btn" onclick="filterProducts('cellular',this)">Cellular Health</button>
-          <button class="filter-btn" onclick="filterProducts('accessories',this)">Accessories</button>
+          <button class="filter-btn active" data-filter="all" onclick="filterProducts('all',this)">All</button>
+          <button class="filter-btn" data-filter="metabolic" onclick="filterProducts('metabolic',this)">Metabolic</button>
+          <button class="filter-btn" data-filter="recovery" onclick="filterProducts('recovery',this)">Recovery Research</button>
+          <button class="filter-btn" data-filter="cognitive" onclick="filterProducts('cognitive',this)">Cognitive Research</button>
+          <button class="filter-btn" data-filter="gh" onclick="filterProducts('gh',this)">GH Peptides</button>
+          <button class="filter-btn" data-filter="cellular" onclick="filterProducts('cellular',this)">Cellular Health</button>
+          <button class="filter-btn" data-filter="accessories" onclick="filterProducts('accessories',this)">Accessories</button>
         </div>
       </div>
       <div class="products-grid" id="shopGrid"></div>
@@ -806,24 +834,18 @@
             <div class="product-page-vial"><div class="vial-cap"></div><div class="vial-body" style="height:80px;width:36px;"></div></div>
           </div>
           <div class="product-page-img__label" id="pdpImgLabel">Product · Research Grade</div>
-          <div id="pdpImageBadges" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 24px;">
-            <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:var(--teal-400);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">HPLC Tested</span>
-            <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:var(--teal-400);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">Supplier Specifications</span>
-          </div>
         </div>
         <div class="product-page-info">
           <div class="product-page-eyebrow">PeptideLab · <span id="pdpSku">000</span></div>
           <h1 class="product-page-name" id="pdpName">Product Name</h1>
           <div class="product-page-id" id="pdpId">Research Compound · For Laboratory Use Only</div>
-          <div class="product-page-purity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="pdpPurity">Supplier specifications · Check lot documentation</span></div>
           <div class="product-page-price" id="pdpPrice">$0.00</div>
           <div class="product-page-price-note" id="pdpPriceNote">Per vial · AUD · Research use only</div>
 
           <!-- Shared by every product; prices use the cart's discount rules. -->
-          <fieldset class="pdp-bundle-box" aria-describedby="pdpBundleNote">
+          <fieldset class="pdp-bundle-box">
             <legend class="pdp-bundle-box__title">Bundle &amp; Save</legend>
             <div class="pdp-bundle-box__tiers" id="pdpBundleTiers"></div>
-            <p class="pdp-bundle-box__note" id="pdpBundleNote">Totals for this product, before shipping. Mix &amp; match discounts also apply across your cart.</p>
           </fieldset>
 
           <div class="product-page-variants" id="pdpVariants"></div>
@@ -835,78 +857,19 @@
               Add to Cart
               </button>
             </div>
-            <div class="pdp-delivery-estimate">
-              <span aria-hidden="true">🚚</span>
-              <span><strong>Ships from Australia</strong><br>Express delivery: 1–2 business days · Standard: 3–7 business days</span>
-            </div>
-            <div class="pdp-payment-note"><strong>Payment:</strong> Bank transfer in AUD. International customers can pay through Wise or Revolut.</div>
-          </div>
-          <div class="product-cert-box" id="pdpCertBox">
-            <div><div class="product-cert-box__title" id="pdpCertTitle">Product-specific batch records</div><div class="product-cert-box__sub" id="pdpCertSub">Independent third-party testing · Batch dates published in our directory</div></div>
-            <a href="/quality-testing" onclick="showPage('quality');return false;" class="btn btn--outline-teal btn--sm" id="pdpCertLink">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              View this product's batches
-            </a>
           </div>
           <div class="product-page-info-tabs">
             <div class="tab-buttons">
               <div class="tab-btn active" onclick="switchTab(this,'desc')">Description</div>
-              <div class="tab-btn" onclick="switchTab(this,'specs')">Specifications</div>
               <div class="tab-btn" onclick="switchTab(this,'storage')">Storage</div>
               <div class="tab-btn" onclick="switchTab(this,'shipping-info')">Shipping</div>
             </div>
-            <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><div id="pdpDescDetail"><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Request documentation matching the product and lot number before relying on batch-specific specifications.</p></div></div>
-            <div class="tab-content" id="tab-specs"><table class="spec-table" id="pdpSpecTable"></table></div>
-            <div class="tab-content" id="tab-storage"><div id="pdpStorageContent"><p><strong>Product-specific storage and handling</strong></p><p>Refer to the product label, lot documentation and your laboratory’s approved procedures. Storage requirements and shelf life vary by product and preparation.</p><p>Contact support if the required documentation is missing or unclear. This page does not establish a preparation protocol or expiry date.</p></div></div>
+            <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><div id="pdpDescDetail"><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Contact support if you need documentation for a specific product and lot.</p></div></div>
+            <div class="tab-content" id="tab-storage"><div id="pdpStorageContent"><p><strong>Storage before and after reconstitution</strong></p><p><strong>Before reconstitution:</strong> Keep the sealed lyophilised vial dry and protected from light at −20°C or colder. Let it reach room temperature before opening to limit condensation.</p><p><strong>After reconstitution:</strong> Follow the product and lot instructions. Refrigerate at 2–8°C for short-term storage or freeze single-use aliquots at −20°C or colder when validated. Avoid repeated freeze–thaw cycles. Stability and expiry vary by peptide and diluent.</p></div></div>
             <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. New Zealand and selected international destinations are also available, with the price and delivery estimate shown at checkout.</p><p>All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
           </div>
           <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
           <div style="margin-top:24px;" id="pdpFaq"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- ============================================================ -->
-<!--  PAGE: QUALITY & TESTING                                      -->
-<!-- ============================================================ -->
-<div class="page" id="page-quality">
-  <section class="section">
-    <div class="container">
-
-      <!-- CERTIFICATIONS DIRECTORY -->
-      <div>
-        <div class="section-header">
-          <div class="section-label">Batch Certificate Directory</div>
-          <h1 class="section-title">Supplier Certificate Archive</h1>
-          <p class="section-sub">These supplier-listed dates link to a general external archive, not individual certificates. They do not confirm the lot currently supplied. Request documentation matching your product and lot number before relying on any result.</p>
-        </div>
-        <div class="cert-search-bar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="certSearch" placeholder="Search by compound name…" oninput="filterCerts(this.value)" />
-        </div>
-        <p><button type="button" class="btn btn--outline-teal" onclick="requestBatchDocumentation()">Request lot documentation</button></p>
-        <div class="cert-grid" id="certGrid"></div>
-        <div style="margin-top:32px;padding:20px 24px;background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
-          <div>
-            <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">View Full Certificate Archive</div>
-            <div style="font-size:13px;color:var(--text-muted);">The external supplier archive is not a certificate for a specific order or current lot.</div>
-          </div>
-          <a href="https://utherpeptide.com/peptide-certifications/" target="_blank" rel="noopener" class="btn btn--teal">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Open Certificate Archive
-          </a>
-        </div>
-      </div>
-
-      <div style="margin-top:48px;">
-        <div class="disclaimer-banner">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <div>
-            <div class="disclaimer-banner__title">Research Use Only</div>
-            <div class="disclaimer-banner__text">Batch certification confirms purity and molecular identity for research purposes only. Testing does not constitute approval for human use, veterinary use, or therapeutic application.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -1127,8 +1090,8 @@
           <div class="footer__logo-mark"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v6l-3 8h12l-3-8V2"/><path d="M7 2h6"/><path d="M5 14h10"/></svg></div>
           <span class="footer__logo-name">Peptide<span>Lab</span></span>
         </div>
-        <p class="footer__tagline">Australian-based research supply. Product information and documentation support. Express delivery nationwide.</p>
-        <div class="footer__compliance"><strong style="color:var(--slate-400);display:block;margin-bottom:4px;">Compliance Statement</strong>All products sold for laboratory research purposes only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. This website does not provide medical advice. Customers responsible for compliance with all applicable laws. Checkout and payment are in AUD.</div>
+        <p class="footer__tagline">Australian-based research supply. Product information and documentation support. Shipping worldwide.</p>
+        <div class="footer__compliance"><strong style="color:var(--slate-400);display:block;margin-bottom:4px;">Compliance Statement</strong>All products sold for laboratory research purposes only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. This website does not provide medical advice. Customers are responsible for compliance with all applicable laws.</div>
       </div>
       <div>
         <div class="footer__col-title">Products</div>
@@ -1139,14 +1102,12 @@
           <span class="footer__link" onclick="showPage('shop')">Cognitive Research</span>
           <span class="footer__link" onclick="showPage('shop')">GH Peptides</span>
           <span class="footer__link" onclick="showPage('shop')">Cellular Health</span>
-          <span class="footer__link" onclick="showPage('quality')">Batch Certificates</span>
         </div>
       </div>
       <div>
         <div class="footer__col-title">Information</div>
         <div class="footer__links">
           <span class="footer__link" onclick="showPage('about')">About Us</span>
-          <span class="footer__link" onclick="showPage('quality')">Quality &amp; Testing</span>
           <span class="footer__link" onclick="showPage('faq')">FAQ</span>
           <span class="footer__link" onclick="showPage('contact')">Contact</span>
           <button type="button" class="footer__link ten-vial-footer" onclick="openPopup()">10-vial offer</button>
@@ -1173,7 +1134,7 @@
       </div>
     </div>
   </div>
-  <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · Checkout in AUD · Australian Operations</div></div>
+  <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · Australian Operations</div></div>
 </footer>
 
 <div class="mix-bundle-overlay" id="mixBundleDialog" hidden>
@@ -1202,7 +1163,7 @@
   <button class="btn btn--outline-white btn--sm" style="flex:1;font-size:12px" onclick="openCart()">Cart (<span id="mobileCTACount">0</span>)</button>
   <button class="btn btn--teal btn--sm" style="flex:2" onclick="showPage('shop')">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-    Shop Peptides
+    Shop products
   </button>
 </div>
 <div class="pdp-mobile-cta" id="pdpMobileCta">
@@ -1225,8 +1186,8 @@ if (!researchAgreementAccepted) {
 // PRODUCT DATA
 // ============================================================
 const PRODUCTS = [
-  { id:'PL-012', name:'GHK-Cu', size:'50mg', price:49, category:'cellular', img:'/images/ghk-cu.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'GHK-Cu (Copper Peptide) is a naturally occurring tripeptide research compound. Request documentation matching the product and lot number.', tags:['≥99% Purity','Supplier-listed HPLC','Request lot documentation'], specs:[['CAS Number','49557-75-7'],['Molecular Formula','C₁₄H₂₃CuN₆O₄'],['Molecular Weight','403.91 g/mol'],['Appearance','Blue-green powder'],['Supplier-listed purity (HPLC)','≥99%'],['Quantity','50mg per vial'],['Lot documentation','Request from support']] },
   { id:'PL-001', name:'Retatrutide', size:'10mg', price:135, category:'metabolic', img:'/images/retatrutide.jpg', purity:'≥99% Purity', badge:'Best Seller', badgeHot:true, desc:'Retatrutide is a tri-agonist research compound supplied for laboratory study. Request documentation matching the product and lot number.', tags:['≥99% Purity','Supplier-listed HPLC','Supplier-listed MS'], specs:[['CAS Number','2382367-33-9'],['Molecular Weight','~4814 Da'],['Appearance','White lyophilised powder'],['Supplier-listed purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Supplier-listed testing','HPLC / Mass Spectrometry'],['Lot documentation','Request from support']] },
+  { id:'PL-012', name:'GHK-Cu', size:'50mg', price:49, category:'cellular', img:'/images/ghk-cu.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'GHK-Cu (Copper Peptide) is a naturally occurring tripeptide research compound. Request documentation matching the product and lot number.', tags:['≥99% Purity','Supplier-listed HPLC','Request lot documentation'], specs:[['CAS Number','49557-75-7'],['Molecular Formula','C₁₄H₂₃CuN₆O₄'],['Molecular Weight','403.91 g/mol'],['Appearance','Blue-green powder'],['Supplier-listed purity (HPLC)','≥99%'],['Quantity','50mg per vial'],['Lot documentation','Request from support']] },
   { id:'PL-002', name:'BPC-157', size:'10mg', price:85, category:'recovery', img:'/images/bpc-157.jpg', purity:'≥99% Purity', badge:'Popular', badgeHot:false, desc:'BPC-157 (Body Protection Compound 157) is a synthetic pentadecapeptide supplied for laboratory research. Request documentation matching the product and lot number.', tags:['≥99% Purity','Supplier-listed HPLC','Request lot documentation'], specs:[['CAS Number','137525-51-0'],['Molecular Formula','C₆₂H₉₈N₁₆O₂₂'],['Molecular Weight','1419.55 g/mol'],['Appearance','White lyophilised powder'],['Supplier-listed purity (HPLC)','≥99%'],['Quantity','10mg per vial'],['Supplier-listed testing','HPLC / Mass Spectrometry'],['Lot documentation','Request from support']] },
   { id:'PL-003', name:'TB-500', size:'5mg', price:79, category:'recovery', img:'/images/tb-500.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'TB-500 (Thymosin β4) is an analytical reference compound for laboratory research. Request documentation matching the product and lot number.', tags:['≥99% Purity','Supplier-listed HPLC','Request lot documentation'], specs:[['CAS Number','77591-33-4'],['Molecular Weight','~4964 Da'],['Appearance','White lyophilised powder'],['Supplier-listed purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Supplier-listed testing','HPLC / Mass Spectrometry'],['Lot documentation','Request from support']] },
   { id:'PL-004', name:'Tesamorelin', size:'5mg', price:95, category:'gh', img:'/images/tesamorelin.jpg', purity:'≥99% Purity', badge:'In Stock', badgeHot:false, desc:'Tesamorelin is a synthetic GHRH analogue research compound. Request documentation matching the product and lot number.', tags:['≥99% Purity','Supplier-listed MS','Request lot documentation'], specs:[['CAS Number','218949-48-5'],['Molecular Weight','~5135 Da'],['Appearance','White lyophilised powder'],['Supplier-listed purity (HPLC)','≥99%'],['Quantity','5mg per vial'],['Supplier-listed testing','HPLC / Mass Spectrometry'],['Lot documentation','Request from support']] },
@@ -1329,6 +1290,7 @@ const PROMO_CODES = {
 let appliedPromo   = null;
 let coSelectedPayId = 'aud';
 let coPayApiData    = {};
+let checkoutReturnFocus = null;
 
 const PAY_METHOD_LABELS = {
   aud:  'Australian Bank Transfer',
@@ -1372,6 +1334,7 @@ function coShipLabel(method, subtotal) {
 
 function openCheckout() {
   if (!cart.length) return;
+  checkoutReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   trackFunnel('Checkout Started', { items: getCartCount(), subtotal: Number(getCartTotal().toFixed(2)), currency: 'AUD' });
   const overlay = document.getElementById('coOverlay');
   document.getElementById('coSuccess').classList.remove('visible');
@@ -1393,8 +1356,13 @@ function closeCheckout() {
   setTimeout(() => {
     overlay.classList.remove('open');
     document.body.style.overflow = '';
+    checkoutReturnFocus?.focus?.();
   }, 250);
 }
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.getElementById('coOverlay').classList.contains('open')) closeCheckout();
+});
 
 async function coLoadPayMethods() {
   try {
@@ -1450,6 +1418,15 @@ function coGetShipMethods() {
   return SHIP_ZONES.INTL;
 }
 
+function coHasDeliveryDetails() {
+  return ['co-address1', 'co-suburb', 'co-postcode'].every(id => coVal(id));
+}
+
+function coDeliveryDetailsInput() {
+  coRenderShippingOptions();
+  coRenderSummary();
+}
+
 function coRenderShippingOptions() {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const methods  = coGetShipMethods();
@@ -1460,7 +1437,7 @@ function coRenderShippingOptions() {
   if (!group) return;
 
   group.innerHTML = methods.map(m => {
-    const priceStr = coShipLabel(m, subtotal);
+    const priceStr = coHasDeliveryDetails() ? coShipLabel(m, subtotal) : '—';
     const isOn     = m.id === selectedShipping.id;
     return `
       <div class="co-ship-opt${isOn ? ' co-ship-opt--on' : ''}" id="sopt-${m.id}" onclick="selectShipping('${m.id}')">
@@ -1504,9 +1481,12 @@ function coRenderSummary() {
     else discount = Math.min(appliedPromo.value, afterMb);
   }
   const effectiveSubtotal = afterMb - discount;
-  const ship = selectedShipping
-    ? coShipPrice(selectedShipping, subtotal)
-    : getShippingCost(subtotal, document.getElementById('co-country')?.value || 'AU');
+  const shippingReady = coHasDeliveryDetails();
+  const ship = shippingReady
+    ? (selectedShipping
+      ? coShipPrice(selectedShipping, subtotal)
+      : getShippingCost(subtotal, document.getElementById('co-country')?.value || 'AU'))
+    : 0;
   const total = Math.max(0, effectiveSubtotal) + ship;
 
   // Multi-buy row
@@ -1521,7 +1501,7 @@ function coRenderSummary() {
 
   document.getElementById('coSumItems').innerHTML = cart.map(i => {
     const prod = PRODUCTS.find(x => x.id === i.id);
-    const img = (prod && prod.img) ? `<img src="${prod.img}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />` : '';
+    const img = (prod && prod.img) ? `<img src="${prod.img}" alt="${i.name}" style="width:100%;height:100%;object-fit:contain;border-radius:inherit;" />` : '';
     return `<div class="co-sum-item">
       <div class="co-sum-item__img">${img}<div class="co-sum-item__badge">${i.qty}</div></div>
       <div class="co-sum-item__name">${i.name}${i.size ? `<br/><span style="color:#555;font-size:11px">${i.size}</span>` : ''}${i.selections ? `<br/><span style="color:#aaa;font-size:11px">${bundleContentsLabel(i.selections)}</span>` : ''}</div>
@@ -1530,7 +1510,9 @@ function coRenderSummary() {
   }).join('');
 
   document.getElementById('coSumSubtotal').textContent = `A$${subtotal.toFixed(2)}`;
-  document.getElementById('coSumShipping').textContent = ship === 0 ? 'FREE' : `A$${ship.toFixed(2)}`;
+  document.getElementById('coSumShipping').textContent = shippingReady
+    ? (ship === 0 ? 'FREE' : `A$${ship.toFixed(2)}`)
+    : 'Calculated after address';
   document.getElementById('coSumTotal').textContent    = `A$${total.toFixed(2)}`;
 
   const discRow = document.getElementById('coDiscountRow');
@@ -1555,13 +1537,13 @@ function applyPromo() {
     appliedPromo = { ...promo, code };
     msgEl.textContent = `✓ "${code}" applied — ${promo.label}`;
     msgEl.style.display = '';
-    msgEl.style.color = '#60f7a4';
+    msgEl.style.color = '#07804D';
     trackFunnel('Promo Applied', { code, discount_percent: promo.value });
     coRenderSummary();
   } else {
     msgEl.textContent = 'Invalid discount code.';
     msgEl.style.display = '';
-    msgEl.style.color = '#f87171';
+    msgEl.style.color = '#B42318';
   }
 }
 
@@ -1710,6 +1692,7 @@ function coPostcodeInput() {
         choice.hidden = false;
         status.textContent = 'Select your suburb below, or enter it manually.';
       }
+      coDeliveryDetailsInput();
     } catch {
       if (token !== coPostcodeLookupToken) return;
       status.textContent = 'Postcode lookup unavailable. Enter suburb and state manually.';
@@ -1728,6 +1711,7 @@ function coSelectSuburbSuggestion() {
   coAutoSuburb = match[0];
   coAutoPostcode = document.getElementById('co-postcode').value.trim();
   document.getElementById('coPostcodeStatus').textContent = 'Suburb selected. Check your delivery address.';
+  coDeliveryDetailsInput();
 }
 
 function coVal(id) { return document.getElementById(id)?.value.trim() || ''; }
@@ -1882,21 +1866,23 @@ async function loadCurrencyRates() {
 }
 async function setCurrency(val) {
   const select = document.getElementById('currencySelect');
+  const mobileSelect = document.getElementById('mobileCurrencySelect');
+  const selectors = [select, mobileSelect].filter(Boolean);
   const notice = document.getElementById('currencyDisplayNote');
-  if (!Object.hasOwn(SYMS, val)) { select.value = currentCurrency; return; }
+  if (!Object.hasOwn(SYMS, val)) { selectors.forEach(element => { element.value = currentCurrency; }); return; }
   if (val !== 'AUD' && !currencyRateDate) {
-    select.disabled = true;
+    selectors.forEach(element => { element.disabled = true; });
     notice.hidden = false;
     notice.textContent = 'Loading current exchange rates…';
     try { await loadCurrencyRates(); }
     catch {
-      select.value = currentCurrency;
+      selectors.forEach(element => { element.value = currentCurrency; });
       notice.textContent = 'Exchange rates are unavailable. Prices remain in AUD.';
       return;
-    } finally { select.disabled = false; }
+    } finally { selectors.forEach(element => { element.disabled = false; }); }
   }
   currentCurrency = val;
-  select.value = val;
+  selectors.forEach(element => { element.value = val; });
   const note = document.getElementById('cartCurrencyNote');
   if (note) note.textContent = val === 'AUD' ? 'AUD' : val + ' (estimate; checkout in AUD)';
   notice.hidden = val === 'AUD';
@@ -1953,13 +1939,20 @@ function openCart() {
 function getStock(productId) { return inventory[productId] ?? 999; }
 
 let restockRequestVersion = 0;
+let restockRequestId = '';
+function newRestockRequestId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  return 'restock-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+}
 function openRestockAlert(product) {
   restockRequestVersion++;
+  restockRequestId = newRestockRequestId();
   const button = document.getElementById('restockSubmit');
   button.style.display = ''; button.disabled = false; button.textContent = 'Notify me';
   document.getElementById('restockProductName').textContent = product.name;
   document.getElementById('restockProductId').value = product.id;
-  document.getElementById('restockMessage').style.display = 'none';
+  const message = document.getElementById('restockMessage');
+  message.className = ''; message.style.display = 'none';
   document.getElementById('restockEmail').value = '';
   document.getElementById('restockModal').style.display = 'flex';
   setTimeout(() => document.getElementById('restockEmail').focus(), 0);
@@ -1973,24 +1966,35 @@ async function submitRestockAlert(event) {
   const requestVersion = restockRequestVersion;
   submit.disabled = true; submit.textContent = 'Saving…';
   try {
-    const res = await fetch('/api/restock-alert', { signal:AbortSignal.timeout(25000), method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email:document.getElementById('restockEmail').value, productId:document.getElementById('restockProductId').value }) });
-    const data = await res.json();
+    const res = await fetch('/api/restock-alert', { signal:AbortSignal.timeout(25000), method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email:document.getElementById('restockEmail').value, productId:document.getElementById('restockProductId').value, requestId:restockRequestId }) });
+    const responseText = await res.text();
+    let data = {};
+    try { data = responseText ? JSON.parse(responseText) : {}; } catch {}
     if (requestVersion !== restockRequestVersion) return;
-    if (!res.ok || !data.ok) throw new Error(data.error || 'Could not save your request.');
-    message.textContent = data.delivery === 'support'
-      ? 'Your request has been submitted to support for follow-up. It could not be added to the automatic alert list.'
-      : 'Your restock request has been saved.';
-    message.style.color = '#07804d'; message.style.display = 'block';
-    submit.style.display = 'none';
+    if (!res.ok || !data.ok) throw new Error(typeof data.error === 'string' ? data.error : 'We could not save your request. Please retry.');
+    if (data.delivery === 'stored') {
+      message.textContent = 'Your automatic restock alert has been saved.';
+      message.className = 'restock-message restock-message--success';
+      submit.style.display = 'none';
+    } else if (data.delivery === 'support') {
+      message.textContent = 'We could not add you to the automatic alert list. Your request was sent to support for manual follow-up. You can retry the automatic alert.';
+      message.className = 'restock-message restock-message--warning';
+      submit.style.display = ''; submit.disabled = false; submit.textContent = 'Retry automatic alert';
+    } else {
+      throw new Error('We could not confirm your automatic alert. Please retry.');
+    }
+    message.style.display = 'block';
   } catch (error) {
     if (requestVersion !== restockRequestVersion) return;
-    message.textContent = error.name === 'TimeoutError' ? 'The request timed out. Please retry or email support@aupeptidelab.com.' : error.message; message.style.color = '#dc2626'; message.style.display = 'block';
+    message.textContent = error.name === 'TimeoutError' ? 'The request timed out. Please retry or email support@aupeptidelab.com.' : error.message;
+    message.className = 'restock-message restock-message--error'; message.style.display = 'block';
     submit.disabled = false; submit.textContent = 'Notify me';
   }
 }
 
 const MIX_BUNDLE_ID = 'PL-MIX-10';
 let mixBundleSelections = {};
+let mixBundleTrigger = null;
 function getReservedQty(productId) {
   return cart.reduce((sum, item) => sum + (item.id === productId ? item.qty : 0)
     + (item.selections || []).filter(selection => selection.id === productId).reduce((n, selection) => n + selection.qty, 0), 0);
@@ -2002,15 +2006,19 @@ function bundleContentsLabel(selections) {
   }).join(' · ');
 }
 function openMixBundleBuilder() {
+  mixBundleTrigger = document.activeElement;
   mixBundleSelections = {};
   document.getElementById('mixBundleDialog').hidden = false;
   document.body.style.overflow = 'hidden';
   renderMixBundleBuilder();
-  document.querySelector('.mix-bundle-close').focus();
+  requestAnimationFrame(() => document.querySelector('.mix-bundle-close')?.focus());
 }
 function closeMixBundleBuilder() {
-  document.getElementById('mixBundleDialog').hidden = true;
+  const dialog = document.getElementById('mixBundleDialog');
+  if (!dialog || dialog.hidden) return;
+  dialog.hidden = true;
   document.body.style.overflow = '';
+  if (mixBundleTrigger instanceof HTMLElement) mixBundleTrigger.focus();
 }
 function changeMixBundleSelection(productId, delta) {
   const selected = Object.values(mixBundleSelections).reduce((sum, qty) => sum + qty, 0);
@@ -2266,15 +2274,67 @@ function showToast(msg) {
 }
 
 // ============================================================
-// PRODUCT CARDS RENDERING
+// SITE SEARCH + PRODUCT CARDS RENDERING
 // ============================================================
-function searchHeroProducts(query) {
-  const results = document.getElementById('heroSearchResults');
+let siteSearchTrigger = null;
+function openSiteSearch() {
+  closeMobileMenu(false);
+  siteSearchTrigger = document.activeElement;
+  const overlay = document.getElementById('siteSearchOverlay');
+  overlay.hidden = false;
+  document.body.classList.add('site-search-open');
+  requestAnimationFrame(() => document.getElementById('siteSearch').focus());
+}
+function closeSiteSearch(restoreFocus = true) {
+  const overlay = document.getElementById('siteSearchOverlay');
+  if (!overlay || overlay.hidden) return;
+  overlay.hidden = true;
+  document.body.classList.remove('site-search-open');
+  const results = document.getElementById('siteSearchResults');
+  results.hidden = true;
+  results.innerHTML = '';
+  if (restoreFocus && siteSearchTrigger instanceof HTMLElement) siteSearchTrigger.focus();
+}
+function searchSiteProducts(query) {
+  const results = document.getElementById('siteSearchResults');
   const term = query.trim().toLowerCase();
   if (!term) { results.hidden = true; results.innerHTML = ''; return; }
   const matches = PRODUCTS.filter(p => `${p.name} ${p.size}`.toLowerCase().includes(term)).slice(0, 5);
   results.innerHTML = matches.length
-    ? matches.map(p => `<button class="hero-finder__result" onclick="selectHeroProduct('${p.id}')"><strong>${p.name}</strong><span>${p.size}</span></button>`).join('')
+    ? matches.map(p => `<button type="button" class="site-search-result" onclick="selectSiteProduct('${p.id}')"><span><strong>${p.name}</strong><small>${p.size}</small></span><span aria-hidden="true">→</span></button>`).join('')
+    : '<div class="site-search-result site-search-result--empty"><span><strong>No matching products</strong><small>Try another name or view all products</small></span></div>';
+  results.hidden = false;
+}
+function selectSiteProduct(productId) {
+  const input = document.getElementById('siteSearch');
+  const results = document.getElementById('siteSearchResults');
+  if (input) input.value = '';
+  if (results) { results.hidden = true; results.innerHTML = ''; }
+  closeSiteSearch(false);
+  viewProduct(productId);
+}
+function submitSiteSearch() {
+  const query = document.getElementById('siteSearch').value.trim().toLowerCase();
+  if (!query) { closeSiteSearch(false); showPage('shop'); return; }
+  const match = PRODUCTS.find(p => p.name.toLowerCase() === query)
+    || PRODUCTS.find(p => `${p.name} ${p.size}`.toLowerCase().includes(query));
+  if (match) { selectSiteProduct(match.id); return; }
+  closeSiteSearch(false);
+  showPage('shop');
+}
+function handleSiteSearch(event) {
+  if (event.key === 'Enter') { event.preventDefault(); submitSiteSearch(); }
+  if (event.key === 'Escape') closeSiteSearch();
+}
+
+function searchHeroProducts(query) {
+  const results = document.getElementById('heroSearchResults');
+  const term = query.trim().toLowerCase();
+  if (!results) return;
+  if (!term) { results.hidden = true; results.innerHTML = ''; return; }
+  const matches = PRODUCTS.filter(p => `${p.name} ${p.size}`.toLowerCase().includes(term)).slice(0, 5);
+  results.innerHTML = matches.length
+    ? matches.map(p => `<button type="button" class="hero-finder__result" onclick="selectHeroProduct('${p.id}')"><strong>${p.name}</strong><span>${p.size}</span></button>`).join('')
     : '<div class="hero-finder__result"><strong>No matching compounds</strong><span>Browse the catalog</span></div>';
   results.hidden = false;
 }
@@ -2286,8 +2346,9 @@ function selectHeroProduct(productId) {
   viewProduct(productId);
 }
 function openHeroSearch() {
-  const query = document.getElementById('heroSearch').value.trim().toLowerCase();
-  const match = PRODUCTS.find(p => p.name.toLowerCase() === query);
+  const query = document.getElementById('heroSearch')?.value.trim().toLowerCase() || '';
+  const match = PRODUCTS.find(p => p.name.toLowerCase() === query)
+    || PRODUCTS.find(p => `${p.name} ${p.size}`.toLowerCase().includes(query));
   if (match) { selectHeroProduct(match.id); return; }
   showPage('shop');
 }
@@ -2311,15 +2372,14 @@ function makeCard(p, mini) {
     <div class="product-card__img">
       <span class="${badgeClass}">${badgeLabel}</span>
       ${p.img
-        ? `<img class="product-card__photo" src="${p.img}" alt="${p.name}" loading="lazy">`
+        ? `<img class="product-card__photo" src="${p.img}" alt="${p.name}" loading="${mini ? 'eager' : 'lazy'}" decoding="async">`
         : `<div class="product-vial-svg">${makeVialSVG(p)}</div>`}
     </div>
     <div class="product-card__body">
-      <div class="product-card__name">${p.name} <span class="product-card__size">${p.size}</span></div>
+      <button type="button" class="product-card__name product-card__open" onclick="event.stopPropagation();viewProduct('${p.id}')">${p.name} <span class="product-card__size">${p.size}</span></button>
       <div class="product-card__sub">${p.desc.split('.')[0]}.</div>
-      <div class="product-card__meta"><span class="product-card__tag">${p.tags[0]}</span></div>
       <div class="product-card__price">${fmtPrice(p.price)}</div>
-      <div class="bundle-card-note">Bundle & save up to 10%</div>
+      ${mini ? '' : '<div class="bundle-card-note">Bundle & save up to 10%</div>'}
       ${low ? `<div class="product-card__low-stock">Only ${stock} left</div>` : ''}
       <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
         ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
@@ -2332,17 +2392,18 @@ function makeCard(p, mini) {
   </div>`;
 }
 
-function makeMixBundleCard() {
+function makeMixBundleCard(eager = false) {
   return `<div class="product-card mix-bundle-card" onclick="openMixBundleBuilder()">
-    <div class="product-card__img mix-bundle-card__img"><span class="product-card__badge mix-bundle-card__badge">SAVE 25%</span><img class="product-card__photo" src="/images/hero-peptide-vials-soft-green.jpg" alt="Research vials for a mix and match set" loading="lazy" decoding="async"></div>
-    <div class="product-card__body"><div class="product-card__name">Mix &amp; Match 10-Vial Set</div><div class="product-card__sub">Choose any 10 available research vials. Repeats welcome.</div><div class="product-card__meta"><span class="product-card__tag">Build your own set</span></div><div class="product-card__price">25% off</div><div class="bundle-card-note">Compared with the selected vials' individual prices</div><button type="button" class="product-card__add-full" onclick="event.stopPropagation();openMixBundleBuilder()">Choose your 10 vials →</button></div>
+    <div class="product-card__img mix-bundle-card__img"><span class="product-card__badge mix-bundle-card__badge">BUILD A SET</span><img class="product-card__photo" src="/images/hero-peptide-vials-soft-green.jpg" alt="Research vials for a mix and match set" loading="${eager ? 'eager' : 'lazy'}" decoding="async"></div>
+    <div class="product-card__body"><button type="button" class="product-card__name product-card__open" onclick="event.stopPropagation();openMixBundleBuilder()">Mix &amp; Match 10-Vial Set</button><div class="product-card__sub">Choose any 10 available research vials, including repeats.</div><div class="product-card__price">Save 25%</div><div class="bundle-card-note">Compared with the selected vials' individual prices</div><button type="button" class="product-card__add-full" onclick="event.stopPropagation();openMixBundleBuilder()">Choose your 10 vials →</button></div>
   </div>`;
 }
 
 function renderFeatured() {
-  const featured = PRODUCTS.filter(p => p.category !== 'accessories').slice(0, 7);
-  document.getElementById('featuredGrid').innerHTML = makeMixBundleCard()
-    + featured.map(product => makeCard(product, false)).join('');
+  const featured = ['PL-001', 'PL-015', 'PL-012']
+    .map(id => PRODUCTS.find(product => product.id === id))
+    .filter(Boolean);
+  document.getElementById('featuredGrid').innerHTML = makeMixBundleCard(true) + featured.map(product => makeCard(product, true)).join('');
 }
 function renderShop(filter) {
   const list = filter && filter !== 'all' ? PRODUCTS.filter(p=>p.category===filter) : PRODUCTS;
@@ -2427,7 +2488,7 @@ async function loadInventory() {
 }
 function filterProducts(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   renderShop(cat);
 }
 
@@ -2446,7 +2507,6 @@ const PRODUCT_SLUGS = {
 
 const DEFAULT_PDP_DETAIL = document.getElementById('pdpDescDetail').innerHTML;
 const DEFAULT_PDP_STORAGE = document.getElementById('pdpStorageContent').innerHTML;
-const DEFAULT_PDP_IMAGE_BADGES = document.getElementById('pdpImageBadges').innerHTML;
 function viewProduct(id, updateHistory = true) {
   const p = PRODUCTS.find(x=>x.id===id);
   if (!p) return;
@@ -2457,22 +2517,17 @@ function viewProduct(id, updateHistory = true) {
   document.getElementById('pdpSku').textContent = p.id.replace('PL-','');
   document.getElementById('pdpName').textContent = p.name;
   document.getElementById('pdpId').textContent = p.size + (p.kind === 'kit' ? ' · Laboratory Accessories · For Research Use Only' : ' · Research Compound · For Laboratory Use Only');
-  document.getElementById('pdpPurity').textContent = p.kind === 'kit' ? '1 vial + 4 syringes + 4 prep wipes' : p.purity + ' · Supplier specification; check lot documentation';
   document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
   document.getElementById('pdpPriceNote').textContent = (p.kind === 'kit' ? 'Per kit' : 'Per vial') + ' · ' + currencyPriceNote() + ' · Research use only';
   document.getElementById('pdpImgLabel').textContent = p.kind === 'kit' ? 'Illustrative photo · Kit includes 4 syringes and 4 wipes' : p.name + ' · ' + p.size + ' · Research Grade';
   document.getElementById('pdpDesc').textContent = p.desc;
   trackFunnel('Product Viewed', { product: p.name, sku: p.id, value: p.price, currency: 'AUD' });
-  document.getElementById('pdpCertBox').style.display = p.kind === 'kit' ? 'none' : '';
-  if (p.kind !== 'kit') updatePdpCertificate(p);
-  document.getElementById('pdpImageBadges').innerHTML = p.kind === 'kit' ? '' : DEFAULT_PDP_IMAGE_BADGES;
   document.getElementById('pdpDescDetail').innerHTML = p.kind === 'kit'
     ? '<p>Each kit contains one 10ml BAC Water vial, four syringes, and four alcohol prep wipes for laboratory preparation. The product photo shows two syringes and one wipe for illustration; each delivered kit contains four of each.</p><p>Supplied for in-vitro laboratory research use only. Not for human or veterinary consumption.</p>'
     : DEFAULT_PDP_DETAIL;
   document.getElementById('pdpStorageContent').innerHTML = p.kind === 'kit'
     ? '<p>Store the kit in a cool, dry place away from direct sunlight. Follow the instructions on each component’s packaging.</p>'
     : DEFAULT_PDP_STORAGE;
-  document.getElementById('pdpSpecTable').innerHTML = p.specs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
   document.getElementById('pdpAddBtn').onclick = () => pdpAddToCart();
   updatePdpStock(id);
   // Render label vials on product page
@@ -2497,7 +2552,7 @@ function renderPdpBundles() {
       <input type="radio" name="pdpBundle" value="${qty}" ${qty === pdpBundleQuantity ? 'checked' : ''} onchange="pdpBundleQuantity = Number(this.value); updatePdpMobileCta()">
       <span class="pdp-bundle-option__body">
         <span class="pdp-bundle-option__radio" aria-hidden="true"></span>
-        <span class="pdp-bundle-option__details"><span class="pdp-bundle-option__qty">Buy ${qty}</span><span class="pdp-bundle-option__badge ${rate ? '' : 'pdp-bundle-option__badge--standard'}">${rate ? Math.round(rate * 100) + '% OFF' : 'Standard Price'}</span></span>
+        <span class="pdp-bundle-option__details"><span class="pdp-bundle-option__qty">Buy ${qty}</span><span class="pdp-bundle-option__badge ${rate ? '' : 'pdp-bundle-option__badge--standard'}">${rate ? Math.round(rate * 100) + '% OFF' : 'Standard'}</span></span>
         <span class="pdp-bundle-option__prices"><strong><span class="bundle-sr-only">Total </span>${fmtPrice(original * (1 - rate))}</strong>${rate ? `<del><span class="bundle-sr-only">Original total </span>${fmtPrice(original)}</del>` : ''}</span>
       </span>
     </label>`;
@@ -2545,37 +2600,6 @@ const CERTS = [
   { name:'GHK-Cu 50mg', batches:[['GHK-CU 50mg','21-Aug-25'],['GHK-CU 50mg','25-Sep-25'],['GHK-CU 100mg','25-Jul-25'],['GHK-CU 100mg','25-Aug-25']] },
 ];
 
-function updatePdpCertificate(product) {
-  const record = CERTS.find(cert => {
-    const certName = cert.name.toLowerCase();
-    const productName = product.name.toLowerCase();
-    return certName.startsWith(productName) || (productName === 'deep sleep inducing peptide' && certName.includes('dsip'));
-  });
-  const title = document.getElementById('pdpCertTitle');
-  const sub = document.getElementById('pdpCertSub');
-  const link = document.getElementById('pdpCertLink');
-  if (!title || !sub || !link) return;
-  if (record) {
-    const latest = [...record.batches].sort((a, b) => certificateDate(b[1]) - certificateDate(a[1]))[0];
-    title.textContent = `${record.name} · ${record.batches.length} supplier-listed records`;
-    sub.textContent = `Latest supplier-listed date: ${latest[1]} · Not matched to current stock`;
-    link.onclick = event => {
-      event.preventDefault();
-      showPage('quality');
-      requestAnimationFrame(() => {
-        const search = document.getElementById('certSearch');
-        search.value = product.name;
-        filterCerts(product.name);
-        search.scrollIntoView({ behavior:'smooth', block:'center' });
-      });
-    };
-  } else {
-    title.textContent = `${product.name} certificate directory`;
-    sub.textContent = 'No matching record is listed here. Contact support for product and lot documentation.';
-    link.onclick = event => { event.preventDefault(); showPage('quality'); };
-  }
-}
-
 function certificateDate(value) {
   const [day, month, year] = value.split('-');
   const monthIndex = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(month);
@@ -2606,7 +2630,7 @@ function filterCerts(q) { renderCerts(q); }
 // ============================================================
 // PAGE ROUTER
 // ============================================================
-const PAGE_PATHS = { home:'/', cart:'/cart', shop:'/shop', reconstitution:'/reconstitution', quality:'/quality-testing', about:'/about', faq:'/faq', contact:'/contact', track:'/track-order', shipping:'/shipping', refund:'/refunds', terms:'/terms', privacy:'/privacy' };
+const PAGE_PATHS = { home:'/', cart:'/cart', shop:'/shop', reconstitution:'/reconstitution', about:'/about', faq:'/faq', contact:'/contact', track:'/track-order', shipping:'/shipping', refund:'/refunds', terms:'/terms', privacy:'/privacy' };
 
 function showPage(id, updateHistory = true) {
   const calculator = document.getElementById('reconstitution-calculator');
@@ -2622,10 +2646,13 @@ function showPage(id, updateHistory = true) {
   }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const page = document.getElementById('page-'+id);
-  if (page) { page.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  if (page) {
+    page.classList.add('active');
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }
   document.body.classList.toggle('product-page-active', id === 'product');
   document.querySelectorAll('.nav__link').forEach(l=>l.classList.remove('active'));
-  const map = {shop:0,quality:1,faq:2,contact:3};
+  const map = {shop:0,faq:1,contact:2,track:3};
   const links = document.querySelectorAll('.nav__link');
   if (map[id]!==undefined) links[map[id]]?.classList.add('active');
   if (updateHistory && PAGE_PATHS[id]) history.pushState({ page:id }, '', PAGE_PATHS[id]);
@@ -2645,9 +2672,75 @@ function routeFromLocation() {
 
 window.addEventListener('popstate', routeFromLocation);
 
-function toggleMobileMenu() {
-  document.getElementById('mobileMenu').classList.toggle('open');
+let mobileMenuTrigger = null;
+function openMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  const toggle = document.getElementById('mobileToggle');
+  mobileMenuTrigger = document.activeElement;
+  menu.removeAttribute('inert');
+  menu.classList.add('open');
+  menu.setAttribute('aria-hidden', 'false');
+  backdrop.classList.add('open');
+  backdrop.setAttribute('aria-hidden', 'false');
+  toggle.setAttribute('aria-expanded', 'true');
+  toggle.setAttribute('aria-label', 'Close navigation menu');
+  document.body.classList.add('nav-drawer-open');
+  requestAnimationFrame(() => requestAnimationFrame(() => menu.querySelector('button, a')?.focus()));
 }
+function closeMobileMenu(restoreFocus = true) {
+  const menu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  const toggle = document.getElementById('mobileToggle');
+  if (!menu || !menu.classList.contains('open')) return;
+  menu.classList.remove('open');
+  menu.setAttribute('aria-hidden', 'true');
+  menu.setAttribute('inert', '');
+  backdrop.classList.remove('open');
+  backdrop.setAttribute('aria-hidden', 'true');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-label', 'Open navigation menu');
+  document.body.classList.remove('nav-drawer-open');
+  if (restoreFocus && mobileMenuTrigger instanceof HTMLElement) mobileMenuTrigger.focus();
+}
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.contains('open') ? closeMobileMenu() : openMobileMenu();
+}
+function navigateFromDrawer(page) {
+  closeMobileMenu(false);
+  showPage(page);
+}
+function openShopCategory(category) {
+  closeMobileMenu(false);
+  showPage('shop');
+  filterProducts(category, document.querySelector(`.filter-btn[data-filter="${category}"]`));
+}
+function keepFocusWithin(container, event) {
+  if (event.key !== 'Tab') return;
+  const focusable = [...container.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (!container.contains(document.activeElement)) { event.preventDefault(); first.focus(); }
+  else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    closeMobileMenu();
+    closeSiteSearch();
+    return;
+  }
+  const mixBundleDialog = document.getElementById('mixBundleDialog');
+  const searchOverlay = document.getElementById('siteSearchOverlay');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (!mixBundleDialog.hidden) keepFocusWithin(mixBundleDialog, event);
+  else if (!searchOverlay.hidden) keepFocusWithin(searchOverlay, event);
+  else if (mobileMenu.classList.contains('open')) keepFocusWithin(mobileMenu, event);
+});
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768) closeMobileMenu(false);
+});
 
 const buyerGalleryMotion = {
   timer: 0,
@@ -2851,21 +2944,12 @@ updateReconstitution();
 // ============================================================
 // INIT
 // ============================================================
-const featuredProductsSection = document.querySelector('#page-home > .featured-products');
-const reviewsSection = document.querySelector('#page-home > .orders-proof');
-const packagingSection = document.querySelector('#page-home > .discreet-packaging');
-if (featuredProductsSection && reviewsSection && packagingSection) {
-  featuredProductsSection.after(reviewsSection);
-  reviewsSection.after(packagingSection);
-}
 routeFromLocation();
 renderFeatured();
 renderShop();
 renderReconSupplies();
-renderCerts();
 renderCart();
 updateMobileCartBtn();
-initBuyerGalleryAutoplay();
 
 loadInventory();
 
@@ -2916,7 +3000,7 @@ loadInventory();
 })();
 </script>
 <script src="/storefront-support.js?v=1"></script>
-<script src="/giveaway.js?v=2"></script>
+<script src="/giveaway.js?v=3"></script>
 
 </body>
 </html>

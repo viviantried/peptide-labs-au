@@ -5,7 +5,7 @@ const {PGlite}=require('@electric-sql/pglite');
 let db;
 before(async()=>{db=new PGlite();await db.exec(fs.readFileSync('db/tracker.sql','utf8'));});
 after(async()=>db.close());
-async function seed(){await db.exec('TRUNCATE pl_events,pl_order_items,pl_orders,pl_inventory RESTART IDENTITY CASCADE');await db.query("INSERT INTO pl_inventory(sku,name,on_hand) VALUES('A','Product A',5),('B','Product B',10)");}
+async function seed(){await db.exec('TRUNCATE pl_events,pl_order_items,pl_orders,pl_restock_alerts,pl_inventory RESTART IDENTITY CASCADE');await db.query("INSERT INTO pl_inventory(sku,name,on_hand) VALUES('A','Product A',5),('B','Product B',10)");}
 async function create(id='one',key='key-one',items={A:2},fingerprint='same'){return (await db.query('SELECT pl_create_order($1,$2,$3,$4,$5) AS value',[id,key,fingerprint,JSON.stringify({total:100}),JSON.stringify(items)])).rows[0].value;}
 async function stock(sku='A'){return(await db.query('SELECT * FROM pl_inventory WHERE sku=$1',[sku])).rows[0];}
 async function change(id,status,tracking=null,carrier=null){return(await db.query('SELECT pl_change_order($1,$2,$3,$4) AS value',[id,status,tracking,carrier])).rows[0].value;}
@@ -21,6 +21,24 @@ test('expiry releases only unpaid expired orders',async()=>{await seed();await c
 test('stock adjustment detects stale counts and protects reservations',async()=>{await seed();await create();await assert.rejects(db.query("SELECT pl_adjust_stock('A',8,5,false,1,'new delivery')"),/STOCK_CHANGED/);await assert.rejects(db.query("SELECT pl_adjust_stock('A',1,5,false,2,'physical count')"),/INVALID_STOCK/);await db.query("SELECT pl_adjust_stock('A',8,5,false,2,'new delivery')");assert.equal((await stock()).on_hand,8)});
 test('restocking and unknown products cannot be purchased',async()=>{await seed();await db.query("UPDATE pl_inventory SET restocking=true WHERE sku='A'");await assert.rejects(create(),/OUT_OF_STOCK/);await assert.rejects(create('two','two',{UNKNOWN:1}),/OUT_OF_STOCK/)});
 test('empty cart cannot be persisted',async()=>{await seed();await assert.rejects(create('one','one',{}),/INVALID_ITEMS/)});
+test('restock alert upsert keeps one pending row and allows a new request after notification',async()=>{
+  await seed();
+  const upsert=`INSERT INTO pl_restock_alerts(email,sku) VALUES($1,$2)
+    ON CONFLICT(email,sku) DO UPDATE SET
+      requested_at=CASE WHEN pl_restock_alerts.notified_at IS NULL THEN pl_restock_alerts.requested_at ELSE now() END,
+      notified_at=NULL,provider_id=NULL
+    RETURNING *`;
+  await db.query(upsert,['researcher@example.com','A']);
+  await db.query("UPDATE pl_restock_alerts SET requested_at='2025-01-01T00:00:00Z' WHERE email='researcher@example.com' AND sku='A'");
+  const pending=(await db.query(upsert,['researcher@example.com','A'])).rows[0];
+  assert.equal((await db.query('SELECT count(*)::int AS count FROM pl_restock_alerts')).rows[0].count,1);
+  assert.equal(new Date(pending.requested_at).toISOString(),'2025-01-01T00:00:00.000Z');
+  await db.query("UPDATE pl_restock_alerts SET notified_at=now(),provider_id='email-one' WHERE email='researcher@example.com' AND sku='A'");
+  const renewed=(await db.query(upsert,['researcher@example.com','A'])).rows[0];
+  assert.equal(renewed.notified_at,null);assert.equal(renewed.provider_id,null);
+  assert.ok(new Date(renewed.requested_at)>new Date('2025-01-01T00:00:00Z'));
+  await assert.rejects(db.query("INSERT INTO pl_restock_alerts(email,sku) VALUES('Researcher@example.com','A')"),/check|violates/i);
+});
 test('duplicate five-digit number leaves the existing order and stock intact',async()=>{
   await seed();await create('PL-12345','first',{A:1});
   await assert.rejects(create('PL-12345','second',{A:2}),error=>error.code==='23505'&&error.constraint==='pl_orders_pkey');

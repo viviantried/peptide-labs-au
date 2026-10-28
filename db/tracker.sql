@@ -6,6 +6,16 @@ CREATE TABLE IF NOT EXISTS pl_inventory (
   restocking boolean NOT NULL DEFAULT false,
   version integer NOT NULL DEFAULT 1, updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE TABLE IF NOT EXISTS pl_restock_alerts (
+  email text NOT NULL,
+  sku text NOT NULL REFERENCES pl_inventory(sku) ON DELETE CASCADE,
+  requested_at timestamptz NOT NULL DEFAULT now(),
+  notified_at timestamptz,
+  provider_id text,
+  PRIMARY KEY (email, sku),
+  CHECK (email = lower(email) AND email = btrim(email))
+);
+CREATE INDEX IF NOT EXISTS pl_restock_alerts_pending ON pl_restock_alerts (sku, requested_at) WHERE notified_at IS NULL;
 CREATE TABLE IF NOT EXISTS pl_orders (
   id text PRIMARY KEY, request_key text UNIQUE NOT NULL, fingerprint text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(), expires_at timestamptz NOT NULL,

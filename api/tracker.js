@@ -1,4 +1,5 @@
 const store = require('../lib/tracker');
+const alerts = require('../lib/restock-alerts');
 module.exports = async function(req,res) {
   res.setHeader('Cache-Control','no-store');
   res.setHeader('X-Robots-Tag','noindex, nofollow');
@@ -24,7 +25,16 @@ module.exports = async function(req,res) {
     if (b.action==='stock') {
       if (typeof b.sku!=='string' || !Number.isInteger(b.on_hand) || !Number.isInteger(b.low_stock) || !Number.isInteger(b.version) || typeof b.restocking!=='boolean' || typeof b.reason!=='string' || b.reason.length>500) return res.status(400).json({error:'Invalid stock update'});
       const [row]=await store.query('SELECT pl_adjust_stock($1,$2,$3,$4,$5,$6) AS value',[b.sku,b.on_hand,b.low_stock,b.restocking,b.version,b.reason]);
-      return res.status(200).json({ok:true,inventory:row.value});
+      let restockAlerts;
+      if (alerts.isAvailable(row.value)) {
+        try {
+          restockAlerts=await alerts.notifyAvailable(b.sku);
+        } catch (error) {
+          console.error('Restock notification dispatch failed',error.name || 'provider_unavailable');
+          restockAlerts={status:'failed',attempted:0,accepted:0,failed:0};
+        }
+      }
+      return res.status(200).json({ok:true,inventory:row.value,...(restockAlerts ? {restockAlerts} : {})});
     }
     return res.status(400).json({error:'Unknown action'});
   } catch (error) {
