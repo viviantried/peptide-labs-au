@@ -2,7 +2,6 @@
   const dialog = document.getElementById('popupOverlay');
   const dismissalKey = 'plTenVialOfferDismissedV1';
   const dismissalWindow = 7 * 86400000;
-  let automaticAttempted = false;
   let openBuilderAfterClose = false;
   let lastFocus;
   const storage = {
@@ -35,18 +34,6 @@
   });
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
 
-  function tryAutomaticPopup() {
-    if (automaticAttempted) return;
-    const dismissedAt = Number(storage.get(dismissalKey)) || 0;
-    if (Date.now() - dismissedAt < dismissalWindow) return;
-    const activePageId = document.querySelector('.page.active')?.id;
-    if (activePageId === 'page-home') return;
-    if (document.body.classList.contains('research-agreement-pending')
-        || document.getElementById('coOverlay')?.classList.contains('open')
-        || !['page-shop', 'page-product'].includes(activePageId)) return;
-    automaticAttempted = true;
-    openPopup();
-  }
-  setTimeout(tryAutomaticPopup, 4500);
-  document.addEventListener('click', () => setTimeout(tryAutomaticPopup, 4500));
+  // The offer remains available from explicit storefront links. It does not
+  // interrupt shoppers automatically while they are browsing or checking out.
 })();

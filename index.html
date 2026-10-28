@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="PeptideLab Australia: research compounds, straightforward ordering and support. Standard and express delivery available, with free standard shipping on eligible orders." />
-  <link rel="stylesheet" href="/styles.css?v=29" />
+  <link rel="stylesheet" href="/styles.css?v=31" />
   <link rel="stylesheet" href="/giveaway.css?v=5" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
@@ -32,19 +32,25 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- ═══════════════════ CHECKOUT OVERLAY ═══════════════════ -->
-<div class="co-overlay" id="coOverlay">
+<div class="co-overlay" id="coOverlay" role="dialog" aria-modal="true" aria-labelledby="coCheckoutTitle">
 
   <!-- HEADER -->
   <div class="co-header">
     <button type="button" class="co-close" onclick="closeCheckout()" aria-label="Close checkout">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <div class="co-brand">PeptideLab</div>
+    <div class="co-brand" id="coCheckoutTitle">PeptideLab secure checkout</div>
     <div class="co-secure">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       Secure &amp; Encrypted
     </div>
   </div>
+  <ol class="checkout-progress" id="checkoutProgress" aria-label="Order progress">
+    <li class="checkout-progress__step checkout-progress__step--complete"><span>1</span>Browse</li>
+    <li class="checkout-progress__step checkout-progress__step--complete"><span>2</span>Cart</li>
+    <li class="checkout-progress__step checkout-progress__step--current" id="coProgressCheckout" aria-current="step"><span>3</span>Checkout</li>
+    <li class="checkout-progress__step" id="coProgressPay"><span>4</span>Pay</li>
+  </ol>
 
   <!-- MAIN CONTENT -->
   <div class="co-body" id="coBody">
@@ -53,18 +59,9 @@
     <div class="co-form-col">
       <div class="co-form-primary">
 
-      <!-- Contact -->
-      <div class="co-section">
-        <div class="co-section-title">Contact</div>
-        <div class="co-field">
-          <label for="co-email">Email</label>
-          <input class="co-input" type="email" id="co-email" placeholder="your@email.com" autocomplete="email" />
-        </div>
-      </div>
-
-      <!-- Delivery -->
-      <div class="co-section">
-        <div class="co-section-title">Delivery</div>
+      <!-- Shipping information -->
+      <div class="co-section co-section--shipping">
+        <div class="co-section-title">Shipping information</div>
         <div class="co-field">
           <label for="co-country">Country / Region</label>
           <select class="co-select" id="co-country" onchange="coCountryChange()" autocomplete="shipping country">
@@ -125,7 +122,7 @@
           </select>
           <small class="co-locality-help">International orders are paid in AUD through Wise, Revolut or another transfer service.</small>
         </div>
-        <div class="co-row">
+        <div class="co-row co-row--name">
           <div class="co-field">
             <label for="co-first">First name</label>
             <input class="co-input" type="text" id="co-first" autocomplete="shipping given-name" />
@@ -133,6 +130,16 @@
           <div class="co-field">
             <label for="co-last">Last name</label>
             <input class="co-input" type="text" id="co-last" autocomplete="shipping family-name" />
+          </div>
+        </div>
+        <div class="co-row co-row--contact">
+          <div class="co-field">
+            <label for="co-email">Email</label>
+            <input class="co-input" type="email" id="co-email" placeholder="your@email.com" autocomplete="email" />
+          </div>
+          <div class="co-field">
+            <label for="co-phone">Phone (optional)</label>
+            <input class="co-input" type="tel" id="co-phone" autocomplete="shipping tel" />
           </div>
         </div>
         <div class="co-field co-locality-search" id="coLocalitySearchWrap">
@@ -149,15 +156,11 @@
           <label for="co-address2">Apartment, suite, etc. (optional)</label>
           <input class="co-input" type="text" id="co-address2" autocomplete="shipping address-line2" />
         </div>
-        <div class="co-row co-row--3 co-row--address">
-          <div class="co-field">
-            <label for="co-postcode">Postcode</label>
-            <input class="co-input" type="text" id="co-postcode" autocomplete="shipping postal-code" inputmode="numeric" oninput="coPostcodeInput();coDeliveryDetailsInput()" onchange="coPostcodeInput();coDeliveryDetailsInput()" />
-          </div>
-          <div class="co-field">
-            <label for="co-suburb">Suburb / City</label>
-            <input class="co-input" type="text" id="co-suburb" autocomplete="shipping address-level2" oninput="coDeliveryDetailsInput()" />
-          </div>
+        <div class="co-field">
+          <label for="co-suburb">Suburb / City</label>
+          <input class="co-input" type="text" id="co-suburb" autocomplete="shipping address-level2" oninput="coDeliveryDetailsInput()" />
+        </div>
+        <div class="co-row co-row--region">
           <div class="co-field" id="co-state-wrap">
             <label for="co-state">State</label>
             <select class="co-select" id="co-state-select" autocomplete="shipping address-level1">
@@ -172,6 +175,10 @@
             </select>
             <input class="co-input" type="text" id="co-state-text" placeholder="State / Province" autocomplete="shipping address-level1" style="display:none" />
           </div>
+          <div class="co-field">
+            <label for="co-postcode">Postcode</label>
+            <input class="co-input" type="text" id="co-postcode" autocomplete="shipping postal-code" inputmode="numeric" oninput="coPostcodeInput();coDeliveryDetailsInput()" onchange="coPostcodeInput();coDeliveryDetailsInput()" />
+          </div>
         </div>
         <p class="co-postcode-status" id="coPostcodeStatus" role="status" aria-live="polite" hidden></p>
         <p class="co-postcode-credit" id="coPostcodeCredit" hidden>Suburb data: <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. Please check your delivery address.</p>
@@ -179,14 +186,19 @@
           <label for="coSuburbSuggestions">Choose your suburb</label>
           <select class="co-select" id="coSuburbSuggestions" onchange="coSelectSuburbSuggestion()"></select>
         </div>
-        <div class="co-field">
-          <label for="co-phone">Phone (optional)</label>
-          <input class="co-input" type="tel" id="co-phone" autocomplete="shipping tel" />
-        </div>
       </div>
+      <button class="co-continue-payment" id="coContinuePayment" type="button" onclick="coContinueToPayment()">Continue to shipping &amp; payment <span aria-hidden="true">→</span></button>
+      <div class="co-error-msg" id="coInfoError" role="alert"></div>
       </div>
 
-      <div class="co-form-secondary">
+      <div class="co-form-secondary" hidden>
+      <div class="co-payment-heading">
+        <button type="button" onclick="coShowCheckoutStep('information')"><span aria-hidden="true">←</span> Edit shipping information</button>
+        <div>
+          <h2 id="coPaymentHeading" tabindex="-1">Shipping &amp; payment</h2>
+          <p>Confirm delivery, then place your order to view the secure bank-transfer details.</p>
+        </div>
+      </div>
 
       <!-- Shipping method -->
       <div class="co-section" id="coShipSection">
@@ -234,10 +246,10 @@
       <!-- Submit -->
       <button class="co-place-order" id="coPlaceBtn" onclick="placeOrder()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-        <span class="co-btn-text">Place Order</span>
+        <span class="co-btn-text">Place order &amp; view payment details</span>
       </button>
       <div class="co-error-msg" id="coError"></div>
-      <div class="co-legal">By placing your order you agree to our <a href="#" onclick="closeCheckout();showPage('terms')">Terms of Service</a> and <a href="#" onclick="closeCheckout();showPage('privacy')">Privacy Policy</a>. All products are for research use only.</div>
+      <div class="co-legal">By placing your order you agree to our <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>. All products are for research use only.</div>
       </div>
     </div>
 
@@ -267,55 +279,34 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         Awaiting Payment
       </div>
-      <h1 class="co-success__title">Order received — awaiting payment</h1>
-      <p class="co-success__intro">Your order has been submitted. Payment is still required; dispatch follows payment confirmation. Use the exact amount and reference below.</p>
+      <h1 class="co-success__title">Order received — payment required</h1>
+      <p class="co-success__intro">Complete the transfer using the exact amount and order reference below.</p>
 
       <div class="co-success__block">
-        <div class="co-success__block-title">How to Finalise Your Payment</div>
-
-        <div class="co-success__step-label" id="coSuccessPaymentTitle">Step 1: Complete a Bank Transfer</div>
-        <p class="co-success__step-body">Please send the full order amount to the details listed below:</p>
+        <div class="co-success__block-title" id="coSuccessPaymentTitle">Complete your bank transfer</div>
         <div class="co-success__bank-fields" id="coSuccessFields"></div>
         <div class="co-success__amount-row">
           <span>Amount</span>
           <span id="coSuccessAmt" style="color:#60f7a4;font-weight:800;font-size:20px"></span>
         </div>
-
-        <div class="co-success__step-label" style="margin-top:22px">Step 2: Include the Correct Payment Reference: Your Order number</div>
-        <p class="co-success__step-body"><em>(This step is essential)</em></p>
-        <p class="co-success__step-body">To ensure your order is matched correctly, enter the following in the transfer reference:</p>
         <div class="co-success__ref-box">
-          Your order reference: <strong id="coSuccessRef" style="color:#fff;font-size:17px"></strong>
+          <span>Payment reference</span><strong id="coSuccessRef" style="color:#fff;font-size:17px"></strong>
         </div>
       </div>
 
-      <div class="co-success__notice co-success__notice--green">
-        ✅ Once payment is received, your order will be processed and dispatched.
-      </div>
-
-      <div class="co-success__notice co-success__notice--blue">
-        <div style="font-weight:700;margin-bottom:4px">Already paid? You’re all set.</div>
-        If you sent the exact amount and used the order number above as your payment reference, no further action is needed. We manually match cleared bank transfers to orders, so your order may still show “awaiting payment” in the meantime. Once confirmed, we’ll prepare your order and email your tracking details when the shipping label is created.
-      </div>
-
-      <div class="co-success__notice co-success__notice--yellow">
-        <div style="font-weight:700;margin-bottom:4px">⚠ Important</div>
-        <span id="coSuccessDeadline">Orders not paid within 24 hours will be automatically cancelled.</span>
-      </div>
-
-      <div class="co-success__notice co-success__notice--blue">
-        <div style="font-weight:700;margin-bottom:4px">ℹ Additional Information</div>
+      <div class="co-success__notice co-success__notice--blue co-success__notice--compact">
+        <strong>What happens next</strong>
         <span id="coSuccessPaymentHelp">Use the exact account details and order reference shown above.</span>
+        <span id="coSuccessDeadline">Unpaid orders are cancelled after 24 hours.</span>
       </div>
 
-      <p id="coSuccessEmailNotice" style="font-size:13px;color:#ccc;margin:0 0 24px">Your order is saved. Keep this reference and payment information.</p>
+      <p id="coSuccessEmailNotice" class="co-success__email-note">Your order is saved. Keep this reference and payment information.</p>
 
-      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
-        <button class="co-success__done" onclick="closeCheckout();showPage('track')" style="background:#fff">
+      <div class="co-success__actions">
+        <button class="co-success__done" onclick="closeCheckout();showPage('track')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
           Track Your Order
         </button>
-        <button class="co-success__done" onclick="closeCheckout();showPage('shop')" style="background:#1E1E1E;color:#fff">Back to Shop</button>
       </div>
     </div>
   </div>
@@ -344,7 +335,7 @@
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar">
   <span class="announcement-bar__desktop"><strong>Free standard shipping available</strong><span>•</span>Standard and express delivery<span>•</span>Shipping worldwide</span>
-  <span class="announcement-bar__mobile"><strong>Free standard shipping available</strong> · Shipping worldwide</span>
+  <span class="announcement-bar__mobile"><strong>Free shipping over $200 AUD</strong> · Shipping worldwide</span>
 </div>
 
 <!-- NAVIGATION -->
@@ -452,11 +443,35 @@
 <div class="page" id="page-cart">
 <div class="cart-panel" id="cartPanel" aria-labelledby="cartTitle">
   <div class="cart-header">
-    <h1 class="cart-header__title" id="cartTitle">Shopping Cart</h1>
-    <a class="cart-page-back" href="/shop" onclick="showPage('shop');return false;">Continue shopping</a>
+    <div>
+      <h1 class="cart-header__title" id="cartTitle" tabindex="-1">Shopping Cart</h1>
+      <ol class="cart-progress" aria-label="Order progress">
+        <li class="cart-progress__step cart-progress__step--complete"><span>1</span>Browse</li>
+        <li class="cart-progress__step cart-progress__step--current" aria-current="step"><span>2</span>Cart</li>
+        <li class="cart-progress__step"><span>3</span>Checkout</li>
+        <li class="cart-progress__step"><span>4</span>Pay</li>
+      </ol>
+    </div>
+    <a class="cart-page-back" href="/shop" onclick="showPage('shop');return false;">Add another item</a>
   </div>
   <div class="cart-layout">
     <div class="cart-main">
+      <section class="cart-mix-builder" id="mixBundleBuilder" hidden aria-labelledby="mixBundleTitle">
+        <div class="cart-mix-builder__header">
+          <div>
+            <div class="mix-bundle-kicker">MIX &amp; MATCH · 25% OFF</div>
+            <h2 id="mixBundleTitle" tabindex="-1">Build your 10-vial set</h2>
+            <p>Choose any 10 available research vials, including repeats.</p>
+          </div>
+          <button type="button" class="cart-mix-builder__cancel" onclick="closeMixBundleBuilder()">Cancel set</button>
+        </div>
+        <div class="mix-bundle-progress"><strong id="mixBundleCount">0 of 10 selected</strong><span id="mixBundleRemaining">Choose 10 vials</span></div>
+        <div class="mix-bundle-track"><span id="mixBundleFill"></span></div>
+        <div class="mix-bundle-options" id="mixBundleOptions"></div>
+        <div class="mix-bundle-summary"><div><span>Individual total</span><s id="mixBundleRegular">A$0.00</s></div><div><span>You save 25%</span><strong id="mixBundleSavings">A$0.00</strong></div><div class="mix-bundle-total"><span>Set price</span><strong id="mixBundlePrice">A$0.00</strong></div></div>
+        <button type="button" class="btn btn--teal mix-bundle-add" id="mixBundleAdd" onclick="addMixBundleToCart()" disabled>Select 10 vials</button>
+        <p class="mix-bundle-note">For laboratory research use only. The 10-vial offer replaces the standard quantity discount for this set.</p>
+      </section>
       <div class="cart-empty" id="cartEmpty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <div class="cart-empty__title">Your cart is empty</div>
@@ -486,8 +501,8 @@
       </div>
       <div id="cartFreeShipSuggestions" class="cart-free-ship-suggestions" hidden></div>
       <div class="cart-checkout">
-        <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
-        <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
+        <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Continue securely to checkout →</button>
+        <span class="cart-checkout__next">Next: delivery details and payment method</span>
       </div>
       <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
     </aside>
@@ -536,7 +551,7 @@
     <div class="mobile-hero__main">
       <div class="container">
         <p class="mobile-hero__eyebrow">Research use only</p>
-        <h2 id="mobileHeroTitle">Laboratory Grade Research Peptides</h2>
+        <h2 id="mobileHeroTitle"><span>Laboratory Grade</span> <span>Research Peptides</span></h2>
         <p class="mobile-hero__intro">Search by compound or browse current pricing and availability.</p>
       </div>
     </div>
@@ -741,17 +756,38 @@
   </section>
 
 
-  <!-- FAQ PREVIEW -->
-  <section class="section home-faq-preview" style="background:var(--body-bg)">
+  <!-- NEWSLETTER -->
+  <section class="section home-newsletter" aria-labelledby="newsletterTitle">
     <div class="container--narrow">
-      <div class="section-header section-header--center"><div class="section-label">FAQ</div><h2 class="section-title">Common Questions</h2><p class="section-sub">Quick answers for Australian research customers.</p></div>
-      <div class="faq-list">
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Are these products for human use?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">No. All products are for laboratory research purposes only. Not for human consumption, veterinary use, or any clinical application. By purchasing you confirm products will be used in a supervised laboratory research setting.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Do you offer free shipping?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Yes. Australian orders of $200 AUD or more receive free standard shipping, with express available for a $5 upgrade.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How are products shipped within Australia?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Australian customers can choose standard delivery for $10 AUD or express delivery for $15 AUD. Orders of $200 AUD or more receive free standard delivery, or express for a $5 upgrade. All orders include tracking and discreet, unmarked packaging.</div></div>
-        <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">How should peptides be stored?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer">Store lyophilised peptides at -20°C or below in a dry, dark environment. Avoid repeated freeze-thaw cycles. Once reconstituted, store at 2–8°C and use within the timeframe required by your research protocol. Refer to the product label and lot documentation for compound-specific guidance.</div></div>
+      <div class="newsletter-panel">
+        <div class="newsletter-panel__copy">
+          <div class="section-label">Research updates</div>
+          <h2 class="section-title" id="newsletterTitle">Be first to know.</h2>
+          <p>Get subscriber-only discounts, restock alerts and new-product releases in one useful email.</p>
+          <ul aria-label="Newsletter benefits">
+            <li>Exclusive subscriber offers</li>
+            <li>Priority restock updates</li>
+            <li>New compound announcements</li>
+          </ul>
+        </div>
+        <form class="newsletter-form" id="newsletterForm" onsubmit="submitNewsletter(event)" novalidate>
+          <label for="newsletterEmail">Email address</label>
+          <div class="newsletter-form__row">
+            <input id="newsletterEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="you@email.com" required>
+            <button id="newsletterSubmit" type="submit">Join the list <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="newsletter-form__trap" aria-hidden="true">
+            <label for="newsletterWebsite">Website</label>
+            <input id="newsletterWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <label class="newsletter-consent">
+            <input id="newsletterConsent" type="checkbox" required>
+            <span>I agree to receive marketing emails from PeptideLab. I can unsubscribe at any time.</span>
+          </label>
+          <p class="newsletter-form__privacy">Your email is used only for these updates. See our <a href="/privacy" onclick="showPage('privacy');return false;">Privacy Policy</a>.</p>
+          <p class="newsletter-form__status" id="newsletterStatus" role="status" aria-live="polite"></p>
+        </form>
       </div>
-      <div style="text-align:center;margin-top:32px;"><button class="btn btn--outline" onclick="showPage('faq')">View all FAQs →</button></div>
     </div>
   </section>
 
@@ -822,11 +858,7 @@
 <div class="page" id="page-product">
   <section class="section">
     <div class="container">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:32px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <span onclick="showPage('home')" style="cursor:pointer;color:var(--teal-600)">Home</span><span>›</span>
-        <span onclick="showPage('shop')" style="cursor:pointer;color:var(--teal-600)">Shop</span><span>›</span>
-        <span id="pdpBreadcrumb">Product</span>
-      </div>
+      <button type="button" class="pdp-back-link" onclick="showPage('shop')"><span aria-hidden="true">←</span> Shop all peptides</button>
       <div class="product-page-grid">
         <div class="product-page-img" id="pdpImg">
           <div class="product-page-img__vials" id="pdpVials">
@@ -836,26 +868,46 @@
           <div class="product-page-img__label" id="pdpImgLabel">Product · Research Grade</div>
         </div>
         <div class="product-page-info">
-          <div class="product-page-eyebrow">PeptideLab · <span id="pdpSku">000</span></div>
-          <h1 class="product-page-name" id="pdpName">Product Name</h1>
-          <div class="product-page-id" id="pdpId">Research Compound · For Laboratory Use Only</div>
-          <div class="product-page-price" id="pdpPrice">$0.00</div>
-          <div class="product-page-price-note" id="pdpPriceNote">Per vial · AUD · Research use only</div>
+          <div class="product-page-heading">
+            <div>
+              <div class="product-page-eyebrow">PeptideLab · Product <span id="pdpSku">000</span></div>
+              <h1 class="product-page-name" id="pdpName">Product Name</h1>
+              <div class="product-page-id" id="pdpId">Research Compound · For Laboratory Use Only</div>
+            </div>
+            <div class="pdp-quality-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              <span><strong id="pdpPurityValue">Supplier listed</strong><small>Request matching lot documentation</small></span>
+            </div>
+          </div>
+
+          <div class="pdp-size-selector"><span>Size</span><strong id="pdpSize">—</strong><small>One listed vial size</small></div>
 
           <!-- Shared by every product; prices use the cart's discount rules. -->
           <fieldset class="pdp-bundle-box">
-            <legend class="pdp-bundle-box__title">Bundle &amp; Save</legend>
+            <legend class="pdp-bundle-box__title">Quantity</legend>
             <div class="pdp-bundle-box__tiers" id="pdpBundleTiers"></div>
           </fieldset>
 
+          <div class="pdp-price-summary" aria-live="polite">
+            <div><span class="product-page-price" id="pdpPrice">$0.00</span><del id="pdpOriginalPrice" hidden></del></div>
+            <div class="product-page-price-note" id="pdpPriceNote">Per vial · Research use only</div>
+          </div>
+
           <div class="product-page-variants" id="pdpVariants"></div>
           <div id="pdpStockBadge" style="display:none"></div>
+          <label class="pdp-addon" id="pdpAddon">
+            <input type="checkbox" id="pdpAddWater" onchange="pdpAddWater = this.checked; updatePdpPurchaseSummary()">
+            <img src="/images/bac-water.jpg" alt="" id="pdpAddonImage">
+            <span><strong>Add BAC Water</strong><small>10 mL laboratory supply</small></span>
+            <strong id="pdpAddonPrice">+$0.00</strong>
+          </label>
           <div class="product-page-purchase-panel">
             <div class="product-page-actions">
               <button class="btn btn--teal btn--lg" style="flex:1" id="pdpAddBtn" onclick="pdpAddToCart()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               Add to Cart
               </button>
+              <button class="btn btn--outline btn--lg" style="flex:1" id="pdpBuyBtn" onclick="pdpBuyNow()">Buy Now</button>
             </div>
           </div>
           <div class="product-page-info-tabs">
@@ -866,7 +918,7 @@
             </div>
             <div class="tab-content active" id="tab-desc"><p id="pdpDesc">Research compound description.</p><div id="pdpDescDetail"><p>This product is supplied as a lyophilised powder for <strong>laboratory research purposes only</strong>. It is not intended for human consumption and has not been approved for therapeutic use. Contact support if you need documentation for a specific product and lot.</p></div></div>
             <div class="tab-content" id="tab-storage"><div id="pdpStorageContent"><p><strong>Storage before and after reconstitution</strong></p><p><strong>Before reconstitution:</strong> Keep the sealed lyophilised vial dry and protected from light at −20°C or colder. Let it reach room temperature before opening to limit condensation.</p><p><strong>After reconstitution:</strong> Follow the product and lot instructions. Refrigerate at 2–8°C for short-term storage or freeze single-use aliquots at −20°C or colder when validated. Avoid repeated freeze–thaw cycles. Stability and expiry vary by peptide and diluent.</p></div></div>
-            <div class="tab-content" id="tab-shipping-info"><p>Australian customers can choose <strong>standard shipping for $10 AUD</strong> or <strong>express shipping for $15 AUD</strong>. New Zealand and selected international destinations are also available, with the price and delivery estimate shown at checkout.</p><p>All orders are shipped in discreet, unmarked packaging with tracking confirmation by email.</p></div>
+            <div class="tab-content" id="tab-shipping-info"><p><strong>International shipping is available</strong> to New Zealand and selected destinations across North America, Europe and Asia, alongside nationwide Australian delivery. Choose your country at checkout to see the available services, exact price and delivery estimate.</p><p>Every order includes tracking and discreet, unmarked packaging. International customers are welcome; please confirm local import requirements before ordering.</p></div>
           </div>
           <div class="product-disclaimer"><strong>Research Use Only — Important Notice</strong>Sold strictly for laboratory research purposes only. Not for human consumption, veterinary use, or clinical application. Not evaluated by any regulatory authority. Not intended to diagnose, treat, cure, or prevent any disease. By purchasing, buyer confirms they are a qualified researcher operating in compliance with all applicable laws.</div>
           <div style="margin-top:24px;" id="pdpFaq"></div>
@@ -1071,7 +1123,8 @@
   <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: 23 September 2026 · We respect your privacy.</p></div>
   <div class="policy-body"><div class="container--narrow"><div class="policy-content">
     <h2>Information We Collect</h2><p>Order data (name, email, shipping address and selected payment method), communication data from enquiries (name, email, subject, optional order reference and message), and anonymised usage analytics. We do not collect or store online-banking credentials.</p>
-    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell or share your data for marketing purposes.</p><p>Australian suburb and postcode suggestions use data hosted on this website, sourced from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. This lookup does not send your entered address to an outside service.</p>
+    <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell your personal data.</p><p>Australian suburb and postcode suggestions use data hosted on this website, sourced from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. This lookup does not send your entered address to an outside service.</p>
+    <h2>Newsletter Subscriptions</h2><p>If you actively opt in through the newsletter form, we store your email address with Resend, our email service provider, to send subscriber discounts, restock updates and new-product announcements. You can unsubscribe from any marketing email or ask support to remove your subscription. Ordering, contacting support, requesting a product restock alert, or entering a giveaway does not subscribe you automatically.</p>
     <h2>Giveaway Entries</h2><p>We store the email address submitted through the giveaway form in Resend to manage entries and contact winners. Marketing emails are optional. Entering the giveaway does not change an existing unsubscribe preference. You may ask support to remove your giveaway entry.</p>
     <h2>Support Enquiries</h2><p>Website enquiries are sent to our support inbox through Resend, our email service provider. Submitting an enquiry does not subscribe you to marketing. Do not include payment credentials or personal health information in your message.</p>
     <h2>Data Security</h2><p>SSL/TLS encrypted transmission. Appropriate technical and organisational security measures. Order data retained for 7 years for Australian legal/accounting compliance.</p>
@@ -1137,21 +1190,6 @@
   <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · Australian Operations</div></div>
 </footer>
 
-<div class="mix-bundle-overlay" id="mixBundleDialog" hidden>
-  <section class="mix-bundle-dialog" role="dialog" aria-modal="true" aria-labelledby="mixBundleTitle">
-    <button type="button" class="mix-bundle-close" onclick="closeMixBundleBuilder()" aria-label="Close mix and match builder">×</button>
-    <div class="mix-bundle-kicker">MIX &amp; MATCH · 25% OFF</div>
-    <h2 id="mixBundleTitle">Build your 10-vial set</h2>
-    <p>Choose any 10 available research vials, including repeats. The set is 25% less than buying those vials individually.</p>
-    <div class="mix-bundle-progress"><strong id="mixBundleCount">0 of 10 selected</strong><span id="mixBundleRemaining">Choose 10 vials</span></div>
-    <div class="mix-bundle-track"><span id="mixBundleFill"></span></div>
-    <div class="mix-bundle-options" id="mixBundleOptions"></div>
-    <div class="mix-bundle-summary"><div><span>Individual total</span><s id="mixBundleRegular">A$0.00</s></div><div><span>You save 25%</span><strong id="mixBundleSavings">A$0.00</strong></div><div class="mix-bundle-total"><span>Set price</span><strong id="mixBundlePrice">A$0.00</strong></div></div>
-    <button type="button" class="btn btn--teal mix-bundle-add" id="mixBundleAdd" onclick="addMixBundleToCart()" disabled>Select 10 vials</button>
-    <p class="mix-bundle-note">For laboratory research use only. The 10-vial offer replaces the standard quantity discount for this set.</p>
-  </section>
-</div>
-
 <aside class="research-agreement" id="researchAgreement" aria-label="Research use agreement" hidden>
   <img src="/images/favicon.png?v=3" width="26" height="26" alt="" aria-hidden="true">
   <p><strong>Research use only.</strong> All products are strictly for in-vitro research and laboratory development use only — not for human consumption. <a href="/terms" onclick="showPage('terms'); return false;">Full terms</a></p>
@@ -1168,6 +1206,7 @@
 </div>
 <div class="pdp-mobile-cta" id="pdpMobileCta">
   <button type="button" id="pdpMobileAddBtn" onclick="pdpMobileAddToCart()">Add to Cart</button>
+  <button type="button" id="pdpMobileBuyBtn" onclick="pdpMobileBuyNow()">Buy Now</button>
 </div>
 
 <script>
@@ -1337,9 +1376,12 @@ function openCheckout() {
   checkoutReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   trackFunnel('Checkout Started', { items: getCartCount(), subtotal: Number(getCartTotal().toFixed(2)), currency: 'AUD' });
   const overlay = document.getElementById('coOverlay');
+  overlay.classList.remove('co-success-mode');
+  setCheckoutProgress('checkout');
   document.getElementById('coSuccess').classList.remove('visible');
   document.getElementById('coPlaceBtn').classList.remove('loading');
   document.getElementById('coError').style.display = 'none';
+  document.getElementById('coInfoError').style.display = 'none';
   document.getElementById('coBody').style.display = 'grid';
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
@@ -1348,6 +1390,72 @@ function openCheckout() {
   coRenderShippingOptions();
   coRenderSummary();
   coLoadPayMethods();
+  coShowCheckoutStep('information', false);
+  requestAnimationFrame(() => document.getElementById('co-email')?.focus());
+}
+
+function setCheckoutProgress(stage) {
+  const checkout = document.getElementById('coProgressCheckout');
+  const pay = document.getElementById('coProgressPay');
+  const paying = stage === 'pay';
+  checkout.classList.toggle('checkout-progress__step--current', !paying);
+  checkout.classList.toggle('checkout-progress__step--complete', paying);
+  pay.classList.toggle('checkout-progress__step--current', paying);
+  checkout.toggleAttribute('aria-current', !paying);
+  pay.toggleAttribute('aria-current', paying);
+}
+
+function coShowCheckoutStep(step, focus = true) {
+  const information = document.querySelector('.co-form-primary');
+  const payment = document.querySelector('.co-form-secondary');
+  const showPayment = step === 'payment';
+  if (!information || !payment) return;
+  if (!showPayment && document.getElementById('coPlaceBtn')?.classList.contains('loading')) return;
+  information.hidden = showPayment;
+  payment.hidden = !showPayment;
+  if (!showPayment) document.getElementById('coError').style.display = 'none';
+  setCheckoutProgress(showPayment ? 'pay' : 'checkout');
+  document.getElementById('coOverlay')?.scrollTo({ top: 0, behavior: 'auto' });
+  if (focus) requestAnimationFrame(() => {
+    (showPayment ? document.getElementById('coPaymentHeading') : document.getElementById('co-email'))?.focus();
+  });
+}
+
+function coValidateShippingInformation() {
+  const required = { 'co-email':'Email', 'co-first':'First name', 'co-last':'Last name', 'co-address1':'Address', 'co-suburb':'Suburb / City', 'co-postcode':'Postcode' };
+  let firstError = null;
+  let firstField = null;
+  for (const [id, label] of Object.entries(required)) {
+    const field = document.getElementById(id);
+    const invalid = !field?.value.trim();
+    field?.classList.toggle('error', invalid);
+    field?.toggleAttribute('aria-invalid', invalid);
+    if (invalid && !firstError) { firstError = label; firstField = field; }
+  }
+  const email = document.getElementById('co-email');
+  if (email?.value && !/\S+@\S+\.\S+/.test(email.value)) {
+    email.classList.add('error');
+    email.setAttribute('aria-invalid', 'true');
+    if (!firstError) { firstError = 'a valid email address'; firstField = email; }
+  }
+  return { valid: !firstError, firstError, firstField };
+}
+
+function coContinueToPayment() {
+  const validation = coValidateShippingInformation();
+  const error = document.getElementById('coInfoError');
+  if (!validation.valid) {
+    error.textContent = `Please enter ${validation.firstError}.`;
+    error.style.display = 'block';
+    validation.firstField?.focus();
+    return;
+  }
+  error.style.display = 'none';
+  coUpdatePaymentForCountry();
+  coRenderShippingOptions();
+  coRenderSummary();
+  trackFunnel('Shipping Information Completed', { country: coVal('co-country') });
+  coShowCheckoutStep('payment');
 }
 
 function closeCheckout() {
@@ -1407,7 +1515,7 @@ function coUpdatePaymentForCountry() {
   const placeOrderButton = document.getElementById('coPlaceBtn');
   if (placeOrderButton) {
     placeOrderButton.disabled = false;
-    placeOrderButton.innerHTML = '<span class="co-btn-text">Place Order</span>';
+    placeOrderButton.innerHTML = '<span class="co-btn-text">Place order &amp; view payment details</span>';
   }
 }
 
@@ -1717,20 +1825,15 @@ function coSelectSuburbSuggestion() {
 function coVal(id) { return document.getElementById(id)?.value.trim() || ''; }
 
 async function placeOrder() {
-  const required = { 'co-email': 'Email', 'co-first': 'First name', 'co-last': 'Last name', 'co-address1': 'Address', 'co-suburb': 'Suburb / City', 'co-postcode': 'Postcode' };
-  let firstErr = null;
-  for (const [id, label] of Object.entries(required)) {
-    const el = document.getElementById(id);
-    if (!el.value.trim()) { el.classList.add('error'); if (!firstErr) firstErr = label; }
-    else el.classList.remove('error');
-  }
-  const emailEl = document.getElementById('co-email');
-  if (emailEl.value && !/\S+@\S+\.\S+/.test(emailEl.value)) {
-    emailEl.classList.add('error'); firstErr = firstErr || 'a valid email address';
-  }
-  if (firstErr) {
-    const e = document.getElementById('coError');
-    e.textContent = `Please enter ${firstErr}.`; e.style.display = 'block'; return;
+  if (document.getElementById('coPlaceBtn')?.disabled) return;
+  const validation = coValidateShippingInformation();
+  if (!validation.valid) {
+    coShowCheckoutStep('information', false);
+    const e = document.getElementById('coInfoError');
+    e.textContent = `Please enter ${validation.firstError}.`;
+    e.style.display = 'block';
+    validation.firstField?.focus();
+    return;
   }
   document.getElementById('coError').style.display = 'none';
 
@@ -1785,6 +1888,8 @@ async function placeOrder() {
 
     // Populate success screen
     document.getElementById('coBody').style.display = 'none';
+    document.getElementById('coOverlay').classList.add('co-success-mode');
+    setCheckoutProgress('pay');
     document.getElementById('coSuccessAmt').textContent = `A$${Number(data.total).toFixed(2)}`;
     document.getElementById('coSuccessRef').textContent = data.orderName;
     const emailNotice = document.getElementById('coSuccessEmailNotice');
@@ -1795,9 +1900,9 @@ async function placeOrder() {
         : 'A confirmation email has been accepted for sending; please keep this order reference as a backup.';
     const isInternationalPayment = (data.paymentMethod || coSelectedPayId) === 'intl';
     document.getElementById('coSuccessPaymentTitle').textContent = isInternationalPayment
-      ? 'Step 1: Send AUD via Wise / Revolut'
-      : 'Step 1: Complete an Australian Bank Transfer';
-    document.getElementById('coSuccessDeadline').textContent = 'Orders not paid within 24 hours will be automatically cancelled.';
+      ? 'Send AUD via Wise, Revolut or a local transfer service'
+      : 'Complete your Australian bank transfer';
+    document.getElementById('coSuccessDeadline').textContent = 'Unpaid orders are cancelled after 24 hours.';
     document.getElementById('coSuccessPaymentHelp').textContent = isInternationalPayment
       ? 'In Wise, Revolut or a similar service, choose AUD and a local Australian bank transfer. The exact AUD total must arrive; do not use SWIFT.'
       : 'Use the exact BSB, account number and order reference shown above.';
@@ -1898,10 +2003,9 @@ async function setCurrency(val) {
 // ============================================================
 function updatePdpPrices() {
   if (!currentProduct) return;
-  const p = currentProduct;
-  document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
-  document.getElementById('pdpPriceNote').textContent = 'Per vial · ' + currencyPriceNote() + ' · Research use only';
   renderPdpBundles();
+  updatePdpAddon();
+  updatePdpPurchaseSummary();
 }
 
 // ============================================================
@@ -1934,6 +2038,9 @@ function getShippingCost(subtotalAUD) {
 // CART LOGIC
 // ============================================================
 function openCart() {
+  const builder = document.getElementById('mixBundleBuilder');
+  if (builder && !builder.hidden) builder.hidden = true;
+  renderCart();
   showPage('cart');
 }
 function getStock(productId) { return inventory[productId] ?? 999; }
@@ -1956,6 +2063,10 @@ function openRestockAlert(product) {
   document.getElementById('restockEmail').value = '';
   document.getElementById('restockModal').style.display = 'flex';
   setTimeout(() => document.getElementById('restockEmail').focus(), 0);
+}
+function openRestockAlertById(productId) {
+  const product = PRODUCTS.find(item => item.id === productId);
+  if (product) openRestockAlert(product);
 }
 function closeRestockAlert() { restockRequestVersion++; document.getElementById('restockModal').style.display = 'none'; }
 async function submitRestockAlert(event) {
@@ -1992,9 +2103,51 @@ async function submitRestockAlert(event) {
   }
 }
 
+async function submitNewsletter(event) {
+  event.preventDefault();
+  const form = document.getElementById('newsletterForm');
+  const email = document.getElementById('newsletterEmail');
+  const consent = document.getElementById('newsletterConsent');
+  const website = document.getElementById('newsletterWebsite');
+  const submit = document.getElementById('newsletterSubmit');
+  const status = document.getElementById('newsletterStatus');
+  if (!form || !email || !consent || !submit || !status || submit.disabled) return;
+  status.className = 'newsletter-form__status';
+  status.textContent = '';
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+  submit.disabled = true;
+  submit.textContent = 'Joining…';
+  try {
+    const response = await fetch('/api/newsletter', {
+      signal: AbortSignal.timeout(25000),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.value, consent: consent.checked, website: website?.value || '' })
+    });
+    const responseText = await response.text();
+    let data = {};
+    try { data = responseText ? JSON.parse(responseText) : {}; } catch {}
+    if (!response.ok || !data.ok) throw new Error(typeof data.error === 'string' ? data.error : 'We could not add you right now. Please try again.');
+    status.textContent = 'You’re subscribed. Watch your inbox for PeptideLab updates.';
+    status.className = 'newsletter-form__status newsletter-form__status--success';
+    form.reset();
+  } catch (error) {
+    status.textContent = error.name === 'TimeoutError'
+      ? 'The request timed out. Please try again.'
+      : error.message;
+    status.className = 'newsletter-form__status newsletter-form__status--error';
+  } finally {
+    submit.disabled = false;
+    submit.innerHTML = 'Join the list <span aria-hidden="true">→</span>';
+  }
+}
+
 const MIX_BUNDLE_ID = 'PL-MIX-10';
 let mixBundleSelections = {};
-let mixBundleTrigger = null;
+let mixBundleCheckoutAfterAdd = false;
 function getReservedQty(productId) {
   return cart.reduce((sum, item) => sum + (item.id === productId ? item.qty : 0)
     + (item.selections || []).filter(selection => selection.id === productId).reduce((n, selection) => n + selection.qty, 0), 0);
@@ -2005,20 +2158,27 @@ function bundleContentsLabel(selections) {
     return `${product?.name || selection.id} × ${selection.qty}`;
   }).join(' · ');
 }
-function openMixBundleBuilder() {
-  mixBundleTrigger = document.activeElement;
+function openMixBundleBuilder(checkoutAfterAdd = false) {
+  const builder = document.getElementById('mixBundleBuilder');
+  const cartIsActive = document.getElementById('page-cart').classList.contains('active');
   mixBundleSelections = {};
-  document.getElementById('mixBundleDialog').hidden = false;
-  document.body.style.overflow = 'hidden';
+  mixBundleCheckoutAfterAdd = checkoutAfterAdd;
+  builder.hidden = false;
+  showPage('cart', !cartIsActive);
+  renderCart();
   renderMixBundleBuilder();
-  requestAnimationFrame(() => document.querySelector('.mix-bundle-close')?.focus());
+  requestAnimationFrame(() => {
+    builder.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    document.getElementById('mixBundleTitle')?.focus({ preventScroll: true });
+  });
 }
 function closeMixBundleBuilder() {
-  const dialog = document.getElementById('mixBundleDialog');
-  if (!dialog || dialog.hidden) return;
-  dialog.hidden = true;
-  document.body.style.overflow = '';
-  if (mixBundleTrigger instanceof HTMLElement) mixBundleTrigger.focus();
+  const builder = document.getElementById('mixBundleBuilder');
+  if (!builder || builder.hidden) return;
+  builder.hidden = true;
+  mixBundleCheckoutAfterAdd = false;
+  renderCart();
+  document.getElementById('cartTitle')?.focus();
 }
 function changeMixBundleSelection(productId, delta) {
   const selected = Object.values(mixBundleSelections).reduce((sum, qty) => sum + qty, 0);
@@ -2042,7 +2202,9 @@ function renderMixBundleBuilder() {
   document.getElementById('mixBundlePrice').textContent = fmtPrice(price);
   const add = document.getElementById('mixBundleAdd');
   add.disabled = selected !== 10;
-  add.textContent = selected === 10 ? `Add set to cart — ${fmtPrice(price)}` : `Select ${10 - selected} more vial${10 - selected === 1 ? '' : 's'}`;
+  add.textContent = selected === 10
+    ? `${mixBundleCheckoutAfterAdd ? 'Buy set now' : 'Add set to cart'} — ${fmtPrice(price)}`
+    : `Select ${10 - selected} more vial${10 - selected === 1 ? '' : 's'}`;
   document.getElementById('mixBundleOptions').innerHTML = PRODUCTS.filter(p => p.category !== 'accessories').map(product => {
     const qty = mixBundleSelections[product.id] || 0;
     const available = Math.max(0, getStock(product.id) - getReservedQty(product.id));
@@ -2061,12 +2223,14 @@ function addMixBundleToCart() {
   }
   const regularPrice = selections.reduce((sum, selection) => sum + PRODUCTS.find(p => p.id === selection.id).price * selection.qty, 0);
   cart.push({ id:MIX_BUNDLE_ID, name:'Mix & Match 10-Vial Set', size:'10 vials', price:Math.round(regularPrice * 75) / 100, qty:1, selections });
-  closeMixBundleBuilder(); renderCart(); updateCountBadges(); showToast('10-vial set added to cart'); openCart();
+  const checkoutAfterAdd = mixBundleCheckoutAfterAdd;
+  document.getElementById('mixBundleBuilder').hidden = true;
+  mixBundleCheckoutAfterAdd = false;
+  renderCart(); updateCountBadges(); showToast('10-vial set added to cart');
+  if (checkoutAfterAdd) openCheckout();
 }
-document.getElementById('mixBundleDialog').addEventListener('click', event => { if (event.target.id === 'mixBundleDialog') closeMixBundleBuilder(); });
-document.addEventListener('keydown', event => { if (event.key === 'Escape' && !document.getElementById('mixBundleDialog').hidden) closeMixBundleBuilder(); });
 
-function addToCart(productId, quantity = 1) {
+function addToCart(productId, quantity = 1, destination = 'cart') {
   const p = PRODUCTS.find(x => x.id === productId);
   if (!p) return;
   const stock = getStock(productId);
@@ -2081,7 +2245,8 @@ function addToCart(productId, quantity = 1) {
   updateCountBadges();
   trackFunnel('Add to Cart', { product: p.name, sku: p.id, quantity, value: Number((p.price * quantity).toFixed(2)), currency: 'AUD' });
   showToast(quantity + ' × ' + p.name + ' added to cart');
-  openCart();
+  if (destination === 'checkout') openCheckout();
+  else openCart();
 }
 function removeFromCart(idx) {
   cart.splice(idx, 1);
@@ -2142,12 +2307,12 @@ function renderCartSuggestions() {
   const waterUpsell = showWater ? `<div class="cart-water-upsell">
     <img src="${water.img}" alt="${water.name} ${water.size}" loading="lazy">
     <div class="cart-water-upsell__copy"><strong>Add bacteriostatic water</strong><span>For laboratory reconstitution; not included with peptide vials.</span></div>
-    <button type="button" onclick="addToCart('PL-014')">Add ${water.size} · ${fmtPrice(water.price)}</button>
+    <div class="cart-upsell-actions"><button type="button" onclick="addToCart('PL-014')">Add to cart</button><button type="button" onclick="addToCart('PL-014',1,'checkout')">Buy now</button></div>
   </div>` : '';
   const cards = suggestions.map(product => `<article class="cart-rec-card">
     <img src="${product.img}" alt="${product.name} ${product.size}" loading="lazy">
     <div class="cart-rec-card__body"><strong>${product.name}</strong><span>${product.size} · ${fmtPrice(product.price)}</span>
-      <button type="button" onclick="addToCart('${product.id}')">Add to cart</button>
+      <div class="cart-rec-card__actions"><button type="button" onclick="addToCart('${product.id}')">Add to cart</button><button type="button" onclick="addToCart('${product.id}',1,'checkout')">Buy now</button></div>
     </div>
   </article>`).join('');
   el.style.display = waterUpsell || cards ? 'block' : 'none';
@@ -2197,7 +2362,8 @@ function renderCart() {
   }
 
   if (cart.length === 0) {
-    empty.style.display = 'flex'; el.style.display = 'none'; footer.style.display = 'none';
+    const builderOpen = !document.getElementById('mixBundleBuilder').hidden;
+    empty.style.display = builderOpen ? 'none' : 'flex'; el.style.display = 'none'; footer.style.display = 'none';
     document.getElementById('cartSuggestionsEl').style.display = 'none';
     document.getElementById('cartFreeShipSuggestions').hidden = true;
     el.innerHTML = ''; return;
@@ -2381,13 +2547,10 @@ function makeCard(p, mini) {
       <div class="product-card__price">${fmtPrice(p.price)}</div>
       ${mini ? '' : '<div class="bundle-card-note">Bundle & save up to 10%</div>'}
       ${low ? `<div class="product-card__low-stock">Only ${stock} left</div>` : ''}
-      <button class="product-card__add-full${oos ? ' product-card__add-full--oos' : ''}"
-        ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}')"`}>
-        ${oos
-          ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Restocking Soon`
-          : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Add to Cart`}
-      </button>
+      <div class="product-card__actions">
+        <button class="product-card__action product-card__action--cart${oos ? ' product-card__action--notify' : ''}" onclick="event.stopPropagation();${oos ? `openRestockAlertById('${p.id}')` : `addToCart('${p.id}')`}">${oos ? 'Notify me' : 'Add to cart'}</button>
+        <button class="product-card__action product-card__action--buy${oos ? ' product-card__add-full--oos' : ''}" ${oos ? 'disabled' : `onclick="event.stopPropagation();addToCart('${p.id}',1,'checkout')"`}>${oos ? 'Unavailable' : 'Buy now'}</button>
+      </div>
     </div>
   </div>`;
 }
@@ -2395,7 +2558,7 @@ function makeCard(p, mini) {
 function makeMixBundleCard(eager = false) {
   return `<div class="product-card mix-bundle-card" onclick="openMixBundleBuilder()">
     <div class="product-card__img mix-bundle-card__img"><span class="product-card__badge mix-bundle-card__badge">BUILD A SET</span><img class="product-card__photo" src="/images/hero-peptide-vials-soft-green.jpg" alt="Research vials for a mix and match set" loading="${eager ? 'eager' : 'lazy'}" decoding="async"></div>
-    <div class="product-card__body"><button type="button" class="product-card__name product-card__open" onclick="event.stopPropagation();openMixBundleBuilder()">Mix &amp; Match 10-Vial Set</button><div class="product-card__sub">Choose any 10 available research vials, including repeats.</div><div class="product-card__price">Save 25%</div><div class="bundle-card-note">Compared with the selected vials' individual prices</div><button type="button" class="product-card__add-full" onclick="event.stopPropagation();openMixBundleBuilder()">Choose your 10 vials →</button></div>
+    <div class="product-card__body"><button type="button" class="product-card__name product-card__open" onclick="event.stopPropagation();openMixBundleBuilder()">Mix &amp; Match 10-Vial Set</button><div class="product-card__sub">Choose any 10 available research vials, including repeats.</div><div class="product-card__price">Save 25%</div><div class="bundle-card-note">Compared with the selected vials' individual prices</div><div class="product-card__actions"><button type="button" class="product-card__action product-card__action--cart" onclick="event.stopPropagation();openMixBundleBuilder()">Build set</button><button type="button" class="product-card__action product-card__action--buy" onclick="event.stopPropagation();openMixBundleBuilder(true)">Buy now</button></div></div>
   </div>`;
 }
 
@@ -2420,11 +2583,14 @@ function renderReconSupplies() {
   };
   grid.innerHTML = ['PL-014', 'PL-015'].map(id => {
     const p = PRODUCTS.find(product => product.id === id);
-    return `<a class="recon-supply-card" href="/products/${PRODUCT_SLUGS[id]}" onclick="viewProduct('${id}'); return false;" aria-label="View ${p.name}, ${fmtPrice(p.price)}">
-      <img src="${p.img}" alt="${p.name}" loading="lazy">
-      <span class="recon-supply-card__copy"><strong>${p.name}</strong><span>${descriptions[id]}</span></span>
-      <span class="recon-supply-card__price">${fmtPrice(p.price)} <span aria-hidden="true">→</span></span>
-    </a>`;
+    return `<article class="recon-supply-listing">
+      <a class="recon-supply-card" href="/products/${PRODUCT_SLUGS[id]}" onclick="viewProduct('${id}'); return false;" aria-label="View ${p.name}, ${fmtPrice(p.price)}">
+        <img src="${p.img}" alt="${p.name}" loading="lazy">
+        <span class="recon-supply-card__copy"><strong>${p.name}</strong><span>${descriptions[id]}</span></span>
+        <span class="recon-supply-card__price">${fmtPrice(p.price)} <span aria-hidden="true">→</span></span>
+      </a>
+      <div class="recon-supply-actions"><button type="button" onclick="addToCart('${id}')">Add to cart</button><button type="button" onclick="addToCart('${id}',1,'checkout')">Buy now</button></div>
+    </article>`;
   }).join('');
   document.getElementById('reconStarterPrice').textContent = fmtPrice(PRODUCTS.find(p => p.id === 'PL-015').price);
 }
@@ -2434,9 +2600,11 @@ function updatePdpStock(productId) {
   const oos   = stock === 0 || restocking[productId] === true;
   const low   = !oos && stock <= LOW_STOCK_THRESHOLD;
   const btn   = document.getElementById('pdpAddBtn');
+  const buyBtn = document.getElementById('pdpBuyBtn');
   const badge = document.getElementById('pdpStockBadge');
   if (!btn) return;
   btn.disabled = false;
+  if (buyBtn) buyBtn.disabled = false;
   if (oos) {
     const isKit = productId === 'PL-015';
     btn.innerHTML = isKit ? 'Available soon' : 'Notify me when available';
@@ -2444,11 +2612,13 @@ function updatePdpStock(productId) {
     btn.onclick = isKit ? null : () => { const product = PRODUCTS.find(p => p.id === productId); if (product) openRestockAlert(product); };
     btn.style.opacity = '';
     btn.style.cursor  = 'pointer';
+    if (buyBtn) { buyBtn.disabled = true; buyBtn.textContent = 'Buy Now'; }
   } else {
     btn.onclick = () => pdpAddToCart();
     btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Add to Cart';
     btn.style.opacity = '';
     btn.style.cursor  = '';
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.onclick = () => pdpBuyNow(); buyBtn.textContent = 'Buy Now'; }
   }
   if (badge) {
     if (low) {
@@ -2463,6 +2633,8 @@ function updatePdpStock(productId) {
       badge.style.display = 'none';
     }
   }
+  updatePdpAddon();
+  updatePdpPurchaseSummary();
   updatePdpMobileCta();
 }
 
@@ -2497,6 +2669,7 @@ function filterProducts(cat, btn) {
 // ============================================================
 let currentProduct = null;
 let pdpBundleQuantity = 1;
+let pdpAddWater = false;
 const PRODUCT_SLUGS = {
   'PL-001':'retatrutide', 'PL-002':'bpc-157', 'PL-003':'tb-500',
   'PL-004':'tesamorelin', 'PL-005':'semax', 'PL-006':'selank',
@@ -2512,13 +2685,16 @@ function viewProduct(id, updateHistory = true) {
   if (!p) return;
   currentProduct = p;
   pdpBundleQuantity = 1;
+  pdpAddWater = false;
+  const addWaterInput = document.getElementById('pdpAddWater');
+  if (addWaterInput) addWaterInput.checked = false;
   renderPdpBundles();
-  document.getElementById('pdpBreadcrumb').textContent = p.name;
   document.getElementById('pdpSku').textContent = p.id.replace('PL-','');
   document.getElementById('pdpName').textContent = p.name;
   document.getElementById('pdpId').textContent = p.size + (p.kind === 'kit' ? ' · Laboratory Accessories · For Research Use Only' : ' · Research Compound · For Laboratory Use Only');
-  document.getElementById('pdpPrice').textContent = fmtPrice(p.price);
-  document.getElementById('pdpPriceNote').textContent = (p.kind === 'kit' ? 'Per kit' : 'Per vial') + ' · ' + currencyPriceNote() + ' · Research use only';
+  document.getElementById('pdpPurityValue').textContent = p.purity;
+  document.getElementById('pdpSize').textContent = p.size;
+  updatePdpPurchaseSummary();
   document.getElementById('pdpImgLabel').textContent = p.kind === 'kit' ? 'Illustrative photo · Kit includes 4 syringes and 4 wipes' : p.name + ' · ' + p.size + ' · Research Grade';
   document.getElementById('pdpDesc').textContent = p.desc;
   trackFunnel('Product Viewed', { product: p.name, sku: p.id, value: p.price, currency: 'AUD' });
@@ -2529,6 +2705,7 @@ function viewProduct(id, updateHistory = true) {
     ? '<p>Store the kit in a cool, dry place away from direct sunlight. Follow the instructions on each component’s packaging.</p>'
     : DEFAULT_PDP_STORAGE;
   document.getElementById('pdpAddBtn').onclick = () => pdpAddToCart();
+  updatePdpAddon();
   updatePdpStock(id);
   // Render label vials on product page
   const pdpVials = document.getElementById('pdpVials');
@@ -2545,34 +2722,115 @@ function viewProduct(id, updateHistory = true) {
 }
 function renderPdpBundles() {
   if (!currentProduct) return;
-  document.getElementById('pdpBundleTiers').innerHTML = [1, 2, 3, 5].map(qty => {
+  const quantityTiers = [1, 2, 3, 5].map(qty => {
     const rate = getMultibuyDiscount(qty);
     const original = currentProduct.price * qty;
+    const saving = original * rate;
     return `<label class="pdp-bundle-option">
-      <input type="radio" name="pdpBundle" value="${qty}" ${qty === pdpBundleQuantity ? 'checked' : ''} onchange="pdpBundleQuantity = Number(this.value); updatePdpMobileCta()">
+      <input type="radio" name="pdpBundle" value="${qty}" ${qty === pdpBundleQuantity ? 'checked' : ''} onchange="pdpBundleQuantity = Number(this.value); updatePdpPurchaseSummary()">
       <span class="pdp-bundle-option__body">
-        <span class="pdp-bundle-option__radio" aria-hidden="true"></span>
-        <span class="pdp-bundle-option__details"><span class="pdp-bundle-option__qty">Buy ${qty}</span><span class="pdp-bundle-option__badge ${rate ? '' : 'pdp-bundle-option__badge--standard'}">${rate ? Math.round(rate * 100) + '% OFF' : 'Standard'}</span></span>
-        <span class="pdp-bundle-option__prices"><strong><span class="bundle-sr-only">Total </span>${fmtPrice(original * (1 - rate))}</strong>${rate ? `<del><span class="bundle-sr-only">Original total </span>${fmtPrice(original)}</del>` : ''}</span>
+        <strong class="pdp-bundle-option__qty">${qty}</strong>
+        <span class="pdp-bundle-option__discount">${rate ? `−${Math.round(rate * 100)}%` : 'Standard'}</span>
+        <small class="pdp-bundle-option__saving">${rate ? `Save ${fmtPrice(saving)}` : 'One vial'}</small>
       </span>
     </label>`;
   }).join('');
+  const mixAndMatchTier = `<button type="button" class="pdp-bundle-option pdp-bundle-option--mix" onclick="openMixBundleBuilder()" aria-label="Build the Mix and Match 10-Vial Set, 25% off in your cart">
+    <span class="pdp-bundle-option__body">
+      <strong class="pdp-bundle-option__qty">Mix 10</strong>
+      <span class="pdp-bundle-option__discount">−25%</span>
+      <small class="pdp-bundle-option__saving">Choose any 10</small>
+    </span>
+  </button>`;
+  document.getElementById('pdpBundleTiers').innerHTML = quantityTiers + mixAndMatchTier;
+  updatePdpPurchaseSummary();
+}
+function updatePdpAddon() {
+  const addon = document.getElementById('pdpAddon');
+  const water = PRODUCTS.find(product => product.id === 'PL-014');
+  if (!addon || !water || !currentProduct) return;
+  const unavailable = getStock(water.id) === 0 || restocking[water.id] === true;
+  const relevant = currentProduct.id !== water.id && currentProduct.id !== 'PL-015' && currentProduct.category !== 'accessories';
+  addon.hidden = !relevant || unavailable;
+  document.getElementById('pdpAddonPrice').textContent = `+${fmtPrice(water.price)}`;
+  if (addon.hidden) {
+    pdpAddWater = false;
+    const input = document.getElementById('pdpAddWater');
+    if (input) input.checked = false;
+  }
+}
+function updatePdpPurchaseSummary() {
+  if (!currentProduct) return;
+  const quantity = pdpBundleQuantity;
+  const rate = getMultibuyDiscount(quantity);
+  const original = currentProduct.price * quantity;
+  const discounted = original * (1 - rate);
+  const water = pdpAddWater ? PRODUCTS.find(product => product.id === 'PL-014') : null;
+  const total = discounted + (water?.price || 0);
+  const price = document.getElementById('pdpPrice');
+  const originalPrice = document.getElementById('pdpOriginalPrice');
+  const note = document.getElementById('pdpPriceNote');
+  if (price) price.textContent = fmtPrice(total);
+  if (originalPrice) {
+    originalPrice.hidden = rate === 0;
+    originalPrice.textContent = rate ? fmtPrice(original + (water?.price || 0)) : '';
+  }
+  if (note) {
+    const unit = currentProduct.kind === 'kit' ? 'kit' : 'vial';
+    const saving = original - discounted;
+    note.textContent = rate
+      ? `${fmtPrice(discounted / quantity)} per ${unit} · Save ${fmtPrice(saving)}${water ? ' · BAC Water included' : ''}`
+      : `${quantity === 1 ? 'One' : quantity} ${unit}${quantity === 1 ? '' : 's'}${water ? ' · BAC Water included' : ''} · Research use only`;
+  }
   updatePdpMobileCta();
 }
-function pdpAddToCart() { if (currentProduct) addToCart(currentProduct.id, pdpBundleQuantity); }
+function addPdpSelection(destination) {
+  if (!currentProduct) return;
+  const lines = [{ product: currentProduct, quantity: pdpBundleQuantity }];
+  if (pdpAddWater) {
+    const water = PRODUCTS.find(product => product.id === 'PL-014');
+    if (water) lines.push({ product: water, quantity: 1 });
+  }
+  for (const line of lines) {
+    const available = getStock(line.product.id) - getReservedQty(line.product.id);
+    if (restocking[line.product.id] === true || available < line.quantity) {
+      if (line.product.id === currentProduct.id) openRestockAlert(currentProduct);
+      else showToast('BAC Water is no longer available');
+      return;
+    }
+  }
+  lines.forEach(({ product, quantity }) => {
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) existing.qty += quantity;
+    else cart.push({ id:product.id, name:product.name, size:product.size, price:product.price, qty:quantity });
+    trackFunnel('Add to Cart', { product:product.name, sku:product.id, quantity, value:Number((product.price * quantity).toFixed(2)), currency:'AUD' });
+  });
+  renderCart();
+  updateCountBadges();
+  showToast(`${pdpBundleQuantity} × ${currentProduct.name}${pdpAddWater ? ' + BAC Water' : ''} added to cart`);
+  if (destination === 'checkout') openCheckout();
+  else openCart();
+}
+function pdpAddToCart() { addPdpSelection('cart'); }
+function pdpBuyNow() { addPdpSelection('checkout'); }
 function updatePdpMobileCta() {
   const button = document.getElementById('pdpMobileAddBtn');
-  if (!button || !currentProduct) return;
+  const buyButton = document.getElementById('pdpMobileBuyBtn');
+  if (!button || !buyButton || !currentProduct) return;
   const unavailable = getStock(currentProduct.id) === 0 || restocking[currentProduct.id] === true;
   if (unavailable) {
     button.disabled = currentProduct.id === 'PL-015';
     button.textContent = button.disabled ? 'Available soon' : 'Notify me when available';
+    buyButton.disabled = true;
     return;
   }
   button.disabled = false;
+  buyButton.disabled = false;
   const quantity = pdpBundleQuantity;
-  const price = currentProduct.price * quantity * (1 - getMultibuyDiscount(quantity));
+  const water = pdpAddWater ? PRODUCTS.find(product => product.id === 'PL-014') : null;
+  const price = currentProduct.price * quantity * (1 - getMultibuyDiscount(quantity)) + (water?.price || 0);
   button.textContent = `Add ${quantity} to Cart · ${fmtPrice(price)}`;
+  buyButton.textContent = `Buy now · ${fmtPrice(price)}`;
 }
 function pdpMobileAddToCart() {
   if (!currentProduct) return;
@@ -2581,6 +2839,10 @@ function pdpMobileAddToCart() {
     return;
   }
   pdpAddToCart();
+}
+function pdpMobileBuyNow() {
+  if (!currentProduct || getStock(currentProduct.id) === 0 || restocking[currentProduct.id] === true) return;
+  pdpBuyNow();
 }
 
 // ============================================================
@@ -2651,6 +2913,9 @@ function showPage(id, updateHistory = true) {
     window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }
   document.body.classList.toggle('product-page-active', id === 'product');
+  document.body.classList.toggle('cart-page-active', id === 'cart');
+  const navLogo = document.querySelector('.nav__logo');
+  if (navLogo) navLogo.disabled = id === 'cart';
   document.querySelectorAll('.nav__link').forEach(l=>l.classList.remove('active'));
   const map = {shop:0,faq:1,contact:2,track:3};
   const links = document.querySelectorAll('.nav__link');
@@ -2717,7 +2982,8 @@ function openShopCategory(category) {
 }
 function keepFocusWithin(container, event) {
   if (event.key !== 'Tab') return;
-  const focusable = [...container.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+  const focusable = [...container.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter(element => !element.closest('[hidden]') && element.getClientRects().length > 0);
   if (!focusable.length) return;
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
@@ -2731,10 +2997,10 @@ document.addEventListener('keydown', event => {
     closeSiteSearch();
     return;
   }
-  const mixBundleDialog = document.getElementById('mixBundleDialog');
   const searchOverlay = document.getElementById('siteSearchOverlay');
+  const checkoutOverlay = document.getElementById('coOverlay');
   const mobileMenu = document.getElementById('mobileMenu');
-  if (!mixBundleDialog.hidden) keepFocusWithin(mixBundleDialog, event);
+  if (checkoutOverlay.classList.contains('open')) keepFocusWithin(checkoutOverlay, event);
   else if (!searchOverlay.hidden) keepFocusWithin(searchOverlay, event);
   else if (mobileMenu.classList.contains('open')) keepFocusWithin(mobileMenu, event);
 });
@@ -3000,7 +3266,7 @@ loadInventory();
 })();
 </script>
 <script src="/storefront-support.js?v=1"></script>
-<script src="/giveaway.js?v=3"></script>
+<script src="/giveaway.js?v=5"></script>
 
 </body>
 </html>

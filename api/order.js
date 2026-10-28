@@ -42,6 +42,38 @@ const PROMO_CODES = {
 };
 const FREE_SHIP_THRESHOLD = 200;
 const MIX_BUNDLE_ID = 'PL-MIX-10';
+const SUPPORTED_COUNTRIES = new Set([
+  'AU','NZ','US','GB','CA','DE','FR','JP','SG','HK','IE','IT','ES','NL','SE','NO','DK','FI','CH','AT','BE','PT','PL','GR','CZ','RO','HU','SK','HR','BG','LT','LV','EE','MT','CY','LU','SI','KR','TW','MY','TH','PH','ID','VN','IN','AE','SA','IL','ZA','MX','BR','AR','CL','CO',
+]);
+const SHIPPING_ZONES = {
+  AU: [
+    { id:'au-std', kind:'standard', price:10, label:'Standard — Australia Post (3–7 business days)' },
+    { id:'au-exp', kind:'express',  price:15, label:'Express — Australia Post Express (1–2 business days)' },
+  ],
+  NZ: [
+    { id:'nz-std', kind:'standard', price:15, label:'Standard — Aust. Post International (6–12 business days)' },
+    { id:'nz-exp', kind:'express',  price:28, label:'Express — Australia Post International Express (2–5 business days)' },
+  ],
+  INTL: [
+    { id:'int-std', kind:'standard', price:20, label:'Standard — Aust. Post International (7–21 business days)' },
+    { id:'int-exp', kind:'express',  price:40, label:'Express — Australia Post International Express (3–12 business days)' },
+  ],
+};
+
+function shippingZone(country) {
+  if (!SUPPORTED_COUNTRIES.has(country)) throw new Error('Unsupported shipping country');
+  return country === 'AU' ? 'AU' : country === 'NZ' ? 'NZ' : 'INTL';
+}
+
+function resolveShippingMethod(country, rawMethod) {
+  const methods = SHIPPING_ZONES[shippingZone(country)];
+  const requested = String(rawMethod || 'Standard').trim();
+  const method = methods.find(option =>
+    requested === option.id || requested === option.kind || requested === option.label
+    || requested.toLowerCase() === option.kind);
+  if (!method) throw new Error('Invalid shipping method');
+  return method;
+}
 
 function bundleSelection(raw) {
   if (!Array.isArray(raw) || raw.length < 1 || raw.length > 10) throw new Error('Invalid bundle');
@@ -141,13 +173,14 @@ function calculateOrder(rawItems, country, shippingMethod, promoCode) {
   const mbDiscount = individualSubtotal * mbRate;
   const promo = PROMO_CODES[String(promoCode || '').toUpperCase()];
   const promoDiscount = promo?.type === 'percent' ? (subtotal - mbDiscount) * promo.value / 100 : 0;
-  const isExpress = String(shippingMethod || '').toLowerCase().startsWith('express');
-  const baseShipping = isExpress ? 15 : 10;
-  const standardShipping = 10;
-  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? (isExpress ? baseShipping - standardShipping : 0) : baseShipping;
+  const method = resolveShippingMethod(country, shippingMethod);
+  const standardShipping = SHIPPING_ZONES[shippingZone(country)].find(option => option.kind === 'standard').price;
+  const shipping = subtotal >= FREE_SHIP_THRESHOLD
+    ? (method.kind === 'express' ? method.price - standardShipping : 0)
+    : method.price;
   const discount = mbDiscount + promoDiscount;
   const total = Math.max(0, subtotal - discount) + shipping;
-  return { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount };
+  return { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount, shippingMethod:method.label, shippingMethodId:method.id };
 }
 
 async function sendEmail(to, subject, html, orderName, role) {
@@ -197,14 +230,14 @@ module.exports = async function handler(req, res) {
   const {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
-    items: rawItems, promoCode, shippingMethod, marketingConsent,
+    items: rawItems, promoCode, shippingMethod: requestedShippingMethod, marketingConsent,
   } = req.body || {};
 
   if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !Array.isArray(rawItems) || !rawItems.length || rawItems.length > 50) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
-  if ([email,firstName,lastName,address1,address2,suburb,state,postcode,country,phone,shippingMethod,promoCode].some(value => value != null && (typeof value !== 'string' || value.length > 500))) return res.status(400).json({error:'Invalid customer details'});
-  if (!/^\S+@\S+\.\S+$/.test(String(email)) || !/^[A-Z]{2}$/.test(String(country || ''))) {
+  if ([email,firstName,lastName,address1,address2,suburb,state,postcode,country,phone,requestedShippingMethod,promoCode].some(value => value != null && (typeof value !== 'string' || value.length > 500))) return res.status(400).json({error:'Invalid customer details'});
+  if (!/^\S+@\S+\.\S+$/.test(String(email)) || !SUPPORTED_COUNTRIES.has(country)) {
     return res.status(400).json({ error: 'Invalid customer details' });
   }
   const paymentMethod = country === 'AU' ? 'aud' : 'intl';
@@ -221,11 +254,11 @@ module.exports = async function handler(req, res) {
   let calculated;
   try {
     if (!tracker.enabled()) validateAvailability(rawItems);
-    calculated = calculateOrder(rawItems, country, shippingMethod, promoCode);
+    calculated = calculateOrder(rawItems, country, requestedShippingMethod, promoCode);
   } catch {
     return res.status(400).json({ error: 'Invalid cart' });
   }
-  const { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount } = calculated;
+  const { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount, shippingMethod } = calculated;
 
   let orderName = generateOrderId();
   if (tracker.enabled()) {

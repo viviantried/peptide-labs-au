@@ -16,6 +16,43 @@ test('email outage still returns durable order reference and records failures',a
 test('storage outage stops checkout before any email attempt',async()=>{tracker.create=async()=>{throw new Error('database offline')};let attempts=0;global.fetch=async()=>{attempts++;throw new Error('must not send')};const r=res();await handler({method:'POST',body:body()},r);assert.equal(r.statusCode,503);assert.equal(attempts,0);assert.equal(r.body.orderName,undefined)});
 test('saved retry returns same reference without resending emails',async()=>{tracker.create=async()=>({id:'PL-existing',replayed:true,status:'pending',details:{total:145},emails:{customer:'failed',owner:'failed'}});let attempts=0;global.fetch=async()=>{attempts++;throw new Error('must not send')};const r=res();await handler({method:'POST',body:body()},r);assert.equal(r.statusCode,200);assert.equal(r.body.orderName,'PL-existing');assert.equal(attempts,0)});
 test('invalid cart is rejected without writing a record',async()=>{const b=body();b.items=[{id:'PL-001',qty:-1}];const r=res();await handler({method:'POST',body:b},r);assert.equal(r.statusCode,400);assert.equal(saved.length,0)});
+test('server shipping prices match the AU, NZ and international checkout zones',()=>{
+  const calculate=handler._pricing.calculateOrder;
+  const item=[{id:'PL-001',qty:1}];
+  const cases=[
+    ['AU','au-std',10],['AU','au-exp',15],
+    ['NZ','nz-std',15],['NZ','nz-exp',28],
+    ['US','int-std',20],['US','int-exp',40],
+  ];
+  for(const [country,method,shipping] of cases) assert.equal(calculate(item,country,method).shipping,shipping,`${country} ${method}`);
+  assert.equal(calculate(item,'NZ','Express — Australia Post International Express (2–5 business days)').shipping,28);
+});
+test('free standard shipping and express upgrade prices are zone-aware at A$200+',()=>{
+  const calculate=handler._pricing.calculateOrder;
+  const items=[{id:'PL-001',qty:2}];
+  const cases=[
+    ['AU','au-std',0],['AU','au-exp',5],
+    ['NZ','nz-std',0],['NZ','nz-exp',13],
+    ['GB','int-std',0],['GB','int-exp',20],
+  ];
+  for(const [country,method,shipping] of cases) assert.equal(calculate(items,country,method).shipping,shipping,`${country} ${method}`);
+});
+test('shipping method IDs cannot be used outside their country zone',()=>{
+  const calculate=handler._pricing.calculateOrder;
+  const items=[{id:'PL-001',qty:1}];
+  assert.throws(()=>calculate(items,'US','au-exp'),/Invalid shipping method/);
+  assert.throws(()=>calculate(items,'AU','int-std'),/Invalid shipping method/);
+  assert.throws(()=>calculate(items,'XX','standard'),/Unsupported shipping country/);
+  assert.throws(()=>calculate(items,'AU','Express <img src=x>'),/Invalid shipping method/);
+});
+test('order handler rejects unsupported countries and mismatched shipping methods',async()=>{
+  const unsupported=body();unsupported.country='XX';unsupported.shippingMethod='int-std';
+  const unsupportedResult=res();await handler({method:'POST',body:unsupported},unsupportedResult);
+  assert.equal(unsupportedResult.statusCode,400);assert.equal(saved.length,0);
+  const mismatched=body();mismatched.country='US';mismatched.shippingMethod='au-exp';
+  const mismatchedResult=res();await handler({method:'POST',body:mismatched},mismatchedResult);
+  assert.equal(mismatchedResult.statusCode,400);assert.equal(saved.length,0);
+});
 test('bundle quantities include components and individual quantities',()=>{assert.deepEqual(tracker.quantities([{id:'PL-MIX-10',qty:1,selections:[{id:'PL-001',qty:6},{id:'PL-002',qty:4}]},{id:'PL-001',qty:2}]),{'PL-001':8,'PL-002':4})});
 test('admin authorization requires correct secret header',()=>{assert.equal(tracker.authorized({headers:{}}),false);assert.equal(tracker.authorized({headers:{authorization:'Bearer wrong'}}),false);assert.equal(tracker.authorized({headers:{authorization:'Bearer private-test-key'}}),true)});
 

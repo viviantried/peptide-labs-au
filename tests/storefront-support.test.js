@@ -166,7 +166,14 @@ test('storefront keeps removed sections out and presents a compact bundle select
   assert.match(html, /Before reconstitution:<\/strong> Keep the sealed lyophilised vial dry/);
   assert.match(html, /After reconstitution:<\/strong> Follow the product and lot instructions/);
   assert.doesNotMatch(html, /This page does not establish a preparation protocol or expiry date/);
-  assert.match(css, /\.pdp-bundle-box__tiers\s*\{[^}]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/s);
+  assert.match(css, /\.pdp-bundle-box\s*\{[^}]*width:\s*100%/s);
+  assert.match(css, /\.pdp-bundle-box__tiers\s*\{[^}]*grid-template-columns:\s*repeat\(5,\s*minmax\(0,1fr\)\)/s);
+  assert.match(html, /class="pdp-bundle-option pdp-bundle-option--mix"[^>]*onclick="openMixBundleBuilder\(\)"/);
+  assert.match(html, /<strong class="pdp-bundle-option__qty">Mix 10<\/strong>[\s\S]*?−25%/);
+  assert.match(html, /id="pdpAddon"[\s\S]*?id="pdpAddWater"[\s\S]*?Add BAC Water/);
+  assert.match(html, /function addPdpSelection\(destination\)[\s\S]*?const lines = \[\{ product: currentProduct, quantity: pdpBundleQuantity \}\]/);
+  assert.match(html, /<strong>International shipping is available<\/strong>/);
+  assert.doesNotMatch(html, /Australian customers can choose <strong>standard shipping/);
 });
 
 test('home landing keeps responsive heroes, four featured products, and accessible navigation', () => {
@@ -190,7 +197,7 @@ test('home landing keeps responsive heroes, four featured products, and accessib
   }
   assert.match(home, /class="desktop-hero__visual"[\s\S]*src="\/images\/hero-peptide-vials-navy\.webp"/);
   assert.match(mobileHero, /aria-labelledby="mobileHeroTitle"/);
-  assert.match(mobileHero, /id="mobileHeroTitle">Laboratory Grade Research Peptides<\/h2>/);
+  assert.match(mobileHero, /id="mobileHeroTitle"><span>Laboratory Grade<\/span>\s*<span>Research Peptides<\/span><\/h2>/);
   assert.doesNotMatch(mobileHero, /mobile-hero__(?:search|shop|chips|trust)/);
   assert.doesNotMatch(mobileHero, /≥98%|independent lab reports|COA per batch/i);
   assert.match(home, /class="section-label">Popular compounds<\/div>/);
@@ -217,9 +224,8 @@ test('home landing keeps responsive heroes, four featured products, and accessib
   assert.doesNotMatch(featuredRenderer, /PL-002/);
   assert.equal([...html.matchAll(/\{ id:'PL-\d+', name:'([^']+)'/g)][0]?.[1], 'Retatrutide');
   assert.match(html, /class="product-card__name product-card__open"/);
-  assert.match(offerController, /if \(activePageId === 'page-home'\) return;/);
-  assert.match(offerController, /\['page-shop', 'page-product'\]\.includes\(activePageId\)/);
   assert.match(offerController, /window\.openPopup/);
+  assert.doesNotMatch(offerController, /setTimeout\(openIfEligible|addEventListener\('scroll'/);
   assert.match(css, /\.nav__mobile-menu\.open\s*\{[^}]*transform:\s*translateX\(0\)/s);
   assert.match(css, /\.nav__inner\s*\{[^}]*grid-template-columns:\s*48px minmax\(0, 1fr\) 48px/s);
   assert.match(css, /#homeReconstitutionSource\s*\{\s*display:\s*none/);
@@ -228,6 +234,7 @@ test('home landing keeps responsive heroes, four featured products, and accessib
   assert.match(css, /\.mobile-hero\s*\{[\s\S]*?display:\s*block/s);
   assert.match(css, /\.mobile-hero__main\s*\{[^}]*text-align:\s*center/s);
   assert.match(css, /\.mobile-hero h2\s*\{[^}]*font-size:\s*clamp\(28px,\s*6vw,\s*32px\)/s);
+  assert.match(css, /\.mobile-hero h2 span\s*\{\s*display:\s*block/);
   assert.match(css, /@media \(min-width:\s*901px\)[\s\S]*?\.mobile-hero\s*\{\s*display:\s*none/s);
   assert.match(css, /\.desktop-hero__finder\s*\{[^}]*max-width:\s*700px/s);
   assert.match(css, /\.desktop-hero__visual img\s*\{[^}]*height:\s*auto[^}]*object-fit:\s*contain/s);
@@ -266,11 +273,41 @@ test('checkout uses a compact cart-aligned light layout', () => {
   assert.match(html, /marketingConsent:\s*document\.getElementById\('coMarketingConsent'\)\?\.checked \|\| false/);
   assert.match(html, /function coHasDeliveryDetails\(\)/);
   assert.match(html, /'Calculated after address'/);
+  assert.match(html, /class="co-section co-section--shipping"[\s\S]*?<div class="co-section-title">Shipping information<\/div>/);
+  assert.doesNotMatch(html, /<div class="co-section-title">(?:Contact|Delivery)<\/div>/);
+  assert.match(html, /id="coContinuePayment"[^>]*onclick="coContinueToPayment\(\)"/);
+  assert.match(html, /class="co-form-secondary" hidden/);
+  assert.match(html, /function coShowCheckoutStep\(step, focus = true\)/);
+  assert.match(html, /function coContinueToPayment\(\)/);
   assert.match(css, /\.co-overlay\s*\{[^}]*background:\s*#F5F7FA[^}]*color:\s*#1B273C/s);
   assert.match(css, /\.co-body\s*\{[^}]*width:\s*min\(100%,\s*1180px\)[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*minmax\(320px,\s*360px\)/s);
   assert.match(css, /\.co-place-order\s*\{[^}]*background:\s*#1875AC[^}]*color:\s*#FFFFFF/s);
   assert.match(css, /\.co-ship-opt--on,[\s\S]*?\.co-pay-opt--on\s*\{[^}]*border-color:\s*#1875AC[^}]*background:\s*#EDF7FD/s);
   assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-body\s*\{[^}]*width:\s*100%[^}]*min-height:\s*0[^}]*grid-template-columns:\s*1fr/s);
-  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-summary-col\s*\{[^}]*order:\s*-1/s);
+  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?\.co-summary-col\s*\{[^}]*order:\s*2/s);
   assert.match(css, /\.co-success__block\s*\{[^}]*background:\s*#FFFFFF/s);
+});
+
+test('homepage newsletter is explicit-consent only and keeps the dedicated FAQ page', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  const home = html.match(/<div class="page active" id="page-home">[\s\S]*?<div class="page" id="page-reconstitution">/)?.[0] || '';
+  assert.match(home, /class="section home-newsletter"/);
+  assert.match(home, /subscriber-only discounts, restock alerts and new-product releases/);
+  assert.match(home, /id="newsletterConsent" type="checkbox" required/);
+  assert.match(html, /JSON\.stringify\(\{ email: email\.value, consent: consent\.checked, website:/);
+  assert.doesNotMatch(home, /class="section home-faq-preview"/);
+  assert.match(html, /<div class="page" id="page-faq">/);
+  assert.match(css, /\.newsletter-panel\s*\{/);
+});
+
+test('every generated product card exposes add-to-cart and buy-now actions', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  const makeCard = html.match(/function makeCard\(p, mini\) \{[\s\S]*?\n\}/)?.[0] || '';
+  assert.match(makeCard, /product-card__action--cart/);
+  assert.match(makeCard, /product-card__action--buy/);
+  assert.match(makeCard, /openRestockAlertById/);
+  assert.match(makeCard, /addToCart\('\$\{p\.id\}',1,'checkout'\)/);
+  assert.match(css, /\.product-card__actions\s*\{[^}]*grid-template-columns:\s*1fr 1fr/s);
 });
