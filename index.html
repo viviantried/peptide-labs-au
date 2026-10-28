@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="PeptideLab Australia: research compounds, straightforward ordering and support. Standard and express delivery available, with free standard shipping on eligible orders." />
-  <link rel="stylesheet" href="/styles.css?v=31" />
+  <link rel="stylesheet" href="/styles.css?v=32" />
   <link rel="stylesheet" href="/giveaway.css?v=5" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
@@ -443,35 +443,11 @@
 <div class="page" id="page-cart">
 <div class="cart-panel" id="cartPanel" aria-labelledby="cartTitle">
   <div class="cart-header">
-    <div>
-      <h1 class="cart-header__title" id="cartTitle" tabindex="-1">Shopping Cart</h1>
-      <ol class="cart-progress" aria-label="Order progress">
-        <li class="cart-progress__step cart-progress__step--complete"><span>1</span>Browse</li>
-        <li class="cart-progress__step cart-progress__step--current" aria-current="step"><span>2</span>Cart</li>
-        <li class="cart-progress__step"><span>3</span>Checkout</li>
-        <li class="cart-progress__step"><span>4</span>Pay</li>
-      </ol>
-    </div>
-    <a class="cart-page-back" href="/shop" onclick="showPage('shop');return false;">Add another item</a>
+    <h1 class="cart-header__title" id="cartTitle">Shopping Cart</h1>
+    <a class="cart-page-back" href="/shop" onclick="showPage('shop');return false;">Continue shopping</a>
   </div>
   <div class="cart-layout">
     <div class="cart-main">
-      <section class="cart-mix-builder" id="mixBundleBuilder" hidden aria-labelledby="mixBundleTitle">
-        <div class="cart-mix-builder__header">
-          <div>
-            <div class="mix-bundle-kicker">MIX &amp; MATCH · 25% OFF</div>
-            <h2 id="mixBundleTitle" tabindex="-1">Build your 10-vial set</h2>
-            <p>Choose any 10 available research vials, including repeats.</p>
-          </div>
-          <button type="button" class="cart-mix-builder__cancel" onclick="closeMixBundleBuilder()">Cancel set</button>
-        </div>
-        <div class="mix-bundle-progress"><strong id="mixBundleCount">0 of 10 selected</strong><span id="mixBundleRemaining">Choose 10 vials</span></div>
-        <div class="mix-bundle-track"><span id="mixBundleFill"></span></div>
-        <div class="mix-bundle-options" id="mixBundleOptions"></div>
-        <div class="mix-bundle-summary"><div><span>Individual total</span><s id="mixBundleRegular">A$0.00</s></div><div><span>You save 25%</span><strong id="mixBundleSavings">A$0.00</strong></div><div class="mix-bundle-total"><span>Set price</span><strong id="mixBundlePrice">A$0.00</strong></div></div>
-        <button type="button" class="btn btn--teal mix-bundle-add" id="mixBundleAdd" onclick="addMixBundleToCart()" disabled>Select 10 vials</button>
-        <p class="mix-bundle-note">For laboratory research use only. The 10-vial offer replaces the standard quantity discount for this set.</p>
-      </section>
       <div class="cart-empty" id="cartEmpty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <div class="cart-empty__title">Your cart is empty</div>
@@ -501,8 +477,8 @@
       </div>
       <div id="cartFreeShipSuggestions" class="cart-free-ship-suggestions" hidden></div>
       <div class="cart-checkout">
-        <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Continue securely to checkout →</button>
-        <span class="cart-checkout__next">Next: delivery details and payment method</span>
+        <button class="btn btn--teal btn--full btn--lg" onclick="openCheckout()">Proceed to Checkout</button>
+        <button class="btn btn--outline btn--full btn--sm" onclick="showPage('shop')">Continue Shopping</button>
       </div>
       <div class="cart-disclaimer">For research use only · Not for human consumption · Prices in <span id="cartCurrencyNote">AUD</span></div>
     </aside>
@@ -710,12 +686,12 @@
     <div class="container">
       <div class="discreet-packaging__card">
         <figure class="discreet-packaging__visual">
-          <img src="/images/discreet-packaging-mailer.webp" width="1200" height="898" loading="lazy" decoding="async" alt="Plain white bubble mailer with no branding, labels or product details.">
+          <img src="/images/discreet-packaging-mailer.webp" width="1200" height="898" loading="lazy" decoding="async" alt="Discreet white bubble mailer with no branding, labels or product details.">
         </figure>
         <div class="discreet-packaging__copy">
           <div class="section-label">Fulfilment</div>
-          <h2 class="section-title" id="discreetPackagingTitle">Plain packaging. Tracking by email.</h2>
-          <p class="section-sub">Orders use plain outer packaging with no product names on the exterior. Tracking is supplied by email after dispatch.</p>
+          <h2 class="section-title" id="discreetPackagingTitle">Discreet packaging. Tracking by email.</h2>
+          <p class="section-sub">Orders use discreet outer packaging with no product names on the exterior. Tracking is supplied by email after dispatch.</p>
         </div>
       </div>
     </div>
@@ -1189,6 +1165,21 @@
   </div>
   <div class="footer__disclaimer"><div class="container">For Research Use Only · Not for Human Consumption · Not intended to diagnose, treat, cure, or prevent any disease · This website does not provide medical advice · Customers responsible for compliance with all applicable laws · Australian Operations</div></div>
 </footer>
+
+<div class="mix-bundle-overlay" id="mixBundleDialog" hidden>
+  <section class="mix-bundle-dialog" role="dialog" aria-modal="true" aria-labelledby="mixBundleTitle">
+    <button type="button" class="mix-bundle-close" onclick="closeMixBundleBuilder()" aria-label="Close mix and match builder">×</button>
+    <div class="mix-bundle-kicker">MIX &amp; MATCH · 25% OFF</div>
+    <h2 id="mixBundleTitle">Build your 10-vial set</h2>
+    <p>Choose any 10 available research vials, including repeats. The set is 25% less than buying those vials individually.</p>
+    <div class="mix-bundle-progress"><strong id="mixBundleCount">0 of 10 selected</strong><span id="mixBundleRemaining">Choose 10 vials</span></div>
+    <div class="mix-bundle-track"><span id="mixBundleFill"></span></div>
+    <div class="mix-bundle-options" id="mixBundleOptions"></div>
+    <div class="mix-bundle-summary"><div><span>Individual total</span><s id="mixBundleRegular">A$0.00</s></div><div><span>You save 25%</span><strong id="mixBundleSavings">A$0.00</strong></div><div class="mix-bundle-total"><span>Set price</span><strong id="mixBundlePrice">A$0.00</strong></div></div>
+    <button type="button" class="btn btn--teal mix-bundle-add" id="mixBundleAdd" onclick="addMixBundleToCart()" disabled>Select 10 vials</button>
+    <p class="mix-bundle-note">For laboratory research use only. The 10-vial offer replaces the standard quantity discount for this set.</p>
+  </section>
+</div>
 
 <aside class="research-agreement" id="researchAgreement" aria-label="Research use agreement" hidden>
   <img src="/images/favicon.png?v=3" width="26" height="26" alt="" aria-hidden="true">
@@ -2038,8 +2029,6 @@ function getShippingCost(subtotalAUD) {
 // CART LOGIC
 // ============================================================
 function openCart() {
-  const builder = document.getElementById('mixBundleBuilder');
-  if (builder && !builder.hidden) builder.hidden = true;
   renderCart();
   showPage('cart');
 }
@@ -2147,6 +2136,7 @@ async function submitNewsletter(event) {
 
 const MIX_BUNDLE_ID = 'PL-MIX-10';
 let mixBundleSelections = {};
+let mixBundleTrigger = null;
 let mixBundleCheckoutAfterAdd = false;
 function getReservedQty(productId) {
   return cart.reduce((sum, item) => sum + (item.id === productId ? item.qty : 0)
@@ -2159,26 +2149,21 @@ function bundleContentsLabel(selections) {
   }).join(' · ');
 }
 function openMixBundleBuilder(checkoutAfterAdd = false) {
-  const builder = document.getElementById('mixBundleBuilder');
-  const cartIsActive = document.getElementById('page-cart').classList.contains('active');
+  mixBundleTrigger = document.activeElement;
   mixBundleSelections = {};
   mixBundleCheckoutAfterAdd = checkoutAfterAdd;
-  builder.hidden = false;
-  showPage('cart', !cartIsActive);
-  renderCart();
+  document.getElementById('mixBundleDialog').hidden = false;
+  document.body.style.overflow = 'hidden';
   renderMixBundleBuilder();
-  requestAnimationFrame(() => {
-    builder.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-    document.getElementById('mixBundleTitle')?.focus({ preventScroll: true });
-  });
+  requestAnimationFrame(() => document.querySelector('.mix-bundle-close')?.focus());
 }
 function closeMixBundleBuilder() {
-  const builder = document.getElementById('mixBundleBuilder');
-  if (!builder || builder.hidden) return;
-  builder.hidden = true;
+  const dialog = document.getElementById('mixBundleDialog');
+  if (!dialog || dialog.hidden) return;
+  dialog.hidden = true;
+  document.body.style.overflow = '';
   mixBundleCheckoutAfterAdd = false;
-  renderCart();
-  document.getElementById('cartTitle')?.focus();
+  if (mixBundleTrigger instanceof HTMLElement) mixBundleTrigger.focus();
 }
 function changeMixBundleSelection(productId, delta) {
   const selected = Object.values(mixBundleSelections).reduce((sum, qty) => sum + qty, 0);
@@ -2224,11 +2209,13 @@ function addMixBundleToCart() {
   const regularPrice = selections.reduce((sum, selection) => sum + PRODUCTS.find(p => p.id === selection.id).price * selection.qty, 0);
   cart.push({ id:MIX_BUNDLE_ID, name:'Mix & Match 10-Vial Set', size:'10 vials', price:Math.round(regularPrice * 75) / 100, qty:1, selections });
   const checkoutAfterAdd = mixBundleCheckoutAfterAdd;
-  document.getElementById('mixBundleBuilder').hidden = true;
-  mixBundleCheckoutAfterAdd = false;
+  closeMixBundleBuilder();
   renderCart(); updateCountBadges(); showToast('10-vial set added to cart');
   if (checkoutAfterAdd) openCheckout();
+  else openCart();
 }
+document.getElementById('mixBundleDialog').addEventListener('click', event => { if (event.target.id === 'mixBundleDialog') closeMixBundleBuilder(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !document.getElementById('mixBundleDialog').hidden) closeMixBundleBuilder(); });
 
 function addToCart(productId, quantity = 1, destination = 'cart') {
   const p = PRODUCTS.find(x => x.id === productId);
@@ -2307,12 +2294,12 @@ function renderCartSuggestions() {
   const waterUpsell = showWater ? `<div class="cart-water-upsell">
     <img src="${water.img}" alt="${water.name} ${water.size}" loading="lazy">
     <div class="cart-water-upsell__copy"><strong>Add bacteriostatic water</strong><span>For laboratory reconstitution; not included with peptide vials.</span></div>
-    <div class="cart-upsell-actions"><button type="button" onclick="addToCart('PL-014')">Add to cart</button><button type="button" onclick="addToCart('PL-014',1,'checkout')">Buy now</button></div>
+    <button type="button" onclick="addToCart('PL-014')">Add ${water.size} · ${fmtPrice(water.price)}</button>
   </div>` : '';
   const cards = suggestions.map(product => `<article class="cart-rec-card">
     <img src="${product.img}" alt="${product.name} ${product.size}" loading="lazy">
     <div class="cart-rec-card__body"><strong>${product.name}</strong><span>${product.size} · ${fmtPrice(product.price)}</span>
-      <div class="cart-rec-card__actions"><button type="button" onclick="addToCart('${product.id}')">Add to cart</button><button type="button" onclick="addToCart('${product.id}',1,'checkout')">Buy now</button></div>
+      <button type="button" onclick="addToCart('${product.id}')">Add to cart</button>
     </div>
   </article>`).join('');
   el.style.display = waterUpsell || cards ? 'block' : 'none';
@@ -2362,8 +2349,7 @@ function renderCart() {
   }
 
   if (cart.length === 0) {
-    const builderOpen = !document.getElementById('mixBundleBuilder').hidden;
-    empty.style.display = builderOpen ? 'none' : 'flex'; el.style.display = 'none'; footer.style.display = 'none';
+    empty.style.display = 'flex'; el.style.display = 'none'; footer.style.display = 'none';
     document.getElementById('cartSuggestionsEl').style.display = 'none';
     document.getElementById('cartFreeShipSuggestions').hidden = true;
     el.innerHTML = ''; return;
@@ -2913,9 +2899,6 @@ function showPage(id, updateHistory = true) {
     window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }
   document.body.classList.toggle('product-page-active', id === 'product');
-  document.body.classList.toggle('cart-page-active', id === 'cart');
-  const navLogo = document.querySelector('.nav__logo');
-  if (navLogo) navLogo.disabled = id === 'cart';
   document.querySelectorAll('.nav__link').forEach(l=>l.classList.remove('active'));
   const map = {shop:0,faq:1,contact:2,track:3};
   const links = document.querySelectorAll('.nav__link');
@@ -2999,8 +2982,10 @@ document.addEventListener('keydown', event => {
   }
   const searchOverlay = document.getElementById('siteSearchOverlay');
   const checkoutOverlay = document.getElementById('coOverlay');
+  const mixBundleDialog = document.getElementById('mixBundleDialog');
   const mobileMenu = document.getElementById('mobileMenu');
-  if (checkoutOverlay.classList.contains('open')) keepFocusWithin(checkoutOverlay, event);
+  if (!mixBundleDialog.hidden) keepFocusWithin(mixBundleDialog, event);
+  else if (checkoutOverlay.classList.contains('open')) keepFocusWithin(checkoutOverlay, event);
   else if (!searchOverlay.hidden) keepFocusWithin(searchOverlay, event);
   else if (mobileMenu.classList.contains('open')) keepFocusWithin(mobileMenu, event);
 });

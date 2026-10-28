@@ -311,3 +311,27 @@ test('every generated product card exposes add-to-cart and buy-now actions', () 
   assert.match(makeCard, /addToCart\('\$\{p\.id\}',1,'checkout'\)/);
   assert.match(css, /\.product-card__actions\s*\{[^}]*grid-template-columns:\s*1fr 1fr/s);
 });
+
+test('cart keeps the established layout while Mix 10 uses the accessible popup', () => {
+  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  const cart = html.match(/<!-- CART PAGE -->[\s\S]*?<!--  PAGE: HOME/)?.[0] || '';
+  const suggestions = html.match(/function renderCartSuggestions\(\) \{[\s\S]*?\n\}/)?.[0] || '';
+  const mixBuilder = html.match(/function openMixBundleBuilder\(checkoutAfterAdd = false\) \{[\s\S]*?\n\}/)?.[0] || '';
+  const addToCart = html.match(/function addToCart\(productId, quantity = 1, destination = 'cart'\) \{[\s\S]*?\n\}/)?.[0] || '';
+
+  assert.match(cart, />Continue shopping<\/a>/);
+  assert.match(cart, />Proceed to Checkout<\/button>/);
+  assert.match(cart, />Continue Shopping<\/button>/);
+  assert.doesNotMatch(cart, /cart-progress|cart-mix-builder|cart-checkout__next/);
+  assert.match(html, /class="mix-bundle-overlay" id="mixBundleDialog" hidden/);
+  assert.match(css, /\.mix-bundle-overlay\s*\{[^}]*position:\s*fixed[^}]*place-items:\s*center/s);
+  assert.match(mixBuilder, /mixBundleTrigger = document\.activeElement/);
+  assert.match(mixBuilder, /mixBundleCheckoutAfterAdd = checkoutAfterAdd/);
+  assert.match(mixBuilder, /getElementById\('mixBundleDialog'\)\.hidden = false/);
+  assert.match(addToCart, /if \(destination === 'checkout'\) openCheckout\(\)/);
+  assert.match(suggestions, /Add \$\{water\.size\} · \$\{fmtPrice\(water\.price\)\}/);
+  assert.doesNotMatch(suggestions, /cart-upsell-actions|cart-rec-card__actions|,'checkout'/);
+  assert.doesNotMatch(css, /\.cart-page-active|#page-cart #cartSuggestionsEl/);
+  assert.match(css, /\.checkout-progress\s*\{/);
+});
