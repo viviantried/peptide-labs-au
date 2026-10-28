@@ -172,8 +172,11 @@ test('storefront keeps removed sections out and presents a compact bundle select
   assert.match(html, /<strong class="pdp-bundle-option__qty">Mix 10<\/strong>[\s\S]*?−25%/);
   assert.match(html, /id="pdpAddon"[\s\S]*?id="pdpAddWater"[\s\S]*?Add BAC Water/);
   assert.match(html, /function addPdpSelection\(destination\)[\s\S]*?const lines = \[\{ product: currentProduct, quantity: pdpBundleQuantity \}\]/);
-  assert.match(html, /<strong>International shipping is available<\/strong>/);
+  assert.match(html, /<strong>Nationwide Australian delivery is available<\/strong>, with international shipping to New Zealand and selected destinations across North America, Europe and Asia/);
   assert.doesNotMatch(html, /Australian customers can choose <strong>standard shipping/);
+  assert.match(css, /\.product-page-grid\s*\{[^}]*grid-template-columns:\s*minmax\(300px,\s*390px\)\s*minmax\(0,\s*620px\)/s);
+  assert.match(css, /\.product-page-img\s*\{[^}]*aspect-ratio:\s*auto;[^}]*padding:\s*0;[^}]*border:\s*0;[^}]*background:\s*transparent;/s);
+  assert.match(css, /\.pdp-product-photo,\s*\n\.pdp-product-photo--kit\s*\{[^}]*width:\s*100%;[^}]*max-height:\s*480px;[^}]*object-fit:\s*contain;/s);
 });
 
 test('home landing keeps responsive heroes, four featured products, and accessible navigation', () => {
@@ -298,6 +301,11 @@ test('homepage newsletter is explicit-consent only and keeps the dedicated FAQ p
   assert.match(html, /JSON\.stringify\(\{ email: email\.value, consent: consent\.checked, website:/);
   assert.doesNotMatch(home, /class="section home-faq-preview"/);
   assert.match(html, /<div class="page" id="page-faq">/);
+  const faq = html.match(/<div class="page" id="page-faq">[\s\S]*?<div class="page" id="page-contact">/)?.[0] || '';
+  assert.match(faq, />Shipping &amp; Orders<\/div>/);
+  assert.match(faq, />How fast is delivery\?</);
+  assert.match(faq, /We ship worldwide to supported destinations shown at checkout/);
+  assert.doesNotMatch(faq, /Australia|Australian/);
   assert.match(css, /\.newsletter-panel\s*\{/);
 });
 
@@ -310,6 +318,14 @@ test('every generated product card exposes add-to-cart and buy-now actions', () 
   assert.match(makeCard, /openRestockAlertById/);
   assert.match(makeCard, /addToCart\('\$\{p\.id\}',1,'checkout'\)/);
   assert.match(css, /\.product-card__actions\s*\{[^}]*grid-template-columns:\s*1fr 1fr/s);
+});
+
+test('reconstitution supplies stay compact from wide screens through mobile', () => {
+  const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
+  assert.match(css, /#page-reconstitution \.recon-supplies > \.container\s*\{[^}]*max-width:\s*1040px/s);
+  assert.match(css, /@media \(max-width:\s*900px\)[\s\S]*?#page-reconstitution \.recon-supplies > \.container\s*\{[^}]*max-width:\s*640px[^}]*\}[\s\S]*?#page-reconstitution \.recon-supplies__grid\s*\{[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(css, /@media \(max-width:\s*480px\)[\s\S]*?#page-reconstitution \.recon-supply-card\s*\{[^}]*grid-template-columns:\s*64px minmax\(0,1fr\)/s);
+  assert.match(css, /#page-reconstitution \.recon-supply-card__price\s*\{[^}]*grid-column:\s*2[^}]*margin-left:\s*0/s);
 });
 
 test('cart keeps the established layout while Mix 10 uses the accessible popup', () => {
