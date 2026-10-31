@@ -227,6 +227,8 @@ test('home landing keeps responsive heroes, four featured products, and accessib
   assert.doesNotMatch(featuredRenderer, /PL-002/);
   assert.equal([...html.matchAll(/\{ id:'PL-\d+', name:'([^']+)'/g)][0]?.[1], 'Retatrutide');
   assert.match(html, /class="product-card__name product-card__open"/);
+  assert.match(html, /styles\.css\?v=35/);
+  assert.match(css, /\.product-card__badge\s*\{\s*background:\s*#008354;\s*\}\s*\.product-card__badge--hot\s*\{\s*background:\s*#1875AC;/s);
   assert.match(offerController, /window\.openPopup/);
   assert.doesNotMatch(offerController, /setTimeout\(openIfEligible|addEventListener\('scroll'/);
   assert.match(css, /\.nav__mobile-menu\.open\s*\{[^}]*transform:\s*translateX\(0\)/s);
@@ -301,7 +303,9 @@ test('homepage newsletter is explicit-consent only and keeps the dedicated FAQ p
   const css = fs.readFileSync(require.resolve('../styles.css'), 'utf8');
   const home = html.match(/<div class="page active" id="page-home">[\s\S]*?<div class="page" id="page-reconstitution">/)?.[0] || '';
   assert.match(home, /class="section home-newsletter"/);
-  assert.match(home, /subscriber-only discounts, restock alerts and new-product releases/);
+  assert.match(home, /Join for priority restock alerts, subscriber-only offers and first notice of new compounds/);
+  assert.match(home, />Get first access\.<\/h2>/);
+  assert.match(home, />Get research updates <span aria-hidden="true">→<\/span><\/button>/);
   assert.match(home, /id="newsletterConsent" type="checkbox" required/);
   assert.match(html, /JSON\.stringify\(\{ email: email\.value, consent: consent\.checked, website:/);
   assert.doesNotMatch(home, /class="section home-faq-preview"/);
@@ -311,7 +315,23 @@ test('homepage newsletter is explicit-consent only and keeps the dedicated FAQ p
   assert.match(faq, />How fast is delivery\?</);
   assert.match(faq, /We ship worldwide to supported destinations shown at checkout/);
   assert.doesNotMatch(faq, /Australia|Australian/);
-  assert.match(css, /\.newsletter-panel\s*\{/);
+  assert.match(css, /\.newsletter-panel\s*\{[^}]*justify-items:\s*center[^}]*text-align:\s*center/s);
+  assert.match(css, /\.newsletter-form\s*\{[^}]*width:\s*min\(100%,\s*680px\)/s);
+  assert.match(css, /\.newsletter-form__row input\s*\{[^}]*font-size:\s*16px/s);
+  assert.match(css, /\.newsletter-form__row button\s*\{[^}]*background:\s*#008354[^}]*color:\s*#FFFFFF/s);
+  assert.match(css, /@media \(max-width:\s*640px\)[\s\S]*?\.newsletter-form__row\s*\{[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(html, /Post-purchase Review Invitations[\s\S]*separate, minimal trigger to Trustpilot's Automatic Feedback Service[\s\S]*product, payment, address and tracking details are not included[\s\S]*leaving a review is voluntary/);
+});
+
+test('private admin includes a lazy subscriber manager and safe CSV export', () => {
+  const admin = fs.readFileSync(require.resolve('../admin.html'), 'utf8');
+  assert.match(admin, /id="subscribersTab"[^>]*>Subscribers<\/button>/);
+  assert.match(admin, /fetch\('\/api\/newsletter-admin\?'/);
+  assert.match(admin, /Authorization:'Bearer '\+key/);
+  assert.match(admin, /name==='subscribers'\?'Export subscribers CSV':'Export orders CSV'/);
+  assert.match(admin, /\['Email','Status','Contact added \(UTC\)'\]/);
+  assert.match(admin, /if\(\/\^\[=\+@\\-\\t\\r\]\//);
+  assert.doesNotMatch(admin, /localStorage|sessionStorage/);
 });
 
 test('every generated product card exposes add-to-cart and buy-now actions', () => {

@@ -1,5 +1,6 @@
 const store = require('../lib/tracker');
 const alerts = require('../lib/restock-alerts');
+const { queueTrustpilotInvite } = require('../lib/trustpilot');
 module.exports = async function(req,res) {
   res.setHeader('Cache-Control','no-store');
   res.setHeader('X-Robots-Tag','noindex, nofollow');
@@ -20,6 +21,14 @@ module.exports = async function(req,res) {
       if (typeof b.id!=='string' || !['paid','shipped','cancelled'].includes(b.status) || (b.tracking && (typeof b.tracking!=='string' || b.tracking.length>150))) return res.status(400).json({error:'Invalid order update'});
       const order=await store.change(b.id,b.status,b.tracking || null,b.carrier || null);
       if (b.status==='paid' || b.status==='cancelled') await store.cancelReminder(order);
+      if (b.status==='shipped' && order?.emails?.trustpilot!=='accepted') {
+        const details=order.details || {};
+        const invite=await queueTrustpilotInvite({order:order.id,email:details.email,name:[details.firstName,details.lastName].filter(Boolean).join(' ')});
+        if (invite.status!=='disabled') {
+          try { await store.setEmails(order.id,{trustpilot:invite.status,...(invite.id?{trustpilotId:invite.id}:{})}); }
+          catch { console.error('Trustpilot invitation status update failed'); }
+        }
+      }
       return res.status(200).json({ok:true,order});
     }
     if (b.action==='stock') {

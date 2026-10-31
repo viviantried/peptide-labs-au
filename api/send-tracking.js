@@ -3,6 +3,7 @@
 
 const crypto = require('crypto');
 const tracker = require('../lib/tracker');
+const { queueTrustpilotInvite } = require('../lib/trustpilot');
 
 const RESEND_KEY  = process.env.RESEND_API_KEY || process.env.resend_api_key;
 const SECRET      = process.env.CONFIRM_SECRET || process.env.confirm_secret || RESEND_KEY;
@@ -49,11 +50,12 @@ module.exports = async function handler(req, res) {
   if (token !== expected) {
     return res.status(403).send(page('Invalid or expired link.', 'error'));
   }
+  let savedOrder = null;
   if (tracker.enabled()) {
     try {
-      const saved=await tracker.find(order);
-      if (saved) {
-        if (saved.details.email!==email) return res.status(403).send(page('Order details do not match.','error'));
+      savedOrder=await tracker.find(order);
+      if (savedOrder) {
+        if (savedOrder.details.email!==email) return res.status(403).send(page('Order details do not match.','error'));
         await tracker.change(order,'shipped',tracking,carrier);
       }
     } catch { return res.status(503).send(page('Could not save dispatch. Check the order in /admin before trying again.','error')); }
@@ -111,6 +113,22 @@ module.exports = async function handler(req, res) {
       }),
     });
     if (!r.ok) throw new Error(await r.text());
+
+    if (savedOrder?.emails?.trustpilot !== 'accepted') {
+      const invite = await queueTrustpilotInvite({
+        order,
+        email,
+        name: [savedOrder?.details?.firstName, savedOrder?.details?.lastName].filter(Boolean).join(' '),
+      });
+      if (tracker.enabled() && savedOrder && invite.status !== 'disabled') {
+        try {
+          await tracker.setEmails(order, {
+            trustpilot: invite.status,
+            ...(invite.id ? { trustpilotId: invite.id } : {}),
+          });
+        } catch { console.error('Trustpilot invitation status update failed'); }
+      }
+    }
 
     return res.status(200).send(page(`
       <h2 style="color:#1d4ed8;margin:0 0 8px">📦 Tracking email sent</h2>

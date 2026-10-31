@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PeptideLab — Premium Research Peptides | Australia</title>
   <meta name="description" content="PeptideLab Australia: research compounds, straightforward ordering and support. Standard and express delivery available, with free standard shipping on eligible orders." />
-  <link rel="stylesheet" href="/styles.css?v=34" />
+  <link rel="stylesheet" href="/styles.css?v=35" />
   <link rel="stylesheet" href="/giveaway.css?v=5" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
@@ -738,20 +738,20 @@
     <div class="container--narrow">
       <div class="newsletter-panel">
         <div class="newsletter-panel__copy">
-          <div class="section-label">Research updates</div>
-          <h2 class="section-title" id="newsletterTitle">Be first to know.</h2>
-          <p>Get subscriber-only discounts, restock alerts and new-product releases in one useful email.</p>
+          <div class="section-label">PeptideLab updates</div>
+          <h2 class="section-title" id="newsletterTitle">Get first access.</h2>
+          <p>Join for priority restock alerts, subscriber-only offers and first notice of new compounds—sent only when there is something useful.</p>
           <ul aria-label="Newsletter benefits">
-            <li>Exclusive subscriber offers</li>
-            <li>Priority restock updates</li>
-            <li>New compound announcements</li>
+            <li>Priority restock alerts</li>
+            <li>Subscriber-only offers</li>
+            <li>New compound releases</li>
           </ul>
         </div>
         <form class="newsletter-form" id="newsletterForm" onsubmit="submitNewsletter(event)" novalidate>
-          <label for="newsletterEmail">Email address</label>
+          <label class="sr-only" for="newsletterEmail">Email address</label>
           <div class="newsletter-form__row">
-            <input id="newsletterEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="you@email.com" required>
-            <button id="newsletterSubmit" type="submit">Join the list <span aria-hidden="true">→</span></button>
+            <input id="newsletterEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="Enter your email address" aria-describedby="newsletterConsentText newsletterPrivacy" required>
+            <button id="newsletterSubmit" type="submit">Get research updates <span aria-hidden="true">→</span></button>
           </div>
           <div class="newsletter-form__trap" aria-hidden="true">
             <label for="newsletterWebsite">Website</label>
@@ -759,9 +759,9 @@
           </div>
           <label class="newsletter-consent">
             <input id="newsletterConsent" type="checkbox" required>
-            <span>I agree to receive marketing emails from PeptideLab. I can unsubscribe at any time.</span>
+            <span id="newsletterConsentText">I agree to receive marketing emails from PeptideLab. I can unsubscribe at any time.</span>
           </label>
-          <p class="newsletter-form__privacy">Your email is used only for these updates. See our <a href="/privacy" onclick="showPage('privacy');return false;">Privacy Policy</a>.</p>
+          <p class="newsletter-form__privacy" id="newsletterPrivacy">No spam. Your email is used only for these updates. See our <a href="/privacy" onclick="showPage('privacy');return false;">Privacy Policy</a>.</p>
           <p class="newsletter-form__status" id="newsletterStatus" role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -1097,11 +1097,12 @@
 </div>
 
 <div class="page" id="page-privacy">
-  <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: 23 September 2026 · We respect your privacy.</p></div>
+  <div class="policy-hero"><h1 class="policy-hero__title">Privacy Policy</h1><p class="policy-hero__sub">Last updated: 1 November 2026 · We respect your privacy.</p></div>
   <div class="policy-body"><div class="container--narrow"><div class="policy-content">
     <h2>Information We Collect</h2><p>Order data (name, email, shipping address and selected payment method), communication data from enquiries (name, email, subject, optional order reference and message), and anonymised usage analytics. We do not collect or store online-banking credentials.</p>
     <h2>How We Use It</h2><p>To fulfil orders, provide support, send transactional emails, comply with legal obligations, and improve our service through anonymised analytics. We do not sell your personal data.</p><p>Australian suburb and postcode suggestions use data hosted on this website, sourced from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>. This lookup does not send your entered address to an outside service.</p>
     <h2>Newsletter Subscriptions</h2><p>If you actively opt in through the newsletter form, we store your email address with Resend, our email service provider, to send subscriber discounts, restock updates and new-product announcements. You can unsubscribe from any marketing email or ask support to remove your subscription. Ordering, contacting support, requesting a product restock alert, or entering a giveaway does not subscribe you automatically.</p>
+    <h2>Post-purchase Review Invitations</h2><p>After an order is dispatched, we send a separate, minimal trigger to Trustpilot's Automatic Feedback Service using the unique address assigned to our business account. Trustpilot receives the customer name, email address and order reference needed to schedule an optional review invitation; product, payment, address and tracking details are not included. This does not subscribe you to PeptideLab marketing, and leaving a review is voluntary.</p>
     <h2>Giveaway Entries</h2><p>We store the email address submitted through the giveaway form in Resend to manage entries and contact winners. Marketing emails are optional. Entering the giveaway does not change an existing unsubscribe preference. You may ask support to remove your giveaway entry.</p>
     <h2>Support Enquiries</h2><p>Website enquiries are sent to our support inbox through Resend, our email service provider. Submitting an enquiry does not subscribe you to marketing. Do not include payment credentials or personal health information in your message.</p>
     <h2>Data Security</h2><p>SSL/TLS encrypted transmission. Appropriate technical and organisational security measures. Order data retained for 7 years for Australian legal/accounting compliance.</p>
@@ -2156,7 +2157,7 @@ async function submitNewsletter(event) {
     status.className = 'newsletter-form__status newsletter-form__status--error';
   } finally {
     submit.disabled = false;
-    submit.innerHTML = 'Join the list <span aria-hidden="true">→</span>';
+    submit.innerHTML = 'Get research updates <span aria-hidden="true">→</span>';
   }
 }
 
