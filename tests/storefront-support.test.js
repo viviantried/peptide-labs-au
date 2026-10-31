@@ -320,13 +320,13 @@ test('homepage newsletter is explicit-consent only and keeps the dedicated FAQ p
   assert.match(css, /\.newsletter-form__row input\s*\{[^}]*font-size:\s*16px/s);
   assert.match(css, /\.newsletter-form__row button\s*\{[^}]*background:\s*#008354[^}]*color:\s*#FFFFFF/s);
   assert.match(css, /@media \(max-width:\s*640px\)[\s\S]*?\.newsletter-form__row\s*\{[^}]*grid-template-columns:\s*1fr/s);
-  assert.match(html, /Post-purchase Review Invitations[\s\S]*separate, minimal trigger to Trustpilot's Automatic Feedback Service[\s\S]*product, payment, address and tracking details are not included[\s\S]*leaving a review is voluntary/);
+  assert.doesNotMatch(html, /Trustpilot|Post-purchase Review Invitations/);
 });
 
 test('private admin includes a lazy subscriber manager and safe CSV export', () => {
   const admin = fs.readFileSync(require.resolve('../admin.html'), 'utf8');
   assert.match(admin, /id="subscribersTab"[^>]*>Subscribers<\/button>/);
-  assert.match(admin, /fetch\('\/api\/newsletter-admin\?'/);
+  assert.match(admin, /fetch\('\/api\/tracker\?'/);
   assert.match(admin, /Authorization:'Bearer '\+key/);
   assert.match(admin, /name==='subscribers'\?'Export subscribers CSV':'Export orders CSV'/);
   assert.match(admin, /\['Email','Status','Contact added \(UTC\)'\]/);

@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 
 process.env.NODE_ENV = 'test';
 process.env.TRACKER_ADMIN_KEY = 'newsletter-admin-test-key';
-const handler = require('../api/newsletter-admin');
+const handler = require('../api/tracker');
 
 const originalFetch = global.fetch;
 const originalEnv = { ...process.env };
@@ -35,7 +35,7 @@ function response() {
 
 async function invoke({ method = 'GET', query = {}, key = 'newsletter-admin-test-key' } = {}) {
   const res = response();
-  await handler({ method, query, headers: key ? { authorization: `Bearer ${key}` } : {} }, res);
+  await handler({ method, query: { newsletter: '1', ...query }, headers: key ? { authorization: `Bearer ${key}` } : {} }, res);
   return res;
 }
 
@@ -106,4 +106,3 @@ test('dedicated segment wins and provider failures stay generic', async () => {
   assert.match(calls[0].url, /\/segments\/newsletter-segment\/contacts/);
   assert.doesNotMatch(JSON.stringify(result.body), /private provider detail/);
 });
-
