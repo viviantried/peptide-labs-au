@@ -4,6 +4,11 @@
     "weekly_sold": 35,
     "restocking": false
   },
+  "PL-018": {
+    "stock": 20,
+    "weekly_sold": 0,
+    "restocking": false
+  },
   "PL-002": {
     "stock": 35,
     "weekly_sold": 5,
@@ -66,6 +71,11 @@
   },
   "PL-015": {
     "stock": 50,
+    "weekly_sold": 0,
+    "restocking": false
+  },
+  "PL-SYR": {
+    "stock": 2500,
     "weekly_sold": 0,
     "restocking": false
   }

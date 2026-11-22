@@ -12,6 +12,7 @@ const ALERT_TABLE = 'Restock Alerts';
 
 const PRODUCTS = {
   'PL-001': 'Retatrutide 10mg',
+  'PL-018': 'Retatrutide 5mg',
   'PL-002': 'BPC-157 10mg',
   'PL-003': 'TB-500 5mg',
   'PL-004': 'Tesamorelin 5mg',
@@ -25,6 +26,7 @@ const PRODUCTS = {
   'PL-013': 'Glutathione 1500mg',
   'PL-014': 'BAC Water 10ml',
   'PL-015': 'Research Starter Kit',
+  'PL-SYR': 'Research Syringes (individual units)',
 };
 
 async function getInventoryFromGitHub() {
