@@ -1608,6 +1608,7 @@ function openCheckout(paymentMode) {
   document.getElementById('coCommasMount').replaceChildren();
   document.querySelectorAll('[data-payment-locked]').forEach(el=>{el.disabled=false;el.removeAttribute('data-payment-locked');});
   document.getElementById('coPlaceBtn').hidden=false;
+  document.getElementById('coShipGroup').inert=false;
   document.getElementById('coCommasPayment').hidden=true;
 
   clearTimeout(commasStatusTimer);
@@ -1659,6 +1660,7 @@ function setCheckoutProgress(stage) {
 }
 
 function coShowCheckoutStep(step, focus = true) {
+  if(currentCommasSession && !document.getElementById('coCommasPayment').hidden) return;
   const information = document.querySelector('.co-form-primary');
   const payment = document.querySelector('.co-form-secondary');
   const showPayment = step === 'payment';
@@ -2417,6 +2419,7 @@ async function showCommasPayment(data, details) {
   document.getElementById('coCommasFallback').href=link.href;
   document.getElementById('coPaymentIntro').textContent='Complete your card payment securely below. Your order total is in AUD.';
   document.getElementById('coPlaceBtn').hidden=true;
+  document.getElementById('coShipGroup').inert=true;
   document.querySelectorAll('.co-form-col input,.co-form-col select,.co-form-col textarea,.co-promo-row input,.co-promo-row button,.co-payment-method-tab').forEach(el=>{if(!el.disabled){el.disabled=true;el.setAttribute('data-payment-locked','');}});
   section.scrollIntoView({behavior:'smooth',block:'start'});
   try {
