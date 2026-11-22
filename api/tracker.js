@@ -1,8 +1,60 @@
 const store = require('../lib/tracker');
+const alerts = require('../lib/restock-alerts');
+
+const newsletterUnavailable = 'Newsletter subscribers are unavailable. Please retry.';
+
+function newsletterSegmentId() {
+  return (process.env.RESEND_NEWSLETTER_SEGMENT_ID
+    || process.env.resend_newsletter_segment_id
+    || process.env.RESEND_AUDIENCE_ID
+    || process.env.resend_audience_id
+    || '').trim();
+}
+
+function validNewsletterCursor(value) {
+  return value === undefined || (typeof value === 'string'
+    && value.length > 0 && value.length <= 100 && /^[A-Za-z0-9_-]+$/.test(value));
+}
+
+async function newsletterContacts(req,res) {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow','GET');
+    return res.status(405).json({error:'Method not allowed'});
+  }
+  const limit=Number(req.query?.limit ?? '100');
+  const after=req.query?.after;
+  if (!Number.isInteger(limit) || limit<1 || limit>100 || !validNewsletterCursor(after)) {
+    return res.status(400).json({error:'Invalid subscriber page request.'});
+  }
+  const apiKey=(process.env.RESEND_API_KEY || process.env.resend_api_key || '').trim();
+  const segment=newsletterSegmentId();
+  if (!apiKey || !segment) return res.status(503).json({error:newsletterUnavailable});
+  const query=new URLSearchParams({limit:String(limit)});
+  if (after) query.set('after',after);
+  try {
+    const response=await fetch(`https://api.resend.com/segments/${encodeURIComponent(segment)}/contacts?${query}`,{
+      headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json'},
+      signal:AbortSignal.timeout(8000),
+    });
+    const body=await response.json();
+    if (!response.ok || !Array.isArray(body.data)) throw new Error('Provider unavailable');
+    const contacts=body.data.map(contact=>{
+      if (!contact || typeof contact.id!=='string' || typeof contact.email!=='string') throw new Error('Invalid provider response');
+      return {id:contact.id,email:contact.email,createdAt:typeof contact.created_at==='string'?contact.created_at:null,unsubscribed:contact.unsubscribed===true};
+    });
+    const hasMore=body.has_more===true;
+    return res.status(200).json({contacts,hasMore,nextCursor:hasMore && contacts.length?contacts.at(-1).id:null,checkedAt:new Date().toISOString()});
+  } catch {
+    console.error('Newsletter admin: Resend contacts unavailable');
+    return res.status(503).json({error:newsletterUnavailable});
+  }
+}
+
 module.exports = async function(req,res) {
   res.setHeader('Cache-Control','no-store');
   res.setHeader('X-Robots-Tag','noindex, nofollow');
   if (!store.authorized(req)) return res.status(401).json({error:'Please enter your admin key.'});
+  if (req.query?.newsletter==='1') return newsletterContacts(req,res);
   if (!store.enabled()) return res.status(503).json({error:'Tracker is not active yet.'});
   try {
     if (req.method==='GET') {
@@ -24,7 +76,16 @@ module.exports = async function(req,res) {
     if (b.action==='stock') {
       if (typeof b.sku!=='string' || !Number.isInteger(b.on_hand) || !Number.isInteger(b.low_stock) || !Number.isInteger(b.version) || typeof b.restocking!=='boolean' || typeof b.reason!=='string' || b.reason.length>500) return res.status(400).json({error:'Invalid stock update'});
       const [row]=await store.query('SELECT pl_adjust_stock($1,$2,$3,$4,$5,$6) AS value',[b.sku,b.on_hand,b.low_stock,b.restocking,b.version,b.reason]);
-      return res.status(200).json({ok:true,inventory:row.value});
+      let restockAlerts;
+      if (alerts.isAvailable(row.value)) {
+        try {
+          restockAlerts=await alerts.notifyAvailable(b.sku);
+        } catch (error) {
+          console.error('Restock notification dispatch failed',error.name || 'provider_unavailable');
+          restockAlerts={status:'failed',attempted:0,accepted:0,failed:0};
+        }
+      }
+      return res.status(200).json({ok:true,inventory:row.value,...(restockAlerts ? {restockAlerts} : {})});
     }
     return res.status(400).json({error:'Unknown action'});
   } catch (error) {

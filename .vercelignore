@@ -1,5 +1,8 @@
-tests
+tests/*
+!tests/checkout-currency.test.js
 test-results
 db
-scripts
+scripts/*
+!scripts/build-seo.mjs
 *.md
+.env*

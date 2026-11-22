@@ -51,9 +51,9 @@ module.exports = async function handler(req, res) {
   }
   if (tracker.enabled()) {
     try {
-      const saved=await tracker.find(order);
-      if (saved) {
-        if (saved.details.email!==email) return res.status(403).send(page('Order details do not match.','error'));
+      const savedOrder=await tracker.find(order);
+      if (savedOrder) {
+        if (savedOrder.details.email!==email) return res.status(403).send(page('Order details do not match.','error'));
         await tracker.change(order,'shipped',tracking,carrier);
       }
     } catch { return res.status(503).send(page('Could not save dispatch. Check the order in /admin before trying again.','error')); }

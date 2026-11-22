@@ -5,12 +5,15 @@ const crypto       = require('crypto');
 const fs           = require('fs');
 const path         = require('path');
 const tracker      = require('../lib/tracker');
+const commas = require('../lib/commas');
 const PREVIEW_TEST = process.env.VERCEL_ENV === 'preview' && process.env.TRACKER_TEST_MODE === 'true';
 const BSB          = process.env.BSB_NUMBER      || process.env.bsb_number;
 const ACCOUNT      = process.env.ACCOUNT_NUMBER  || process.env.account_number;
+const PAYID_VALUE  = process.env.PAYID_VALUE     || process.env.payid_value;
+const PAYID_TYPE   = process.env.PAYID_TYPE      || process.env.payid_type || 'PayID';
 const RESEND_KEY   = process.env.RESEND_API_KEY  || process.env.resend_api_key;
 const CONFIRM_SECRET = process.env.CONFIRM_SECRET || process.env.confirm_secret || RESEND_KEY;
-const ACCOUNT_NAME   = 'Australian Peptide Labs Store';
+const ACCOUNT_NAME   = process.env.BANK_ACCOUNT_NAME || 'Australian Peptide Labs Store';
 const OWNER_EMAIL    = 'support@aupeptidelab.com';
 const ORDER_ALERT_EMAIL = 'viviantriedk@gmail.com';
 const FROM_EMAIL     = 'orders@aupeptidelab.com';
@@ -18,22 +21,8 @@ const SITE_URL       = 'https://www.aupeptidelab.com';
 const AIRTABLE_TOKEN    = process.env.AIRTABLE_TOKEN    || process.env.airtable_token;
 const AIRTABLE_BASE     = 'appwbIeYvWxx7R9Y8';
 const RESEND_AUDIENCE   = process.env.RESEND_AUDIENCE_ID || process.env.resend_audience_id;
-const PRODUCT_CATALOG = {
-  'PL-001': { name:'Retatrutide', size:'10mg', price:135 },
-  'PL-002': { name:'BPC-157', size:'10mg', price:85 },
-  'PL-003': { name:'TB-500', size:'5mg', price:79 },
-  'PL-004': { name:'Tesamorelin', size:'5mg', price:95 },
-  'PL-005': { name:'Semax', size:'10mg', price:69 },
-  'PL-006': { name:'Selank', size:'10mg', price:59 },
-  'PL-007': { name:'Deep Sleep Inducing Peptide', size:'5mg', price:49 },
-  'PL-008': { name:'Melanotan-2', size:'10mg', price:69 },
-  'PL-009': { name:'Melanotan-1', size:'10mg', price:69 },
-  'PL-011': { name:'NAD+', size:'500mg', price:75 },
-  'PL-012': { name:'GHK-Cu', size:'50mg', price:49 },
-  'PL-013': { name:'Glutathione', size:'1500mg', price:85 },
-  'PL-014': { name:'BAC Water', size:'10ml', price:19 },
-  'PL-015': { name:'Research Starter Kit', size:'1 kit', price:29 },
-};
+const pricing = require('../checkout-pricing');
+const PRODUCT_CATALOG = pricing.PRODUCT_MAP;
 const PROMO_CODES = {
   VIVIAN: { type:'percent', value:10 },
   TIKTOK: { type:'percent', value:10 },
@@ -42,13 +31,45 @@ const PROMO_CODES = {
 };
 const FREE_SHIP_THRESHOLD = 200;
 const MIX_BUNDLE_ID = 'PL-MIX-10';
+const SUPPORTED_COUNTRIES = new Set([
+  'AU','NZ','US','GB','CA','DE','FR','JP','SG','HK','IE','IT','ES','NL','SE','NO','DK','FI','CH','AT','BE','PT','PL','GR','CZ','RO','HU','SK','HR','BG','LT','LV','EE','MT','CY','LU','SI','KR','TW','MY','TH','PH','ID','VN','IN','AE','SA','IL','ZA','MX','BR','AR','CL','CO',
+]);
+const SHIPPING_ZONES = {
+  AU: [
+    { id:'au-std', kind:'standard', price:10, label:'Standard — Australia Post (3–7 business days)' },
+    { id:'au-exp', kind:'express',  price:15, label:'Express — Australia Post Express (1–2 business days)' },
+  ],
+  NZ: [
+    { id:'nz-std', kind:'standard', price:15, label:'Standard — Aust. Post International (6–12 business days)' },
+    { id:'nz-exp', kind:'express',  price:28, label:'Express — Australia Post International Express (2–5 business days)' },
+  ],
+  INTL: [
+    { id:'int-std', kind:'standard', price:20, label:'Standard — Aust. Post International (7–21 business days)' },
+    { id:'int-exp', kind:'express',  price:40, label:'Express — Australia Post International Express (3–12 business days)' },
+  ],
+};
+
+function shippingZone(country) {
+  if (!SUPPORTED_COUNTRIES.has(country)) throw new Error('Unsupported shipping country');
+  return country === 'AU' ? 'AU' : country === 'NZ' ? 'NZ' : 'INTL';
+}
+
+function resolveShippingMethod(country, rawMethod) {
+  const methods = SHIPPING_ZONES[shippingZone(country)];
+  const requested = String(rawMethod || 'Standard').trim();
+  const method = methods.find(option =>
+    requested === option.id || requested === option.kind || requested === option.label
+    || requested.toLowerCase() === option.kind);
+  if (!method) throw new Error('Invalid shipping method');
+  return method;
+}
 
 function bundleSelection(raw) {
   if (!Array.isArray(raw) || raw.length < 1 || raw.length > 10) throw new Error('Invalid bundle');
   const selections = raw.map(selection => {
     const product = PRODUCT_CATALOG[selection.id];
     const qty = Number(selection.qty);
-    if (!product || ['PL-014', 'PL-015'].includes(selection.id) || !Number.isInteger(qty) || qty < 1 || qty > 10) throw new Error('Invalid bundle');
+    if (!product || ['PL-014', 'PL-015', 'PL-016', 'PL-017', 'PL-018'].includes(selection.id) || !Number.isInteger(qty) || qty < 1 || qty > 10) throw new Error('Invalid bundle');
     return { id:selection.id, name:product.name, size:product.size, price:product.price, qty };
   });
   if (selections.reduce((sum, item) => sum + item.qty, 0) !== 10 || new Set(selections.map(item => item.id)).size !== selections.length) throw new Error('Invalid bundle');
@@ -61,6 +82,22 @@ function paymentDetails() {
     { label:'BSB', value:BSB },
     { label:'Account No.', value:ACCOUNT },
   ].filter(field => field.value);
+}
+
+function structuredPaymentDetails() {
+  return {
+    bank: BSB && ACCOUNT ? {
+      accountName: ACCOUNT_NAME,
+      bsb: BSB,
+      accountNumber: ACCOUNT,
+    } : null,
+    payid: PAYID_VALUE ? {
+      value: PAYID_VALUE,
+      type: PAYID_TYPE,
+      accountName: ACCOUNT_NAME,
+    } : null,
+    preferredMethod: PAYID_VALUE ? 'payid' : 'bank',
+  };
 }
 
 async function addToAudience(email, firstName, lastName) {
@@ -110,44 +147,23 @@ function validateAvailability(rawItems) {
   const required = {};
   for (const item of rawItems) {
     const contents = item.id === MIX_BUNDLE_ID ? bundleSelection(item.selections) : [{ id:item.id, qty:Number(item.qty) }];
-    for (const part of contents) required[part.id] = (required[part.id] || 0) + part.qty;
+    for (const part of contents) {
+      const sku = ['PL-016','PL-017'].includes(part.id) ? 'PL-SYR' : part.id;
+      const units = part.id === 'PL-016' ? 10 : part.id === 'PL-017' ? 30 : 1;
+      required[sku] = (required[sku] || 0) + part.qty * units;
+    }
   }
   for (const [id, qty] of Object.entries(required)) {
     const entry = inventory[id];
     const stock = typeof entry === 'number' ? entry : entry?.stock;
     const restocking = typeof entry === 'object' && entry?.restocking === true;
-    if (!PRODUCT_CATALOG[id] || !Number.isInteger(qty) || qty < 1 || !Number.isInteger(stock) || qty > stock || restocking) throw new Error('An item in your cart is currently unavailable');
+    if ((!PRODUCT_CATALOG[id] && id !== 'PL-SYR') || !Number.isInteger(qty) || qty < 1 || !Number.isInteger(stock) || qty > stock || restocking) throw new Error('An item in your cart is currently unavailable');
   }
 }
 
-function calculateOrder(rawItems, country, shippingMethod, promoCode) {
-  const items = rawItems.map(item => {
-    if (item.id === MIX_BUNDLE_ID) {
-      if (Number(item.qty) !== 1) throw new Error('Invalid bundle');
-      const selections = bundleSelection(item.selections);
-      const regularPrice = selections.reduce((sum, selection) => sum + selection.price * selection.qty, 0);
-      return { id:MIX_BUNDLE_ID, name:'Mix & Match 10-Vial Set', size:'10 vials', price:Math.round(regularPrice * 75) / 100, regularPrice, selections, qty:1 };
-    }
-    const product = PRODUCT_CATALOG[item.id];
-    const qty = Number(item.qty);
-    if (!product || !Number.isInteger(qty) || qty < 1 || qty > 50) throw new Error('Invalid cart item');
-    return { id:item.id, ...product, qty };
-  });
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const individualItems = items.filter(item => item.id !== MIX_BUNDLE_ID);
-  const totalQty = individualItems.reduce((sum, item) => sum + item.qty, 0);
-  const individualSubtotal = individualItems.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const mbRate = totalQty >= 5 ? 0.10 : totalQty >= 3 ? 0.05 : totalQty >= 2 ? 0.03 : 0;
-  const mbDiscount = individualSubtotal * mbRate;
-  const promo = PROMO_CODES[String(promoCode || '').toUpperCase()];
-  const promoDiscount = promo?.type === 'percent' ? (subtotal - mbDiscount) * promo.value / 100 : 0;
-  const isExpress = String(shippingMethod || '').toLowerCase().startsWith('express');
-  const baseShipping = isExpress ? 15 : 10;
-  const standardShipping = 10;
-  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? (isExpress ? baseShipping - standardShipping : 0) : baseShipping;
-  const discount = mbDiscount + promoDiscount;
-  const total = Math.max(0, subtotal - discount) + shipping;
-  return { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount };
+function calculateOrder(rawItems, country, shippingMethod, promoCode, shippingProtection = false) {
+  const method = resolveShippingMethod(country, shippingMethod);
+  return pricing.calculate(rawItems, country, method.id, promoCode, shippingProtection);
 }
 
 async function sendEmail(to, subject, html, orderName, role) {
@@ -192,26 +208,29 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   if (!tracker.enabled() && (!CONFIRM_SECRET || !RESEND_KEY)) return res.status(500).json({ error: 'Order email service unavailable' });
-  if (!BSB || !ACCOUNT) return res.status(500).json({ error: 'Payment details unavailable' });
+  if (req.body?.paymentMethod !== 'commas' && (!BSB || !ACCOUNT)) return res.status(500).json({ error: 'Payment details unavailable' });
 
   const {
     email, firstName, lastName,
     address1, address2, suburb, state, postcode, country, phone,
-    items: rawItems, promoCode, shippingMethod, marketingConsent,
+    items: rawItems, promoCode, shippingMethod: requestedShippingMethod, shippingProtection, marketingConsent,
   } = req.body || {};
 
   if (!email || !firstName || !lastName || !address1 || !suburb || !postcode || !Array.isArray(rawItems) || !rawItems.length || rawItems.length > 50) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
-  if ([email,firstName,lastName,address1,address2,suburb,state,postcode,country,phone,shippingMethod,promoCode].some(value => value != null && (typeof value !== 'string' || value.length > 500))) return res.status(400).json({error:'Invalid customer details'});
-  if (!/^\S+@\S+\.\S+$/.test(String(email)) || !/^[A-Z]{2}$/.test(String(country || ''))) {
+  if ([email,firstName,lastName,address1,address2,suburb,state,postcode,country,phone,requestedShippingMethod,promoCode].some(value => value != null && (typeof value !== 'string' || value.length > 500)) || (shippingProtection != null && typeof shippingProtection !== 'boolean')) return res.status(400).json({error:'Invalid customer details'});
+  if (!/^\S+@\S+\.\S+$/.test(String(email)) || !SUPPORTED_COUNTRIES.has(country)) {
     return res.status(400).json({ error: 'Invalid customer details' });
   }
-  const paymentMethod = country === 'AU' ? 'aud' : 'intl';
-  const paymentLabel = paymentMethod === 'intl'
+  const isCard = req.body.paymentMethod === 'commas';
+  if(isCard) return res.status(409).json({error:'Please refresh the store and select card payment again to use the verified AUD checkout.'});
+  const paymentMethod = isCard ? 'commas' : country === 'AU' ? 'aud' : 'intl';
+  const paymentLabel = isCard ? 'Commas card payment' : paymentMethod === 'intl'
     ? 'International Transfer via Wise / Revolut'
     : 'Australian Bank Transfer';
   const paymentFields = paymentDetails();
+  const paymentMethodDetails = structuredPaymentDetails();
   const internationalPaymentNote = paymentMethod === 'intl'
     ? '<div style="margin-top:14px;padding:10px 12px;background:#e0f2fe;border-radius:6px;font-size:13px;color:#075985">Use your own Wise, Revolut or similar transfer service. Convert to AUD, choose a local Australian bank transfer, and ensure the exact AUD total arrives. Do not use SWIFT. Transfer availability depends on your provider and country.</div>'
     : '';
@@ -221,17 +240,17 @@ module.exports = async function handler(req, res) {
   let calculated;
   try {
     if (!tracker.enabled()) validateAvailability(rawItems);
-    calculated = calculateOrder(rawItems, country, shippingMethod, promoCode);
+    calculated = calculateOrder(rawItems, country, requestedShippingMethod, promoCode, shippingProtection);
   } catch {
     return res.status(400).json({ error: 'Invalid cart' });
   }
-  const { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount } = calculated;
+  const { items, subtotal, shipping, discount, total, mbDiscount, promoDiscount, shippingMethod, shippingProtection:hasShippingProtection, shippingProtectionPrice } = calculated;
 
   let orderName = generateOrderId();
   if (tracker.enabled()) {
     const checkoutKey = req.body.checkoutKey || crypto.randomUUID();
     if (typeof checkoutKey !== 'string' || !/^[a-zA-Z0-9-]{20,100}$/.test(checkoutKey)) return res.status(400).json({error:'Invalid checkout reference'});
-    const details = { email,firstName,lastName,address1,address2:address2 || '',suburb,state:state || '',postcode,country,phone:phone || '',items,subtotal,shipping,discount,total,promoCode:promoCode || '',shippingMethod:shippingMethod || 'Standard',paymentMethod,paymentLabel };
+    const details = { email,firstName,lastName,address1,address2:address2 || '',suburb,state:state || '',postcode,country,phone:phone || '',items,subtotal,shipping,discount,total,promoCode:promoCode || '',shippingMethod:shippingMethod || 'Standard',shippingProtection:hasShippingProtection,shippingProtectionPrice,paymentMethod,paymentLabel };
     try {
       let saved;
       for (let attempt = 0; ; attempt++) {
@@ -245,9 +264,14 @@ module.exports = async function handler(req, res) {
         }
       }
       orderName = saved.id;
+      if(isCard) {
+        if(['expired','cancelled'].includes(saved.status)) return res.status(409).json({error:'This order is no longer payable.'});
+        try {return res.status(200).json(await commas.begin(orderName));}
+        catch {return res.status(503).json({error:'We could not prepare card payment. Please keep your cart and contact support with reference '+orderName+'. Do not create another payment.'});}
+      }
       if (saved.replayed) {
         if (['expired','cancelled'].includes(saved.status)) return res.status(409).json({error:'This order has expired or been cancelled. Refresh checkout to place a new order.'});
-        return res.status(200).json({orderName,total:saved.details.total,paymentMethod,paymentLabel,paymentFields,bsb:BSB,acct:ACCOUNT,customerEmailAccepted:saved.emails.customer==='accepted',storeAlertAccepted:saved.emails.owner==='accepted',orderSaved:true});
+        return res.status(200).json({orderName,total:saved.details.total,paymentMethod,paymentLabel,paymentFields,paymentDetails:paymentMethodDetails,bsb:BSB,acct:ACCOUNT,customerEmailAccepted:saved.emails.customer==='accepted',storeAlertAccepted:saved.emails.owner==='accepted',orderSaved:true});
       }
     } catch (error) {
       console.error('Order save failed',error.message.includes('OUT_OF_STOCK')?'out_of_stock':'database_or_request_error');
@@ -328,6 +352,12 @@ module.exports = async function handler(req, res) {
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px">A$${(i.price * i.qty).toFixed(2)}</td>
     </tr>`).join('');
 
+  const alreadyPaidHtml = `
+    <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:14px 16px;margin:0 0 24px">
+      <div style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:5px">Already paid? You’re all set.</div>
+      <p style="font-size:13px;line-height:1.6;color:#1e3a8a;margin:0">If you sent the exact amount and used your order number as the payment reference, no further action is needed. We manually match cleared bank transfers to orders, so an “awaiting payment” email may arrive in the meantime. Once confirmed, we’ll prepare your order and email your tracking details when the shipping label is created.</p>
+    </div>`;
+
   const reminderEmailHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"/></head>
 <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif">
 <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1)">
@@ -339,8 +369,9 @@ module.exports = async function handler(req, res) {
     <div style="display:inline-block;background:#fff8e1;border:2px solid #ffe082;border-radius:50px;padding:8px 20px;margin-bottom:20px">
       <span style="color:#b45309;font-weight:700;font-size:14px">⏰ Payment Reminder</span>
     </div>
-    <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">Your order is waiting, ${firstName}!</h1>
-    <p style="color:#666;margin:0 0 24px;font-size:15px">We noticed payment hasn't been received yet for order <strong>${orderName}</strong>. Please transfer as soon as possible to avoid cancellation.</p>
+    <h1 style="font-size:22px;font-weight:700;color:#111;margin:0 0 8px">Bank transfer awaiting confirmation</h1>
+    <p style="color:#666;margin:0 0 24px;font-size:15px">Hi ${firstName}, order <strong>${orderName}</strong> is still awaiting manual payment confirmation. If you haven’t sent the transfer yet, please do so before the deadline to avoid cancellation.</p>
+    ${alreadyPaidHtml}
     <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:22px;margin:0 0 24px">
       <h2 style="font-size:16px;font-weight:700;color:#111;margin:0 0 16px">Bank Transfer Details</h2>
       <table style="width:100%;border-collapse:collapse">
@@ -370,7 +401,7 @@ module.exports = async function handler(req, res) {
         from: `PeptideLab <${FROM_EMAIL}>`,
         reply_to: OWNER_EMAIL,
         to: email,
-        subject: `Reminder: Payment still pending — Order ${orderName}`,
+        subject: `Reminder: Bank transfer awaiting confirmation — Order ${orderName}`,
         html: reminderEmailHtml,
         scheduled_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
       }),
@@ -409,6 +440,7 @@ module.exports = async function handler(req, res) {
       <tr><td style="padding:6px 0;color:#666;font-size:14px">Subtotal</td><td style="padding:6px 0;text-align:right;font-size:14px">A$${Number(subtotal).toFixed(2)}</td></tr>
       ${Number(discount) > 0 ? `<tr><td style="padding:6px 0;color:#16a34a;font-size:14px">Discount${promoCode ? ` (${promoCode})` : ''}</td><td style="padding:6px 0;text-align:right;font-size:14px;color:#16a34a">−A$${Number(discount).toFixed(2)}</td></tr>` : ''}
       <tr><td style="padding:6px 0;color:#666;font-size:14px">Shipping${shippingMethod ? `<div style="font-size:11px;color:#999;margin-top:2px">${shippingMethod}</div>` : ''}</td><td style="padding:6px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
+      ${hasShippingProtection ? `<tr><td style="padding:6px 0;color:#666;font-size:14px">Shipping protection</td><td style="padding:6px 0;text-align:right;font-size:14px">A$${Number(shippingProtectionPrice).toFixed(2)}</td></tr>` : ''}
       <tr><td style="padding:10px 0;font-weight:700;font-size:16px;border-top:2px solid #111">Total Due</td><td style="padding:10px 0;text-align:right;font-weight:800;font-size:18px;color:#111;border-top:2px solid #111">A$${Number(total).toFixed(2)}</td></tr>
     </table>
 
@@ -424,6 +456,8 @@ module.exports = async function handler(req, res) {
       <div style="margin-top:14px;padding:10px 12px;background:#dcfce7;border-radius:6px;font-size:13px;color:#166534">Always use <strong>${orderName}</strong> as your payment reference.</div>
       ${internationalPaymentNote}
     </div>
+
+    ${alreadyPaidHtml}
 
     <p style="color:#666;font-size:13px;margin:0 0 8px">Once your payment clears, your order will be dispatched within 1-2 business days. A <strong>dispatch confirmation email</strong> with your tracking number will be sent when your order ships.</p>
     <div style="margin:0 0 16px;padding:12px 16px;background:#f0f4ff;border:1px solid #c7d2fe;border-radius:8px;font-size:13px;color:#3730a3">
@@ -459,6 +493,7 @@ module.exports = async function handler(req, res) {
       ${promoD > 0 ? `<tr><td style="padding:8px 0;color:#16a34a;font-size:14px">Promo (${promoCode})</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#16a34a">−A$${promoD.toFixed(2)}</td></tr>` : ''}
       ${mbD === 0 && promoD === 0 && Number(discount) > 0 ? `<tr><td style="padding:8px 0;color:#16a34a;font-size:14px">Discount${promoCode ? ` (${promoCode})` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px;color:#16a34a">−A$${Number(discount).toFixed(2)}</td></tr>` : ''}
       <tr><td style="padding:8px 0;color:#666;font-size:14px">Shipping${shippingMethod ? `<div style="font-size:11px;color:#999;margin-top:2px">${shippingMethod}</div>` : ''}</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">${Number(shipping) === 0 ? 'FREE' : 'A$' + Number(shipping).toFixed(2)}</td></tr>
+      ${hasShippingProtection ? `<tr><td style="padding:8px 0;color:#666;font-size:14px">Shipping protection</td><td></td><td style="padding:8px 0;text-align:right;font-size:14px">A$${Number(shippingProtectionPrice).toFixed(2)}</td></tr>` : ''}
       <tr><td style="padding:12px 0;font-weight:800;font-size:16px;border-top:2px solid #111">TOTAL</td><td style="border-top:2px solid #111"></td><td style="padding:12px 0;text-align:right;font-weight:800;font-size:18px;border-top:2px solid #111">A$${Number(total).toFixed(2)}</td></tr>
     </table>
 
@@ -504,6 +539,6 @@ module.exports = async function handler(req, res) {
   if (marketingConsent) await addToAudience(email, firstName, lastName);
   await logToAirtable(orderRecord);
 
-  return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, bsb: BSB, acct: ACCOUNT, customerEmailAccepted, storeAlertAccepted, orderSaved:tracker.enabled() });
+  return res.status(200).json({ orderName, total, paymentMethod, paymentLabel, paymentFields, paymentDetails:paymentMethodDetails, bsb: BSB, acct: ACCOUNT, customerEmailAccepted, storeAlertAccepted, orderSaved:tracker.enabled() });
 };
 if (process.env.NODE_ENV === 'test') module.exports._pricing = { calculateOrder, validateAvailability };

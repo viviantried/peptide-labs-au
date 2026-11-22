@@ -35,9 +35,3 @@ async function submitContact(event) {
     button.textContent = 'Send Message';
   }
 }
-
-function requestBatchDocumentation() {
-  showPage('contact');
-  document.getElementById('contactTopic').value = 'Batch Certificate Request';
-  document.getElementById('contactMessage').focus();
-}

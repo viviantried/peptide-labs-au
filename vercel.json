@@ -1,20 +1,251 @@
 {
-  "functions": { "api/order.js": { "maxDuration": 60 }, "api/giveaway.js": { "maxDuration": 60 } },
+  "functions": {
+    "api/order.js": {
+      "maxDuration": 60
+    },
+    "api/giveaway.js": {
+      "maxDuration": 60
+    },
+    "api/public.js": {
+      "maxDuration": 60
+    }
+  },
+  "redirects": [
+    {
+      "source": "/quality-testing",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/education",
+      "destination": "/reconstitution",
+      "permanent": true
+    },
+    {
+      "source": "/collections/all",
+      "destination": "/shop",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/products/:slug", "destination": "/index.html" },
-    { "source": "/collections/all", "destination": "/index.html" },
-    { "source": "/shop", "destination": "/index.html" },
-    { "source": "/cart", "destination": "/index.html" },
-    { "source": "/reconstitution", "destination": "/index.html" },
-    { "source": "/quality-testing", "destination": "/index.html" },
-    { "source": "/about", "destination": "/index.html" },
-    { "source": "/faq", "destination": "/index.html" },
-    { "source": "/contact", "destination": "/index.html" },
-    { "source": "/track-order", "destination": "/index.html" },
-    { "source": "/shipping", "destination": "/index.html" },
-    { "source": "/refunds", "destination": "/index.html" },
-    { "source": "/terms", "destination": "/index.html" },
-    { "source": "/privacy", "destination": "/index.html" }
+    {
+      "source": "/api/bank-details",
+      "destination": "/api/public?route=bank-details"
+    },
+    {
+      "source": "/api/inventory",
+      "destination": "/api/public?route=inventory"
+    },
+    {
+      "source": "/api/commas-status",
+      "destination": "/api/public?route=commas-status"
+    },
+    {
+      "source": "/api/commas-checkout",
+      "destination": "/api/public?route=commas-checkout"
+    },
+    {
+      "source": "/card-checkout",
+      "destination": "/card-checkout.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/cart",
+      "destination": "/seo-pages/page-1.html"
+    },
+    {
+      "source": "/shop",
+      "destination": "/seo-pages/page-2.html"
+    },
+    {
+      "source": "/reconstitution",
+      "destination": "/seo-pages/page-3.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/seo-pages/page-4.html"
+    },
+    {
+      "source": "/faq",
+      "destination": "/seo-pages/page-5.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/seo-pages/page-6.html"
+    },
+    {
+      "source": "/track-order",
+      "destination": "/seo-pages/page-7.html"
+    },
+    {
+      "source": "/shipping",
+      "destination": "/seo-pages/page-8.html"
+    },
+    {
+      "source": "/refunds",
+      "destination": "/seo-pages/page-9.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/seo-pages/page-10.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/seo-pages/page-11.html"
+    },
+    {
+      "source": "/research-guides",
+      "destination": "/seo-pages/page-12.html"
+    },
+    {
+      "source": "/research-guides/how-to-read-a-coa",
+      "destination": "/seo-pages/page-13.html"
+    },
+    {
+      "source": "/research-guides/request-batch-documentation",
+      "destination": "/seo-pages/page-14.html"
+    },
+    {
+      "source": "/products/retatrutide",
+      "destination": "/seo-pages/page-15.html"
+    },
+    {
+      "source": "/products/bpc-157",
+      "destination": "/seo-pages/page-16.html"
+    },
+    {
+      "source": "/products/tb-500",
+      "destination": "/seo-pages/page-17.html"
+    },
+    {
+      "source": "/products/tesamorelin",
+      "destination": "/seo-pages/page-18.html"
+    },
+    {
+      "source": "/products/semax",
+      "destination": "/seo-pages/page-19.html"
+    },
+    {
+      "source": "/products/selank",
+      "destination": "/seo-pages/page-20.html"
+    },
+    {
+      "source": "/products/deep-sleep-inducing-peptide",
+      "destination": "/seo-pages/page-21.html"
+    },
+    {
+      "source": "/products/melanotan-2",
+      "destination": "/seo-pages/page-22.html"
+    },
+    {
+      "source": "/products/melanotan-1",
+      "destination": "/seo-pages/page-23.html"
+    },
+    {
+      "source": "/products/nad-plus",
+      "destination": "/seo-pages/page-24.html"
+    },
+    {
+      "source": "/products/ghk-cu",
+      "destination": "/seo-pages/page-25.html"
+    },
+    {
+      "source": "/products/glutathione",
+      "destination": "/seo-pages/page-26.html"
+    },
+    {
+      "source": "/products/bac-water",
+      "destination": "/seo-pages/page-27.html"
+    },
+    {
+      "source": "/products/research-starter-kit",
+      "destination": "/seo-pages/page-28.html"
+    },
+    {
+      "source": "/products/research-syringes",
+      "destination": "/seo-pages/page-29.html"
+    },
+    {
+      "source": "/products/research-syringes-30-pack",
+      "destination": "/seo-pages/page-30.html"
+    }
+  ],
+  "buildCommand": "node --test tests/checkout-currency.test.js && node scripts/build-seo.mjs",
+  "outputDirectory": "public",
+  "headers": [
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/admin.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/card-checkout",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/card-checkout.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/cart",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/track-order",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/checkout-pricing.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    }
   ]
 }
