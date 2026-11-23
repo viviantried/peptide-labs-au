@@ -137,8 +137,13 @@ test('feedback preserves escaped text after provider failure and only thanks aft
   provider(200, { id: 'test-email-id' });
   assert.match((await invoke('feedback', feedback())).body, /Thank you/);
 });
-test('all inline storefront scripts parse after edits', () => {
-  const html = fs.readFileSync(require.resolve('../index.html'), 'utf8');
-  for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)) new vm.Script(match[1]);
+test('all inline storefront and admin scripts parse after edits', () => {
+  for (const file of ['../index.html','../admin.html']) {
+    const html = fs.readFileSync(require.resolve(file), 'utf8');
+    for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+      if (/type=["']application\/ld\+json["']/.test(match[1])) JSON.parse(match[2]);
+      else new vm.Script(match[2]);
+    }
+  }
   new vm.Script(fs.readFileSync(require.resolve('../storefront-support.js'), 'utf8'));
 });
