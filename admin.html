@@ -51,7 +51,7 @@ function render(){if(!data)return;const q=$('search').value.toLowerCase().trim()
 function showOrder(o){
  $('detailTitle').textContent=o.id;$('detailStatus').textContent=labels[o.status]+' · '+date(o.created_at);
  const d=o.details,info=$('detailInfo');info.replaceChildren();
- for(const [label,value]of [['Customer',d.firstName+' '+d.lastName],['Email',d.email],['Phone',d.phone||'—'],['Ship to',[d.address1,d.address2,d.suburb+' '+d.state+' '+d.postcode,d.country].filter(Boolean).join('\n')],['Shipping',d.shippingMethod],['Total',money(d.total)],['Payment due',date(o.expires_at)],['Tracking',o.tracking?o.carrier+' · '+o.tracking:'—']])info.append(text('dt',label),text('dd',value));
+ for(const [label,value]of [['Customer',d.firstName+' '+d.lastName],['Email',d.email],['Phone',d.phone||'—'],['Ship to',[d.address1,d.address2,d.suburb+' '+d.state+' '+d.postcode,d.country].filter(Boolean).join('\n')],['Shipping',d.shippingMethod],['Total',money(d.total)],['Payment due',date(o.expires_at)],['Tracking',o.tracking?o.carrier+' · '+o.tracking:'—']]){const valueElement=text('dd',value);if(label==='Tracking')valueElement.id='detailTracking';info.append(text('dt',label),valueElement);}
  $('detailItems').replaceChildren();
  for(const i of d.items){$('detailItems').append(text('div',i.qty+' × '+i.name+' '+(i.size||'')+' · '+money(i.price*i.qty)));if(i.selections)$('detailItems').append(text('div',i.selections.map(s=>s.qty+' × '+s.name+' '+s.size).join(', '),'muted'))}
  $('detailEmail').textContent='Customer email: '+o.emails.customer+' · Store alert: '+o.emails.owner+(o.emails.tracking?' · Tracking email: '+o.emails.tracking:'')+(o.emails.trackingSentAt?' · Last sent '+date(o.emails.trackingSentAt):'');
@@ -68,7 +68,7 @@ function showOrder(o){
  const attempt={signature:'',id:crypto.randomUUID()};
  const send=action(o.emails.tracking==='accepted'?'Resend tracking email':'Send tracking email',()=>sendTracking(o,tracking,carrier,fields,message,send,attempt),'primary');
  fields.append(text('p','Sends from support@aupeptidelab.com to '+d.email+'.','muted'),send);
- if(o.status==='paid')fields.append(action('Save dispatch record only',()=>updateOrder(o,'shipped',tracking.value.trim(),carrier.value)));
+ if(o.status==='paid'){const save=action('Save dispatch record only',()=>updateOrder(o,'shipped',tracking.value.trim(),carrier.value));save.id='saveDispatch';fields.append(save);}
  if(['expired','cancelled','pending'].includes(o.status))fields.append(text('p','Tracking can be emailed while this order remains '+labels[o.status].toLowerCase()+'.','muted'));
  controls.append(fields,message);
  if(['pending','paid'].includes(o.status))controls.append(action('Cancel & release stock',()=>updateOrder(o,'cancelled'),'danger'));
@@ -85,6 +85,7 @@ async function sendTracking(o,tracking,carrier,fields,message,button,attempt){
   o.emails={...o.emails,tracking:'accepted',trackingSentAt:result.sentAt};
   $('detailStatus').textContent=labels[o.status]+' · '+date(o.created_at);
   $('detailEmail').textContent='Tracking email accepted · '+date(result.sentAt);
+  $('detailTracking').textContent=result.carrier+' · '+result.tracking;if(o.status!=='paid')$('saveDispatch')?.remove();
   message.textContent='Tracking email sent to '+result.email+'.'+(result.emailRecorded?'':' The email was sent, but its history could not be saved.');
   button.textContent='Resend tracking email';attempt.id=crypto.randomUUID();await refresh();
  }catch(e){message.textContent=e.message;}finally{fields.disabled=false;}
