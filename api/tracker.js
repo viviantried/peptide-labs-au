@@ -61,7 +61,7 @@ module.exports = async function(req,res) {
       const inventory = await store.inventory();
       const limit = req.query?.export==='1' ? 10000 : 500;
       const orders = await store.query('SELECT id,created_at,expires_at,status,details,emails,tracking,carrier FROM pl_orders ORDER BY created_at DESC LIMIT $1',[limit]);
-      const [counts] = await store.query(`SELECT count(*)::int AS total, count(*) FILTER (WHERE status='pending')::int AS pending, count(*) FILTER (WHERE status='paid')::int AS paid, count(*) FILTER (WHERE emails->>'customer' IN ('failed','pending') OR emails->>'owner' IN ('failed','pending'))::int AS email_issues FROM pl_orders`);
+      const [counts] = await store.query(`SELECT count(*)::int AS total, count(*) FILTER (WHERE status='pending')::int AS pending, count(*) FILTER (WHERE status='paid')::int AS paid, count(*) FILTER (WHERE emails->>'customer' IN ('failed','pending') OR emails->>'owner' IN ('failed','pending') OR emails->>'tracking'='failed')::int AS email_issues FROM pl_orders`);
       const events = await store.query('SELECT * FROM pl_events ORDER BY id DESC LIMIT 50');
       return res.status(200).json({orders,inventory,counts,events,checkedAt:new Date().toISOString(),limit});
     }
